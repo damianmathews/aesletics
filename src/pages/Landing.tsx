@@ -18,65 +18,60 @@ export default function Landing() {
       {/* Animated wavy background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
         <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="wave-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-              <motion.path
-                d="M0,50 Q25,30 50,50 T100,50"
-                stroke="rgba(255, 255, 255, 0.03)"
-                strokeWidth="1"
-                fill="none"
-                animate={{
-                  d: [
-                    "M0,50 Q25,30 50,50 T100,50",
-                    "M0,50 Q25,70 50,50 T100,50",
-                    "M0,50 Q25,30 50,50 T100,50",
-                  ],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <motion.path
-                d="M0,30 Q25,50 50,30 T100,30"
-                stroke="rgba(255, 255, 255, 0.02)"
-                strokeWidth="1"
-                fill="none"
-                animate={{
-                  d: [
-                    "M0,30 Q25,50 50,30 T100,30",
-                    "M0,30 Q25,10 50,30 T100,30",
-                    "M0,30 Q25,50 50,30 T100,30",
-                  ],
-                }}
-                transition={{
-                  duration: 10,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <motion.path
-                d="M0,70 Q25,50 50,70 T100,70"
-                stroke="rgba(255, 255, 255, 0.025)"
-                strokeWidth="1"
-                fill="none"
-                animate={{
-                  d: [
-                    "M0,70 Q25,50 50,70 T100,70",
-                    "M0,70 Q25,90 50,70 T100,70",
-                    "M0,70 Q25,50 50,70 T100,70",
-                  ],
-                }}
-                transition={{
-                  duration: 12,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#wave-pattern)" />
+          <motion.path
+            d="M-100,300 Q200,100 500,300 T1100,300 T1700,300"
+            stroke="rgba(167, 139, 250, 0.15)"
+            strokeWidth="2"
+            fill="none"
+            animate={{
+              d: [
+                "M-100,300 Q200,100 500,300 T1100,300 T1700,300",
+                "M-100,300 Q200,500 500,300 T1100,300 T1700,300",
+                "M-100,300 Q200,100 500,300 T1100,300 T1700,300",
+              ],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+          <motion.path
+            d="M-100,500 Q300,300 600,500 T1200,500 T1800,500"
+            stroke="rgba(167, 139, 250, 0.1)"
+            strokeWidth="2"
+            fill="none"
+            animate={{
+              d: [
+                "M-100,500 Q300,300 600,500 T1200,500 T1800,500",
+                "M-100,500 Q300,700 600,500 T1200,500 T1800,500",
+                "M-100,500 Q300,300 600,500 T1200,500 T1800,500",
+              ],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+          <motion.path
+            d="M-100,700 Q250,500 550,700 T1150,700 T1750,700"
+            stroke="rgba(167, 139, 250, 0.08)"
+            strokeWidth="2"
+            fill="none"
+            animate={{
+              d: [
+                "M-100,700 Q250,500 550,700 T1150,700 T1750,700",
+                "M-100,700 Q250,900 550,700 T1150,700 T1750,700",
+                "M-100,700 Q250,500 550,700 T1150,700 T1750,700",
+              ],
+            }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
         </svg>
       </div>
 
