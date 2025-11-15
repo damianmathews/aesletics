@@ -145,11 +145,8 @@ export default function Landing() {
               Become <span className="whitespace-nowrap">formidable.</span>
             </h1>
 
-            <p className="text-xl md:text-2xl mb-4 max-w-3xl mx-auto leading-relaxed font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+            <p className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto leading-relaxed font-mono" style={{ color: 'var(--color-text-secondary)' }}>
               BUILD THE BODY, MIND, AND DISCIPLINE YOU RESPECT.
-            </p>
-            <p className="text-lg mb-12 max-w-2xl mx-auto" style={{ color: 'var(--color-text-tertiary)' }}>
-              One quest at a time.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
