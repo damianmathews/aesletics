@@ -205,29 +205,8 @@ export default function Settings() {
             </div>
           </motion.div>
 
-          {/* Appearance */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
-            <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Appearance</h2>
-            <div>
-              <label className="block text-xs font-medium mb-1.5 font-mono" style={{ color: 'var(--color-text-secondary)' }}>THEME</label>
-              <select
-                value={settings.theme}
-                onChange={(e) => updateSettings({ theme: e.target.value as any })}
-                className="w-full px-3 py-2 rounded glass border focus:outline-none focus:ring-2 transition-all text-sm"
-                style={{
-                  borderColor: 'var(--color-border)',
-                  color: 'var(--color-text)',
-                }}
-              >
-                <option value="dark">Dark</option>
-                <option value="light">Light</option>
-                <option value="system">System</option>
-              </select>
-            </div>
-          </motion.div>
-
           {/* Units */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
             <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Preferences</h2>
             <div>
               <label className="block text-xs font-medium mb-1.5 font-mono" style={{ color: 'var(--color-text-secondary)' }}>MEASUREMENT SYSTEM</label>
@@ -247,7 +226,7 @@ export default function Settings() {
           </motion.div>
 
           {/* Data Management */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
             <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Data Management</h2>
             <div className="space-y-2.5">
               <button
@@ -271,7 +250,7 @@ export default function Settings() {
           </motion.div>
 
           {/* About */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
             <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>About</h2>
             <div className="space-y-1.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
               <p><strong style={{ color: 'var(--color-text)' }}>IRLXP</strong> — Aesthetic discipline meets athletic execution.</p>
