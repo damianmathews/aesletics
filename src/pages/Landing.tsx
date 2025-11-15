@@ -182,7 +182,7 @@ export default function Landing() {
               className="flex flex-wrap justify-center gap-8 mt-16"
             >
               {[
-                { value: '400+', label: 'QUESTS' },
+                { value: '320+', label: 'QUESTS' },
                 { value: '100%', label: 'PRIVATE' },
               ].map((stat, index) => (
                 <div key={index} className="text-center">
@@ -302,7 +302,7 @@ export default function Landing() {
 
           <div className="grid md:grid-cols-3 gap-12">
             {[
-              { step: '1', title: 'Choose your path', description: 'Pick challenges that push you forward. 400+ quests across every area of life.' },
+              { step: '1', title: 'Choose your path', description: 'Pick challenges that push you forward. 320+ quests across every area of life.' },
               { step: '2', title: 'Take action', description: 'Complete quests. Prove your work. Build undeniable momentum every single day.' },
               { step: '3', title: 'Become unstoppable', description: 'Watch your XP climb, streaks build, and capabilities multiply. Transformation becomes inevitable.' },
             ].map((item, index) => (
