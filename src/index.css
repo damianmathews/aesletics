@@ -65,6 +65,43 @@
                    radial-gradient(at 100% 100%, rgba(255, 255, 255, 0.02) 0px, transparent 50%);
 }
 
+[data-theme="light"] {
+  /* Light theme */
+  --color-bg: #FFFFFF;
+  --color-bg-secondary: #F9FAFB;
+  --color-surface: #F3F4F6;
+  --color-surface-elevated: #E5E7EB;
+  --color-text: #111827;
+  --color-text-secondary: #6B7280;
+  --color-text-tertiary: #9CA3AF;
+  --color-border: #E5E7EB;
+  --color-accent: #8B5CF6;
+  --color-accent-hover: #7C3AED;
+  --color-cyan: #0891B2;
+  --color-magenta: #DB2777;
+  --color-success: #059669;
+  --color-warning: #D97706;
+  --color-error: #DC2626;
+
+  /* Light Gradients */
+  --gradient-primary: linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 100%);
+  --gradient-secondary: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+  --gradient-tertiary: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%);
+  --gradient-mesh: radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.05) 0px, transparent 50%),
+                   radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.03) 0px, transparent 50%),
+                   radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.03) 0px, transparent 50%);
+}
+
+[data-theme="light"] .bg-pattern-dots {
+  background-image: radial-gradient(circle, rgba(139, 92, 246, 0.15) 1px, transparent 1px);
+}
+
+[data-theme="light"] .bg-pattern-grid {
+  background-image:
+    linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
+}
+
 * {
   margin: 0;
   padding: 0;
