@@ -134,7 +134,7 @@ export default function Landing() {
             <div className="inline-block px-4 py-2 rounded-full glass mb-6">
               <span style={{ color: 'var(--color-accent)' }} className="font-semibold flex items-center gap-2 font-mono">
                 <Zap size={16} />
-                LEVEL UP YOUR ENTIRE LIFE
+                LEVEL UP YOUR LIFE
               </span>
             </div>
 
