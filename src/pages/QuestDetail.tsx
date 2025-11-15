@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { calculateXP } from '../lib/xp';
-import { Clock, Camera, AlertTriangle, Check, Flame, X, Award, TrendingUp } from 'lucide-react';
+import { Clock, Camera, AlertTriangle, Check, Flame, X, Award, TrendingUp, Menu } from 'lucide-react';
 
 export default function QuestDetail() {
   const { id } = useParams<{ id: string }>();
@@ -11,6 +11,7 @@ export default function QuestDetail() {
   const { profile, getQuestById, addCompletion } = useStore();
   const quest = getQuestById(id!);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [counterValue, setCounterValue] = useState(0);
@@ -83,6 +84,14 @@ export default function QuestDetail() {
             <img src="/logo.png" alt="IRLXP" className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-3 md:gap-6">
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="md:hidden w-10 h-10 flex items-center justify-center"
+              style={{ color: 'var(--color-text)' }}
+            >
+              {showMobileMenu ? <X size={24} /> : <Menu size={24} />}
+            </button>
             <Link to="/app" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Dashboard</Link>
             <Link to="/app/quests" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text)' }}>Quests</Link>
             <Link to="/app/leaderboard" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Leaderboard</Link>
@@ -111,6 +120,68 @@ export default function QuestDetail() {
           </div>
         </div>
       </header>
+
+      {/* Mobile Menu Overlay */}
+      {showMobileMenu && (
+        <motion.div
+          initial={{ opacity: 0, x: -100 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -100 }}
+          className="md:hidden fixed inset-0 z-30 glass"
+          style={{ backgroundColor: 'var(--color-bg)', top: '80px' }}
+        >
+          <div className="flex flex-col p-6 gap-4">
+            <Link
+              to="/app"
+              onClick={() => setShowMobileMenu(false)}
+              className="text-lg font-medium py-3 px-4 rounded-lg hover:bg-white/5 transition-colors"
+              style={{ color: 'var(--color-text)' }}
+            >
+              Dashboard
+            </Link>
+            <Link
+              to="/app/quests"
+              onClick={() => setShowMobileMenu(false)}
+              className="text-lg font-medium py-3 px-4 rounded-lg hover:bg-white/5 transition-colors"
+              style={{ color: 'var(--color-text)' }}
+            >
+              Quests
+            </Link>
+            <Link
+              to="/app/leaderboard"
+              onClick={() => setShowMobileMenu(false)}
+              className="text-lg font-medium py-3 px-4 rounded-lg hover:bg-white/5 transition-colors"
+              style={{ color: 'var(--color-text)' }}
+            >
+              Leaderboard
+            </Link>
+            <Link
+              to="/app/history"
+              onClick={() => setShowMobileMenu(false)}
+              className="text-lg font-medium py-3 px-4 rounded-lg hover:bg-white/5 transition-colors"
+              style={{ color: 'var(--color-text)' }}
+            >
+              History
+            </Link>
+            <Link
+              to="/app/packs"
+              onClick={() => setShowMobileMenu(false)}
+              className="text-lg font-medium py-3 px-4 rounded-lg hover:bg-white/5 transition-colors"
+              style={{ color: 'var(--color-text)' }}
+            >
+              Packs
+            </Link>
+            <Link
+              to="/app/settings"
+              onClick={() => setShowMobileMenu(false)}
+              className="text-lg font-medium py-3 px-4 rounded-lg hover:bg-white/5 transition-colors"
+              style={{ color: 'var(--color-text)' }}
+            >
+              Settings
+            </Link>
+          </div>
+        </motion.div>
+      )}
 
       {/* Main Content */}
       <main className="max-w-3xl mx-auto px-6 py-6">
