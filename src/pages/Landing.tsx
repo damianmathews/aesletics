@@ -142,7 +142,7 @@ export default function Landing() {
               {[
                 { value: '150+', label: 'QUESTS' },
                 { value: '12', label: 'CATEGORIES' },
-                { value: '100%', label: 'OFFLINE' },
+                { value: '100%', label: 'LOCAL' },
               ].map((stat, index) => (
                 <div key={index} className="text-center">
                   <div className="text-4xl font-bold tabular-nums mb-1" style={{
@@ -339,7 +339,7 @@ export default function Landing() {
             Launch Aesletics
           </Link>
           <p className="mt-6 text-xs font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
-            100% FREE • WORKS OFFLINE • YOUR DATA STAYS YOURS
+            100% FREE • LOCAL-FIRST • YOUR DATA STAYS YOURS
           </p>
         </motion.div>
       </section>
