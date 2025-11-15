@@ -262,7 +262,7 @@ export const useStore = create<StoreState>()(
       },
     }),
     {
-      name: 'aesletics-storage',
+      name: 'irlxp-storage',
     }
   )
 );

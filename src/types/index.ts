@@ -1,4 +1,4 @@
-// Core type definitions for Aesletics
+// Core type definitions for IRLXP
 
 export type Difficulty = 'easy' | 'medium' | 'hard' | 'elite' | 'legendary';
 export type ProofType = 'check' | 'photo' | 'timer' | 'counter' | 'text';

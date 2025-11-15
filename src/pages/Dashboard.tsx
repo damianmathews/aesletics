@@ -62,7 +62,7 @@ export default function Dashboard() {
       <header className="glass sticky top-0 z-40 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="Aesletics" className="h-12 w-auto" />
+            <img src="/logo.png" alt="IRLXP" className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-6">
             <Link to="/app" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text)' }}>Dashboard</Link>

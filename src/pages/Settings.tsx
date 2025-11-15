@@ -14,7 +14,7 @@ export default function Settings() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `aesletics-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `irlxp-backup-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -48,7 +48,7 @@ export default function Settings() {
       <header className="glass sticky top-0 z-40 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="Aesletics" className="h-12 w-auto" />
+            <img src="/logo.png" alt="IRLXP" className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-6">
             <Link to="/app" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Dashboard</Link>
@@ -88,7 +88,7 @@ export default function Settings() {
         }} />
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
           <h1 className="font-display text-3xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Settings</h1>
-          <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>Customize your Aesletics experience</p>
+          <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>Customize your IRLXP experience</p>
         </motion.div>
 
         <div className="space-y-5">
@@ -202,7 +202,7 @@ export default function Settings() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
             <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>About</h2>
             <div className="space-y-1.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
-              <p><strong style={{ color: 'var(--color-text)' }}>Aesletics</strong> — Aesthetic discipline meets athletic execution.</p>
+              <p><strong style={{ color: 'var(--color-text)' }}>IRLXP</strong> — Aesthetic discipline meets athletic execution.</p>
               <p>Gamified tracking for total well-being. No tracking. No subscriptions.</p>
               <div className="mt-3 pt-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
                 <p className="text-xs font-mono">Member since: {new Date(profile.joinedAt).toLocaleDateString()}</p>

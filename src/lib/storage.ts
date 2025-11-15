@@ -1,14 +1,14 @@
 // Storage utilities for localStorage and IndexedDB
 
 const STORAGE_KEYS = {
-  APP_STATE: 'aesletics.state',
-  USER_PROFILE: 'aesletics.profile',
-  USER_QUESTS: 'aesletics.quests',
-  COMPLETIONS: 'aesletics.completions',
-  SETTINGS: 'aesletics.settings',
+  APP_STATE: 'irlxp.state',
+  USER_PROFILE: 'irlxp.profile',
+  USER_QUESTS: 'irlxp.quests',
+  COMPLETIONS: 'irlxp.completions',
+  SETTINGS: 'irlxp.settings',
 } as const;
 
-const DB_NAME = 'AesleticsDB';
+const DB_NAME = 'IRLXPDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'photos';
 
@@ -44,7 +44,7 @@ export const storage = {
 
   clear: (): void => {
     try {
-      // Only clear Aesletics keys
+      // Only clear IRLXP keys
       Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
     } catch (error) {
       console.error('Error clearing localStorage:', error);

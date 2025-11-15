@@ -79,7 +79,7 @@ export default function Landing() {
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="Aesletics" className="h-12 w-auto" />
+            <img src="/logo.png" alt="IRLXP" className="h-12 w-auto" />
           </Link>
           <Link
             to="/app"
@@ -223,7 +223,7 @@ export default function Landing() {
             className="text-center mb-20"
           >
             <h2 className="font-display text-5xl font-bold mb-6" style={{ color: 'var(--color-text)' }}>
-              Why Aesletics?
+              Why IRLXP?
             </h2>
             <p className="text-xl max-w-2xl mx-auto font-mono" style={{ color: 'var(--color-text-secondary)' }}>
               STOP GUESSING. START IMPROVING.
@@ -375,7 +375,7 @@ export default function Landing() {
               color: 'white',
             }}
           >
-            Launch Aesletics
+            Launch IRLXP
           </Link>
           <p className="mt-6 text-xs font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
             ALWAYS FREE • COMPLETELY PRIVATE
@@ -388,7 +388,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <img src="/logo.png" alt="Aesletics" className="h-8 w-auto" />
+              <img src="/logo.png" alt="IRLXP" className="h-8 w-auto" />
               <span style={{ color: 'var(--color-text-secondary)' }} className="font-mono text-sm">
                 Aesthetic discipline meets athletic execution.
               </span>

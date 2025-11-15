@@ -1,4 +1,4 @@
-// Comprehensive seed data for Aesletics
+// Comprehensive seed data for IRLXP
 import type { Category, QuestTemplate, QuestPack, Badge } from '../types';
 
 // Categories
