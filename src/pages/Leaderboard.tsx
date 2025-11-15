@@ -124,24 +124,24 @@ export default function Leaderboard() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-6 relative">
+      <main className="max-w-7xl mx-auto px-6 py-5 relative">
         {/* Subtle gradient background */}
         <div className="absolute inset-0 pointer-events-none" style={{
           background: 'radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 60%)'
         }} />
 
         {/* Header */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative mb-6">
-          <h1 className="font-display text-3xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>Global Leaderboard</h1>
-          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>You vs Everyone - See where you rank worldwide</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative mb-5">
+          <h1 className="font-display text-2xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>Global Leaderboard</h1>
+          <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>You vs Everyone - See where you rank worldwide</p>
         </motion.div>
 
         {/* Your Rank Card */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-lg p-4 border mb-6 relative" style={{ borderColor: 'var(--color-accent)', backgroundColor: 'rgba(167, 139, 250, 0.05)' }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-lg p-4 border mb-5 relative" style={{ borderColor: 'var(--color-accent)', backgroundColor: 'rgba(167, 139, 250, 0.05)' }}>
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>Your Global Rank</div>
-              <div className="text-4xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-accent)' }}>
+              <div className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>YOUR GLOBAL RANK</div>
+              <div className="text-3xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-accent)' }}>
                 #{userEntry.rank.toLocaleString()}
               </div>
               <div className="text-xs mt-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
@@ -149,8 +149,8 @@ export default function Leaderboard() {
               </div>
             </div>
             <div className="text-right">
-              <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Your Stats</div>
-              <div className="flex items-center gap-4 font-mono text-sm">
+              <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>YOUR STATS</div>
+              <div className="flex items-center gap-3 font-mono text-xs">
                 <span style={{ color: 'var(--color-text)' }}>{profile.totalXP.toLocaleString()} XP</span>
                 <span style={{ color: 'var(--color-text)' }}>Lvl {userEntry.level}</span>
                 <span className="flex items-center gap-1" style={{ color: 'var(--color-text)' }}>
@@ -162,24 +162,24 @@ export default function Leaderboard() {
         </motion.div>
 
         {/* Top Players */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-lg border mb-6 overflow-hidden relative" style={{ borderColor: 'var(--color-border)' }}>
-          <div className="p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
-            <h2 className="font-display text-xl font-semibold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
-              <Trophy size={20} style={{ color: 'var(--color-accent)' }} />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-lg border mb-5 overflow-hidden relative" style={{ borderColor: 'var(--color-border)' }}>
+          <div className="p-3 border-b" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+              <Trophy size={18} style={{ color: 'var(--color-accent)' }} />
               Top 20 Rankings
             </h2>
-            <p className="text-xs mt-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>The best performers worldwide</p>
+            <p className="text-xs mt-0.5 font-mono" style={{ color: 'var(--color-text-secondary)' }}>The best performers worldwide</p>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b text-xs font-mono" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
-                  <th className="text-left py-2 px-4">RANK</th>
-                  <th className="text-left py-2 px-4">PLAYER</th>
-                  <th className="text-right py-2 px-4">XP</th>
-                  <th className="text-right py-2 px-4">LEVEL</th>
-                  <th className="text-right py-2 px-4">STREAK</th>
+                  <th className="text-left py-1.5 px-3">RANK</th>
+                  <th className="text-left py-1.5 px-3">PLAYER</th>
+                  <th className="text-right py-1.5 px-3">XP</th>
+                  <th className="text-right py-1.5 px-3">LEVEL</th>
+                  <th className="text-right py-1.5 px-3">STREAK</th>
                 </tr>
               </thead>
               <tbody>
@@ -189,23 +189,23 @@ export default function Leaderboard() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 + index * 0.02 }}
-                    className="border-b hover:bg-white/5 transition-colors"
+                    className="border-b hover:bg-white/5 transition-colors text-xs"
                     style={{ borderColor: 'var(--color-border)' }}
                   >
-                    <td className="py-2 px-4">
-                      <div className="flex items-center gap-2">
+                    <td className="py-1.5 px-3">
+                      <div className="flex items-center gap-1.5">
                         {player.rank <= 3 && (
-                          <Trophy size={16} className={player.rank === 1 ? 'text-yellow-500' : player.rank === 2 ? 'text-gray-400' : 'text-orange-600'} />
+                          <Trophy size={14} className={player.rank === 1 ? 'text-yellow-500' : player.rank === 2 ? 'text-gray-400' : 'text-orange-600'} />
                         )}
                         <span className="font-bold font-mono" style={{ color: player.rank <= 3 ? 'var(--color-accent)' : 'var(--color-text)' }}>
                           #{player.rank}
                         </span>
                       </div>
                     </td>
-                    <td className="py-2 px-4 font-semibold" style={{ color: 'var(--color-text)' }}>{player.username}</td>
-                    <td className="py-2 px-4 text-right font-mono font-medium" style={{ color: 'var(--color-text)' }}>{player.xp.toLocaleString()}</td>
-                    <td className="py-2 px-4 text-right font-mono" style={{ color: 'var(--color-text-secondary)' }}>{player.level}</td>
-                    <td className="py-2 px-4 text-right">
+                    <td className="py-1.5 px-3 font-semibold" style={{ color: 'var(--color-text)' }}>{player.username}</td>
+                    <td className="py-1.5 px-3 text-right font-mono font-medium" style={{ color: 'var(--color-text)' }}>{player.xp.toLocaleString()}</td>
+                    <td className="py-1.5 px-3 text-right font-mono" style={{ color: 'var(--color-text-secondary)' }}>{player.level}</td>
+                    <td className="py-1.5 px-3 text-right">
                       <span className="flex items-center justify-end gap-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
                         <Flame size={12} className="text-orange-500" /> {player.streak}
                       </span>
@@ -219,50 +219,50 @@ export default function Leaderboard() {
 
         {/* Your Position Context */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-lg border overflow-hidden relative" style={{ borderColor: 'var(--color-border)' }}>
-          <div className="p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
-            <h2 className="font-display text-xl font-semibold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
-              <TrendingUp size={20} style={{ color: 'var(--color-accent)' }} />
+          <div className="p-3 border-b" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+              <TrendingUp size={18} style={{ color: 'var(--color-accent)' }} />
               Your Position
             </h2>
-            <p className="text-xs mt-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>Players near your rank - climb higher to surpass them</p>
+            <p className="text-xs mt-0.5 font-mono" style={{ color: 'var(--color-text-secondary)' }}>Players near your rank - climb higher to surpass them</p>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b text-xs font-mono" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
-                  <th className="text-left py-2 px-4">RANK</th>
-                  <th className="text-left py-2 px-4">PLAYER</th>
-                  <th className="text-right py-2 px-4">XP</th>
-                  <th className="text-right py-2 px-4">LEVEL</th>
-                  <th className="text-right py-2 px-4">STREAK</th>
+                  <th className="text-left py-1.5 px-3">RANK</th>
+                  <th className="text-left py-1.5 px-3">PLAYER</th>
+                  <th className="text-right py-1.5 px-3">XP</th>
+                  <th className="text-right py-1.5 px-3">LEVEL</th>
+                  <th className="text-right py-1.5 px-3">STREAK</th>
                 </tr>
               </thead>
               <tbody>
                 {userContext.map((player) => (
                   <tr
                     key={player.rank}
-                    className={`border-b transition-colors ${player.isUser ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                    className={`border-b transition-colors text-xs ${player.isUser ? 'bg-white/10' : 'hover:bg-white/5'}`}
                     style={{
                       borderColor: player.isUser ? 'var(--color-accent)' : 'var(--color-border)',
                       borderWidth: player.isUser ? '2px 0' : '1px 0'
                     }}
                   >
-                    <td className="py-2 px-4">
+                    <td className="py-1.5 px-3">
                       <span className="font-bold font-mono" style={{ color: player.isUser ? 'var(--color-accent)' : 'var(--color-text)' }}>
                         #{player.rank}
                       </span>
                     </td>
-                    <td className="py-2 px-4">
+                    <td className="py-1.5 px-3">
                       <span className="font-semibold" style={{ color: player.isUser ? 'var(--color-accent)' : 'var(--color-text)' }}>
                         {player.username} {player.isUser && '←'}
                       </span>
                     </td>
-                    <td className="py-2 px-4 text-right font-mono font-medium" style={{ color: player.isUser ? 'var(--color-accent)' : 'var(--color-text)' }}>
+                    <td className="py-1.5 px-3 text-right font-mono font-medium" style={{ color: player.isUser ? 'var(--color-accent)' : 'var(--color-text)' }}>
                       {player.xp.toLocaleString()}
                     </td>
-                    <td className="py-2 px-4 text-right font-mono" style={{ color: 'var(--color-text-secondary)' }}>{player.level}</td>
-                    <td className="py-2 px-4 text-right">
+                    <td className="py-1.5 px-3 text-right font-mono" style={{ color: 'var(--color-text-secondary)' }}>{player.level}</td>
+                    <td className="py-1.5 px-3 text-right">
                       <span className="flex items-center justify-end gap-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
                         <Flame size={12} className="text-orange-500" /> {player.streak}
                       </span>
@@ -275,11 +275,11 @@ export default function Leaderboard() {
         </motion.div>
 
         {/* Motivational CTA */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-6 text-center">
-          <p className="text-sm font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-5 text-center">
+          <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
             Complete more quests to climb the ranks
           </p>
-          <Link to="/app/quests" className="inline-block mt-2 px-6 py-2 rounded-lg font-semibold transition-all hover:scale-105 text-sm" style={{ background: 'var(--gradient-primary)', color: 'white' }}>
+          <Link to="/app/quests" className="inline-block mt-2 px-5 py-2 rounded-lg font-semibold transition-all hover:scale-105 text-xs" style={{ background: 'var(--gradient-primary)', color: 'white' }}>
             Browse Quests →
           </Link>
         </motion.div>
