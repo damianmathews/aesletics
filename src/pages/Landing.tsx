@@ -76,20 +76,10 @@ export default function Landing() {
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b" style={{ borderColor: 'var(--color-border)' }}>
+      <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
             <img src="/logo.png" alt="IRLXP" className="h-12 w-auto" />
-          </Link>
-          <Link
-            to="/app"
-            className="px-6 py-3 rounded-lg font-semibold transition-all hover:scale-105"
-            style={{
-              background: 'var(--gradient-primary)',
-              color: 'white',
-            }}
-          >
-            Launch App
           </Link>
         </div>
       </nav>
