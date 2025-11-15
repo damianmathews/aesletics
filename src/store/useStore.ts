@@ -43,7 +43,7 @@ const initialProfile: UserProfile = {
 };
 
 const initialSettings: Settings = {
-  theme: 'light',
+  theme: 'dark',
   units: 'imperial',
   notifications: true,
   soundEffects: true,
