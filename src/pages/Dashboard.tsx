@@ -101,7 +101,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="font-display text-4xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>
-                Welcome back, {profile.nickname}
+                Welcome back
               </h1>
               <p className="font-mono text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                 Level {profile.level} • {profile.currentStreak} day streak
