@@ -1,3 +1,6 @@
+/* Google Fonts - Space Mono (typewriter) */
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,59 +38,31 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-Variable.woff2') format('woff2');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
-  /* Dark theme (default) */
-  --color-bg: #0A0A0A;
-  --color-bg-secondary: #121212;
-  --color-surface: #1A1A1A;
-  --color-surface-elevated: #252525;
+  /* Dark theme with purple/cyan/magenta */
+  --color-bg: #000000;
+  --color-bg-secondary: #0A0A0F;
+  --color-surface: #111118;
+  --color-surface-elevated: #1A1A24;
   --color-text: #FFFFFF;
-  --color-text-secondary: #A0A0A0;
-  --color-text-tertiary: #6B6B6B;
-  --color-border: #2A2A2A;
-  --color-accent: #38E28C;
-  --color-accent-hover: #2FD47E;
-  --color-success: #2DD4BF;
-  --color-warning: #FBBF24;
-  --color-error: #F87171;
-
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #38E28C 0%, #2DD4BF 100%);
-  --gradient-secondary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-mesh: radial-gradient(at 0% 0%, rgba(56, 226, 140, 0.1) 0px, transparent 50%),
-                   radial-gradient(at 100% 0%, rgba(45, 212, 191, 0.08) 0px, transparent 50%),
-                   radial-gradient(at 100% 100%, rgba(102, 126, 234, 0.05) 0px, transparent 50%);
-}
-
-[data-theme="light"] {
-  --color-bg: #F7F7F9;
-  --color-bg-secondary: #FFFFFF;
-  --color-surface: #FFFFFF;
-  --color-surface-elevated: #FFFFFF;
-  --color-text: #0F1115;
-  --color-text-secondary: #6B7280;
-  --color-text-tertiary: #9CA3AF;
-  --color-border: #ECECEF;
-  --color-accent: #FF6A55;
-  --color-accent-hover: #ff5544;
-  --color-success: #2DD4BF;
+  --color-text-secondary: #9CA3AF;
+  --color-text-tertiary: #6B7280;
+  --color-border: #2A2A3A;
+  --color-accent: #A78BFA;
+  --color-accent-hover: #8B5CF6;
+  --color-cyan: #06B6D4;
+  --color-magenta: #EC4899;
+  --color-success: #10B981;
   --color-warning: #F59E0B;
   --color-error: #EF4444;
 
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #FF6A55 0%, #FF8A75 100%);
-  --gradient-secondary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-mesh: radial-gradient(at 0% 0%, rgba(255, 106, 85, 0.08) 0px, transparent 50%),
-                   radial-gradient(at 100% 0%, rgba(45, 212, 191, 0.05) 0px, transparent 50%),
-                   radial-gradient(at 100% 100%, rgba(102, 126, 234, 0.03) 0px, transparent 50%);
+  /* Purple/Cyan/Magenta Gradients */
+  --gradient-primary: linear-gradient(135deg, #A78BFA 0%, #06B6D4 100%);
+  --gradient-secondary: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
+  --gradient-tertiary: linear-gradient(135deg, #06B6D4 0%, #EC4899 100%);
+  --gradient-mesh: radial-gradient(at 0% 0%, rgba(167, 139, 250, 0.15) 0px, transparent 50%),
+                   radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
+                   radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
 }
 
 * {
@@ -97,7 +72,7 @@
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Geist', system-ui, -apple-system, sans-serif;
   background-color: var(--color-bg);
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
@@ -105,7 +80,11 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6, .font-display {
-  font-family: 'Geist', 'Inter', system-ui, sans-serif;
+  font-family: 'Geist', system-ui, sans-serif;
+}
+
+.font-mono {
+  font-family: 'Space Mono', monospace;
 }
 
 /* Utility classes */
@@ -115,7 +94,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
 
 /* Smooth transitions for theme */
 * {
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }
 
 /* Reduced motion */
@@ -151,14 +130,14 @@ h1, h2, h3, h4, h5, h6, .font-display {
 
 /* Background patterns */
 .bg-pattern-dots {
-  background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(167, 139, 250, 0.1) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
 .bg-pattern-grid {
   background-image:
-    linear-gradient(var(--color-border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+    linear-gradient(rgba(167, 139, 250, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(167, 139, 250, 0.05) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 
@@ -166,12 +145,12 @@ h1, h2, h3, h4, h5, h6, .font-display {
   background: var(--gradient-mesh);
 }
 
-/* Glassmorphism */
+/* Glassmorphism - stronger effect */
 .glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(17, 17, 24, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(167, 139, 250, 0.1);
 }
 
 /* Animated gradient border */
@@ -208,4 +187,53 @@ h1, h2, h3, h4, h5, h6, .font-display {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(167, 139, 250, 0.1) 50%,
+    transparent 100%
+  );
+  background-size: 1000px 100%;
+}
+
+/* Pulse animation - stronger */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
 }
