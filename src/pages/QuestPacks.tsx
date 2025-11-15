@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useState } from 'react';
-import { questPacks } from '../data/seed';
-import { Flame, Package, Target, Trophy, Zap, Brain, Users, Backpack, Sparkles, Activity, TrendingUp, List, Lock } from 'lucide-react';
+import { questPacks, questTemplatesExtended } from '../data/seed';
+import { Flame, Package, Target, Trophy, Zap, Brain, Users, Backpack, Sparkles, Activity, TrendingUp, List, Lock, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function QuestPacks() {
   const { profile, activePacks, activatePack, deactivatePack } = useStore();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [expandedPack, setExpandedPack] = useState<string | null>(null);
 
   // Icon mapping for pack icons (emoji to Lucide)
   const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string; style?: any }>> = {
@@ -26,6 +27,15 @@ export default function QuestPacks() {
       deactivatePack(packId);
     } else {
       activatePack(packId);
+    }
+  };
+
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'easy': return '#38e28c';
+      case 'medium': return '#06B6D4';
+      case 'hard': return '#EC4899';
+      default: return 'var(--color-text-secondary)';
     }
   };
 
@@ -171,11 +181,73 @@ export default function QuestPacks() {
                     ))}
                   </div>
 
-                  {/* Quest Count */}
-                  <div className="flex items-center gap-2 mb-4 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                    <List size={16} />
-                    <span>{pack.quests.length} quests included</span>
-                  </div>
+                  {/* Quest Count & View Button */}
+                  <button
+                    onClick={() => setExpandedPack(expandedPack === pack.id ? null : pack.id)}
+                    className="w-full flex items-center justify-between mb-4 text-sm p-3 rounded glass border transition-all hover:scale-[1.01]"
+                    style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <List size={16} />
+                      <span>{pack.quests.length} quests included</span>
+                    </div>
+                    {expandedPack === pack.id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  </button>
+
+                  {/* Quest List */}
+                  <AnimatePresence>
+                    {expandedPack === pack.id && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden mb-4"
+                      >
+                        <div className="max-h-80 overflow-y-auto space-y-2 p-3 rounded glass border" style={{ borderColor: 'var(--color-border)' }}>
+                          {pack.quests.map((packQuest) => {
+                            const questTemplate = questTemplatesExtended.find(q => q.id === packQuest.templateId);
+                            if (!questTemplate) return null;
+
+                            return (
+                              <div
+                                key={packQuest.templateId}
+                                className="p-2 rounded border transition-all hover:scale-[1.01]"
+                                style={{ borderColor: 'var(--color-border)', backgroundColor: 'rgba(255, 255, 255, 0.02)' }}
+                              >
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="flex-1 min-w-0">
+                                    <div className="font-medium text-sm truncate" style={{ color: 'var(--color-text)' }}>
+                                      {questTemplate.title}
+                                    </div>
+                                    <div className="flex items-center gap-2 mt-1">
+                                      <span
+                                        className="px-1.5 py-0.5 rounded text-xs font-medium capitalize"
+                                        style={{
+                                          backgroundColor: `${getDifficultyColor(questTemplate.difficulty)}15`,
+                                          color: getDifficultyColor(questTemplate.difficulty)
+                                        }}
+                                      >
+                                        {questTemplate.difficulty}
+                                      </span>
+                                      <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                                        {questTemplate.baseXP} XP
+                                      </span>
+                                      {questTemplate.durationMinutes > 0 && (
+                                        <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+                                          • {questTemplate.durationMinutes} min
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
                   {/* Action Button */}
                   <button
