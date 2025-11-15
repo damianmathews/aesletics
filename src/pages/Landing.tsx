@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import { Zap, TrendingUp, Target, Flame, Palette, Lock } from 'lucide-react';
 
 export default function Landing() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -17,9 +18,8 @@ export default function Landing() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="font-display text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
-            <span className="text-3xl">Æ</span>
-            <span>Aesletics</span>
+          <Link to="/" className="flex items-center gap-3">
+            <img src="/logo.png" alt="Aesletics" className="h-8 w-auto" />
           </Link>
           <Link
             to="/app"
@@ -80,8 +80,9 @@ export default function Landing() {
             transition={{ duration: 0.8 }}
           >
             <div className="inline-block px-4 py-2 rounded-full glass mb-6">
-              <span style={{ color: 'var(--color-accent)' }} className="font-semibold">
-                ⚡ The gamified system for total well-being
+              <span style={{ color: 'var(--color-accent)' }} className="font-semibold flex items-center gap-2">
+                <Zap size={16} />
+                The gamified system for total well-being
               </span>
             </div>
 
@@ -179,55 +180,60 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                icon: '⚡',
+                icon: Zap,
                 title: 'Do Hard Things',
                 description: 'Standards over slogans. Real proof. Real points. Track with timers, counters, photos, and logs.'
               },
               {
-                icon: '📊',
+                icon: TrendingUp,
                 title: 'See Progress Instantly',
                 description: 'XP, levels, and streaks you can feel. Watch your stats climb with every quest completed.'
               },
               {
-                icon: '🎯',
+                icon: Target,
                 title: 'Total Well-Being',
                 description: '12 categories from fitness and conditioning to intelligence, discipline, and creativity.'
               },
               {
-                icon: '🔥',
+                icon: Flame,
                 title: 'Streak System',
                 description: 'Build momentum with daily streaks. Grace periods keep you going. Bonus XP for consistency.'
               },
               {
-                icon: '🎨',
+                icon: Palette,
                 title: 'Beautiful & Fast',
                 description: 'Clean, modern UI you want to open. Dark mode. Smooth animations. Zero bloat.'
               },
               {
-                icon: '🔒',
+                icon: Lock,
                 title: '100% Private',
                 description: 'All data stays on your device. No servers. No tracking. No subscriptions. Ever.'
               },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                whileHover={{ scale: 1.02, y: -4 }}
-                className="p-8 rounded-card glass transition-all"
-                style={{ borderColor: 'var(--color-border)' }}
-              >
-                <div className="text-5xl mb-4">{feature.icon}</div>
-                <h3 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
-                  {feature.title}
-                </h3>
-                <p style={{ color: 'var(--color-text-secondary)' }}>
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
+            ].map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.6 }}
+                  whileHover={{ scale: 1.02, y: -4 }}
+                  className="p-8 rounded-card glass transition-all"
+                  style={{ borderColor: 'var(--color-border)' }}
+                >
+                  <div className="mb-4" style={{ color: 'var(--color-accent)' }}>
+                    <Icon size={48} />
+                  </div>
+                  <h3 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>
+                    {feature.title}
+                  </h3>
+                  <p style={{ color: 'var(--color-text-secondary)' }}>
+                    {feature.description}
+                  </p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -329,10 +335,10 @@ export default function Landing() {
       <footer className="border-t py-12" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <span className="font-display text-2xl font-bold">Æ</span>
-              <span style={{ color: 'var(--color-text-secondary)' }}>
-                Aesletics — aesthetic discipline meets athletic execution.
+            <div className="flex items-center gap-3">
+              <img src="/logo.png" alt="Aesletics" className="h-6 w-auto" />
+              <span style={{ color: 'var(--color-text-secondary)' }} className="font-mono text-sm">
+                Aesthetic discipline meets athletic execution.
               </span>
             </div>
             <div className="flex gap-6">
