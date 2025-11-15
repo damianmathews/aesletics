@@ -1,68 +1,88 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
-import { useState } from 'react';
-import { Zap, Trophy, Flame, Calendar, CheckCircle, Circle, Check } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Trophy, TrendingUp, Flame } from 'lucide-react';
+
+// Generate realistic leaderboard data
+const generateLeaderboard = (userXP: number) => {
+  const usernames = [
+    'Beast_Mode', 'IronWill', 'Titan_Rising', 'PhoenixFire', 'Alpha_Wolf',
+    'NoExcuses', 'Relentless', 'Grind_Master', 'Steel_Mind', 'Unstoppable',
+    'Victory_Labs', 'Discipline', 'Hunter_X', 'Elite_Force', 'Pure_Grit',
+    'Savage_Life', 'Warrior_Path', 'Next_Level', 'Champion_Mind', 'Iron_Core',
+    'Peak_Human', 'Wolf_Pack', 'Titan_Mode', 'Beast_Life', 'Alpha_Grind'
+  ];
+
+  const players = [];
+
+  // Generate top 100 players
+  for (let i = 0; i < 100; i++) {
+    const rank = i + 1;
+    // Exponential decay from 50k to 5k for top 100
+    const baseXP = 50000 * Math.pow(0.95, i);
+    const xp = Math.floor(baseXP + (Math.random() * 500 - 250));
+
+    players.push({
+      rank,
+      username: i < usernames.length ? usernames[i] : `Player${rank}`,
+      xp,
+      level: Math.floor(Math.sqrt(xp / 50)) + 1,
+      streak: Math.floor(Math.random() * 60) + 1,
+      isUser: false
+    });
+  }
+
+  // Generate middle tier (101-2000)
+  for (let i = 100; i < 2000; i++) {
+    const rank = i + 1;
+    const baseXP = 5000 * Math.pow(0.998, i - 100);
+    const xp = Math.floor(baseXP + (Math.random() * 200 - 100));
+
+    players.push({
+      rank,
+      username: `Player${rank}`,
+      xp,
+      level: Math.floor(Math.sqrt(xp / 50)) + 1,
+      streak: Math.floor(Math.random() * 30) + 1,
+      isUser: false
+    });
+  }
+
+  // Insert user into leaderboard
+  const userRank = players.findIndex(p => p.xp < userXP);
+  const finalRank = userRank === -1 ? players.length + 1 : userRank + 1;
+
+  const userEntry = {
+    rank: finalRank,
+    username: 'YOU',
+    xp: userXP,
+    level: Math.floor(Math.sqrt(userXP / 50)) + 1,
+    streak: 7,
+    isUser: true
+  };
+
+  if (userRank === -1) {
+    players.push(userEntry);
+  } else {
+    players.splice(userRank, 0, userEntry);
+    // Update ranks after insertion
+    for (let i = userRank + 1; i < players.length; i++) {
+      players[i].rank = i + 1;
+    }
+  }
+
+  return players;
+};
 
 export default function Leaderboard() {
-  const { profile, completions, getStats } = useStore();
-  const stats = getStats();
+  const { profile } = useStore();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  // Calculate category stats
-  const categoryStats = completions.reduce((acc, completion) => {
-    if (!acc[completion.category]) {
-      acc[completion.category] = {
-        count: 0,
-        xp: 0,
-        avgDifficulty: 0,
-        difficulties: [] as string[],
-      };
-    }
-    acc[completion.category].count += 1;
-    acc[completion.category].xp += completion.xp;
-    acc[completion.category].difficulties.push(completion.difficulty);
-    return acc;
-  }, {} as Record<string, { count: number; xp: number; avgDifficulty: number; difficulties: string[] }>);
-
-  // Calculate average difficulty for each category
-  const difficultyMap = { easy: 1, medium: 2, hard: 3, elite: 4, legendary: 5 };
-  Object.keys(categoryStats).forEach((category) => {
-    const cat = categoryStats[category];
-    const sum = cat.difficulties.reduce((s, d) => s + (difficultyMap[d as keyof typeof difficultyMap] || 0), 0);
-    cat.avgDifficulty = sum / cat.difficulties.length;
-  });
-
-  // Sort categories by XP
-  const sortedCategories = Object.entries(categoryStats)
-    .sort(([, a], [, b]) => b.xp - a.xp)
-    .slice(0, 12);
-
-  // Personal records
-  const records = [
-    { title: 'Total XP', value: profile.totalXP.toLocaleString(), Icon: Zap, color: 'var(--gradient-primary)' },
-    { title: 'Level Reached', value: profile.level.toString(), Icon: Trophy, color: 'var(--gradient-primary)' },
-    { title: 'Longest Streak', value: `${profile.longestStreak} days`, Icon: Flame, color: 'var(--gradient-secondary)' },
-    { title: 'Current Streak', value: `${profile.currentStreak} days`, Icon: Zap, color: 'var(--gradient-primary)' },
-    { title: 'Total Quests', value: completions.length.toString(), Icon: CheckCircle, color: 'var(--gradient-primary)' },
-    { title: 'This Month', value: stats.completedThisMonth.toString(), Icon: Calendar, color: 'var(--gradient-secondary)' },
-  ];
-
-  // Milestones
-  const milestones = [
-    { title: 'First Quest', achieved: completions.length >= 1, threshold: 1 },
-    { title: '10 Quests', achieved: completions.length >= 10, threshold: 10 },
-    { title: '50 Quests', achieved: completions.length >= 50, threshold: 50 },
-    { title: '100 Quests', achieved: completions.length >= 100, threshold: 100 },
-    { title: 'Level 5', achieved: profile.level >= 5, threshold: 5 },
-    { title: 'Level 10', achieved: profile.level >= 10, threshold: 10 },
-    { title: '7-Day Streak', achieved: profile.longestStreak >= 7, threshold: 7 },
-    { title: '30-Day Streak', achieved: profile.longestStreak >= 30, threshold: 30 },
-    { title: '1,000 XP', achieved: profile.totalXP >= 1000, threshold: 1000 },
-    { title: '10,000 XP', achieved: profile.totalXP >= 10000, threshold: 10000 },
-  ];
-
-  const achievedCount = milestones.filter(m => m.achieved).length;
+  const leaderboard = useMemo(() => generateLeaderboard(profile.totalXP), [profile.totalXP]);
+  const userEntry = leaderboard.find(p => p.isUser)!;
+  const topPlayers = leaderboard.slice(0, 20);
+  const userContext = leaderboard.slice(Math.max(0, userEntry.rank - 3), Math.min(leaderboard.length, userEntry.rank + 2));
 
   return (
     <div className="min-h-screen bg-pattern-dots" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -75,6 +95,7 @@ export default function Leaderboard() {
           <div className="flex items-center gap-6">
             <Link to="/app" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Dashboard</Link>
             <Link to="/app/quests" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Quests</Link>
+            <Link to="/app/leaderboard" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text)' }}>Leaderboard</Link>
             <Link to="/app/history" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>History</Link>
             <Link to="/app/packs" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Packs</Link>
             <div className="relative">
@@ -89,7 +110,7 @@ export default function Leaderboard() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute right-0 mt-2 w-48 glass rounded-button p-2 border"
+                  className="absolute right-0 mt-2 w-48 glass rounded-lg p-2 border"
                   style={{ borderColor: 'var(--color-border)' }}
                 >
                   <Link to="/app/settings" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Settings</Link>
@@ -103,136 +124,164 @@ export default function Leaderboard() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8 relative">
+      <main className="max-w-7xl mx-auto px-6 py-6 relative">
         {/* Subtle gradient background */}
         <div className="absolute inset-0 pointer-events-none" style={{
           background: 'radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 60%)'
         }} />
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
-          <h1 className="font-display text-4xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>You vs. You</h1>
-          <p className="mb-8" style={{ color: 'var(--color-text-secondary)' }}>Track your personal records and category performance</p>
+
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative mb-6">
+          <h1 className="font-display text-3xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>Global Leaderboard</h1>
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>You vs Everyone - See where you rank worldwide</p>
         </motion.div>
 
-        {/* Personal Records */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="relative">
-          <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Personal Records</h2>
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            {records.map((record, index) => {
-              const IconComponent = record.Icon;
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + index * 0.05 }}
-                  className="glass rounded-card p-6 border"
-                  style={{ borderColor: 'var(--color-border)' }}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>{record.title}</span>
-                    <IconComponent size={32} style={{ color: 'var(--color-accent)' }} />
-                  </div>
-                  <div className="text-4xl font-bold tabular-nums" style={{
-                    background: record.color,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
-                  }}>
-                    {record.value}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
-
-        {/* Category Performance */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-8 relative">
-          <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Category Performance</h2>
-          <div className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
-            {sortedCategories.length === 0 ? (
-              <div className="text-center py-12" style={{ color: 'var(--color-text-secondary)' }}>
-                <p className="mb-4">No category data yet. Complete your first quest to see stats!</p>
-                <Link to="/app/quests" className="inline-block px-4 py-2 rounded-button font-medium transition-all hover:scale-105" style={{ background: 'var(--gradient-primary)', color: 'white' }}>
-                  Browse Quests
-                </Link>
+        {/* Your Rank Card */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-lg p-4 border mb-6 relative" style={{ borderColor: 'var(--color-accent)', backgroundColor: 'rgba(167, 139, 250, 0.05)' }}>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>Your Global Rank</div>
+              <div className="text-4xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-accent)' }}>
+                #{userEntry.rank.toLocaleString()}
               </div>
-            ) : (
-              <div className="space-y-4">
-                {sortedCategories.map(([category, data], index) => {
-                  const maxXP = sortedCategories[0][1].xp;
-                  const percentage = (data.xp / maxXP) * 100;
-
-                  return (
-                    <motion.div
-                      key={category}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.05 * index }}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                          <span className="text-lg font-semibold" style={{ color: 'var(--color-text)' }}>
-                            #{index + 1}
-                          </span>
-                          <span className="font-medium capitalize" style={{ color: 'var(--color-text)' }}>
-                            {category.replace(/-/g, ' ')}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-4 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                          <span>{data.count} quests</span>
-                          <span className="font-bold" style={{ color: 'var(--color-accent)' }}>{data.xp.toLocaleString()} XP</span>
-                          <span>Avg: {data.avgDifficulty.toFixed(1)}/5</span>
-                        </div>
-                      </div>
-                      <div className="w-full h-2 rounded-full" style={{ backgroundColor: 'var(--color-border)' }}>
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${percentage}%` }}
-                          transition={{ duration: 0.5, delay: 0.1 + index * 0.05 }}
-                          className="h-full rounded-full"
-                          style={{ background: 'var(--gradient-primary)' }}
-                        />
-                      </div>
-                    </motion.div>
-                  );
-                })}
+              <div className="text-xs mt-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                of {leaderboard.length.toLocaleString()} players
               </div>
-            )}
+            </div>
+            <div className="text-right">
+              <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Your Stats</div>
+              <div className="flex items-center gap-4 font-mono text-sm">
+                <span style={{ color: 'var(--color-text)' }}>{profile.totalXP.toLocaleString()} XP</span>
+                <span style={{ color: 'var(--color-text)' }}>Lvl {userEntry.level}</span>
+                <span className="flex items-center gap-1" style={{ color: 'var(--color-text)' }}>
+                  <Flame size={14} className="text-orange-500" /> {profile.currentStreak}
+                </span>
+              </div>
+            </div>
           </div>
         </motion.div>
 
-        {/* Milestones */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-2xl font-semibold" style={{ color: 'var(--color-text)' }}>Milestones</h2>
-            <span className="text-sm font-medium px-3 py-1 rounded-full glass" style={{ color: 'var(--color-accent)' }}>
-              {achievedCount}/{milestones.length} achieved
-            </span>
+        {/* Top Players */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-lg border mb-6 overflow-hidden relative" style={{ borderColor: 'var(--color-border)' }}>
+          <div className="p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-xl font-semibold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+              <Trophy size={20} style={{ color: 'var(--color-accent)' }} />
+              Top 20 Rankings
+            </h2>
+            <p className="text-xs mt-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>The best performers worldwide</p>
           </div>
-          <div className="grid md:grid-cols-2 gap-4">
-            {milestones.map((milestone, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.05 * index }}
-                className="p-4 rounded-card glass border"
-                style={{ borderColor: milestone.achieved ? 'var(--color-accent)' : 'var(--color-border)' }}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${milestone.achieved ? '' : 'bg-white/5'}`} style={{ backgroundColor: milestone.achieved ? 'var(--color-accent)' : undefined }}>
-                    {milestone.achieved ? <Check size={16} color="white" /> : <Circle size={16} style={{ color: 'var(--color-text-secondary)' }} />}
-                  </div>
-                  <div>
-                    <div className="font-semibold" style={{ color: milestone.achieved ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}>
-                      {milestone.title}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b text-xs font-mono" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
+                  <th className="text-left py-2 px-4">RANK</th>
+                  <th className="text-left py-2 px-4">PLAYER</th>
+                  <th className="text-right py-2 px-4">XP</th>
+                  <th className="text-right py-2 px-4">LEVEL</th>
+                  <th className="text-right py-2 px-4">STREAK</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topPlayers.map((player, index) => (
+                  <motion.tr
+                    key={player.rank}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 + index * 0.02 }}
+                    className="border-b hover:bg-white/5 transition-colors"
+                    style={{ borderColor: 'var(--color-border)' }}
+                  >
+                    <td className="py-2 px-4">
+                      <div className="flex items-center gap-2">
+                        {player.rank <= 3 && (
+                          <Trophy size={16} className={player.rank === 1 ? 'text-yellow-500' : player.rank === 2 ? 'text-gray-400' : 'text-orange-600'} />
+                        )}
+                        <span className="font-bold font-mono" style={{ color: player.rank <= 3 ? 'var(--color-accent)' : 'var(--color-text)' }}>
+                          #{player.rank}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-2 px-4 font-semibold" style={{ color: 'var(--color-text)' }}>{player.username}</td>
+                    <td className="py-2 px-4 text-right font-mono font-medium" style={{ color: 'var(--color-text)' }}>{player.xp.toLocaleString()}</td>
+                    <td className="py-2 px-4 text-right font-mono" style={{ color: 'var(--color-text-secondary)' }}>{player.level}</td>
+                    <td className="py-2 px-4 text-right">
+                      <span className="flex items-center justify-end gap-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                        <Flame size={12} className="text-orange-500" /> {player.streak}
+                      </span>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+        </motion.div>
+
+        {/* Your Position Context */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-lg border overflow-hidden relative" style={{ borderColor: 'var(--color-border)' }}>
+          <div className="p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-xl font-semibold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+              <TrendingUp size={20} style={{ color: 'var(--color-accent)' }} />
+              Your Position
+            </h2>
+            <p className="text-xs mt-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>Players near your rank - climb higher to surpass them</p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b text-xs font-mono" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
+                  <th className="text-left py-2 px-4">RANK</th>
+                  <th className="text-left py-2 px-4">PLAYER</th>
+                  <th className="text-right py-2 px-4">XP</th>
+                  <th className="text-right py-2 px-4">LEVEL</th>
+                  <th className="text-right py-2 px-4">STREAK</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userContext.map((player) => (
+                  <tr
+                    key={player.rank}
+                    className={`border-b transition-colors ${player.isUser ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                    style={{
+                      borderColor: player.isUser ? 'var(--color-accent)' : 'var(--color-border)',
+                      borderWidth: player.isUser ? '2px 0' : '1px 0'
+                    }}
+                  >
+                    <td className="py-2 px-4">
+                      <span className="font-bold font-mono" style={{ color: player.isUser ? 'var(--color-accent)' : 'var(--color-text)' }}>
+                        #{player.rank}
+                      </span>
+                    </td>
+                    <td className="py-2 px-4">
+                      <span className="font-semibold" style={{ color: player.isUser ? 'var(--color-accent)' : 'var(--color-text)' }}>
+                        {player.username} {player.isUser && '←'}
+                      </span>
+                    </td>
+                    <td className="py-2 px-4 text-right font-mono font-medium" style={{ color: player.isUser ? 'var(--color-accent)' : 'var(--color-text)' }}>
+                      {player.xp.toLocaleString()}
+                    </td>
+                    <td className="py-2 px-4 text-right font-mono" style={{ color: 'var(--color-text-secondary)' }}>{player.level}</td>
+                    <td className="py-2 px-4 text-right">
+                      <span className="flex items-center justify-end gap-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                        <Flame size={12} className="text-orange-500" /> {player.streak}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+
+        {/* Motivational CTA */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-6 text-center">
+          <p className="text-sm font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+            Complete more quests to climb the ranks
+          </p>
+          <Link to="/app/quests" className="inline-block mt-2 px-6 py-2 rounded-lg font-semibold transition-all hover:scale-105 text-sm" style={{ background: 'var(--gradient-primary)', color: 'white' }}>
+            Browse Quests →
+          </Link>
         </motion.div>
       </main>
     </div>

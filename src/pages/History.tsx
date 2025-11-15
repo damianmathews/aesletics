@@ -44,13 +44,13 @@ export default function History() {
     weeks.push(heatmapData.slice(i, i + 7));
   }
 
-  // Get intensity color based on XP (purple gradient)
+  // Get intensity color based on XP (grey gradient)
   const getIntensityColor = (xp: number) => {
     if (xp === 0) return 'var(--color-border)';
-    if (xp < 50) return 'rgba(167, 139, 250, 0.3)';
-    if (xp < 100) return 'rgba(167, 139, 250, 0.5)';
-    if (xp < 200) return 'rgba(167, 139, 250, 0.7)';
-    return 'rgba(167, 139, 250, 1)';
+    if (xp < 50) return 'rgba(255, 255, 255, 0.1)';
+    if (xp < 100) return 'rgba(255, 255, 255, 0.2)';
+    if (xp < 200) return 'rgba(255, 255, 255, 0.3)';
+    return 'rgba(255, 255, 255, 0.4)';
   };
 
   // Recent completions (last 30)
@@ -69,6 +69,7 @@ export default function History() {
           <div className="flex items-center gap-6">
             <Link to="/app" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Dashboard</Link>
             <Link to="/app/quests" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Quests</Link>
+            <Link to="/app/leaderboard" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Leaderboard</Link>
             <Link to="/app/history" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text)' }}>History</Link>
             <Link to="/app/packs" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Packs</Link>
             <div className="relative">
@@ -116,12 +117,7 @@ export default function History() {
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
             <div className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Total XP Earned</div>
-            <div className="text-3xl font-bold tabular-nums" style={{
-              background: 'var(--gradient-primary)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}>{profile.totalXP.toLocaleString()}</div>
+            <div className="text-3xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{profile.totalXP.toLocaleString()}</div>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>

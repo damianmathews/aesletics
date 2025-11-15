@@ -92,15 +92,7 @@ export default function Landing() {
               fontSize: 'clamp(3rem, 8vw, 7rem)',
               color: 'var(--color-text)'
             }}>
-              Become<br />
-              <span style={{
-                background: 'var(--gradient-primary)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
-              }}>
-                formidable.
-              </span>
+              Become <span className="whitespace-nowrap">formidable.</span>
             </h1>
 
             <p className="text-xl md:text-2xl mb-4 max-w-3xl mx-auto leading-relaxed font-mono" style={{ color: 'var(--color-text-secondary)' }}>
@@ -145,12 +137,7 @@ export default function Landing() {
                 { value: '100%', label: 'PRIVATE' },
               ].map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="text-4xl font-bold tabular-nums mb-1" style={{
-                    background: 'var(--gradient-primary)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text'
-                  }}>
+                  <div className="text-4xl font-bold tabular-nums mb-1" style={{ color: 'var(--color-text)' }}>
                     {stat.value}
                   </div>
                   <div className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
@@ -312,15 +299,7 @@ export default function Landing() {
           className="max-w-4xl mx-auto text-center relative z-10"
         >
           <h2 className="font-display text-5xl md:text-6xl font-bold mb-6" style={{ color: 'var(--color-text)' }}>
-            Ready to become<br />
-            <span style={{
-              background: 'var(--gradient-primary)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}>
-              formidable?
-            </span>
+            Ready to become formidable?
           </h2>
           <p className="text-xl mb-4 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
             START BUILDING THE LIFE YOU RESPECT

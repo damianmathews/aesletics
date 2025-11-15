@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { getLevelProgress } from '../lib/xp';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, Target, Zap, Flame, Trophy, Calendar, Filter } from 'lucide-react';
 
 export default function Dashboard() {
@@ -11,6 +11,11 @@ export default function Dashboard() {
   const todaysQuests = getTodaysQuests();
   const levelProgress = getLevelProgress(profile.totalXP);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Calculate weekly change
   const lastWeekXP = stats.last14DaysXP.slice(0, 7).reduce((a, b) => a + b, 0);
@@ -30,6 +35,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-6">
             <Link to="/app" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text)' }}>Dashboard</Link>
             <Link to="/app/quests" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Quests</Link>
+            <Link to="/app/leaderboard" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Leaderboard</Link>
             <Link to="/app/history" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>History</Link>
             <Link to="/app/packs" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Packs</Link>
             <div className="relative">
@@ -86,12 +92,7 @@ export default function Dashboard() {
         {/* Total XP - Large */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-8">
           <p className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Your total XP</p>
-          <h2 className="text-6xl font-bold tabular-nums mb-2" style={{
-            background: 'var(--gradient-primary)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
-          }}>
+          <h2 className="text-6xl font-bold tabular-nums mb-2" style={{ color: 'var(--color-text)' }}>
             {profile.totalXP.toLocaleString()}
           </h2>
         </motion.div>
@@ -121,7 +122,7 @@ export default function Dashboard() {
                 return (
                   <div key={i} className="flex-1 rounded-t" style={{
                     height: `${height}%`,
-                    background: 'linear-gradient(180deg, #A78BFA 0%, #06B6D4 100%)',
+                    background: 'linear-gradient(180deg, #3A3A3A 0%, #2A2A2A 100%)',
                     minHeight: '4px'
                   }} />
                 );
@@ -186,7 +187,7 @@ export default function Dashboard() {
                 return (
                   <div key={i} className="flex-1 rounded-t" style={{
                     height: `${Math.min(height, 100)}%`,
-                    background: 'linear-gradient(180deg, #EC4899 0%, #8B5CF6 100%)',
+                    background: 'linear-gradient(180deg, #3A3A3A 0%, #2A2A2A 100%)',
                     minHeight: '4px'
                   }} />
                 );
