@@ -14,7 +14,72 @@ export default function Landing() {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
+    <div className="min-h-screen relative" style={{ backgroundColor: 'var(--color-bg)' }}>
+      {/* Animated wavy background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+        <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="wave-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+              <motion.path
+                d="M0,50 Q25,30 50,50 T100,50"
+                stroke="rgba(255, 255, 255, 0.03)"
+                strokeWidth="1"
+                fill="none"
+                animate={{
+                  d: [
+                    "M0,50 Q25,30 50,50 T100,50",
+                    "M0,50 Q25,70 50,50 T100,50",
+                    "M0,50 Q25,30 50,50 T100,50",
+                  ],
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              <motion.path
+                d="M0,30 Q25,50 50,30 T100,30"
+                stroke="rgba(255, 255, 255, 0.02)"
+                strokeWidth="1"
+                fill="none"
+                animate={{
+                  d: [
+                    "M0,30 Q25,50 50,30 T100,30",
+                    "M0,30 Q25,10 50,30 T100,30",
+                    "M0,30 Q25,50 50,30 T100,30",
+                  ],
+                }}
+                transition={{
+                  duration: 10,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              <motion.path
+                d="M0,70 Q25,50 50,70 T100,70"
+                stroke="rgba(255, 255, 255, 0.025)"
+                strokeWidth="1"
+                fill="none"
+                animate={{
+                  d: [
+                    "M0,70 Q25,50 50,70 T100,70",
+                    "M0,70 Q25,90 50,70 T100,70",
+                    "M0,70 Q25,50 50,70 T100,70",
+                  ],
+                }}
+                transition={{
+                  duration: 12,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#wave-pattern)" />
+        </svg>
+      </div>
+
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -200,7 +265,7 @@ export default function Landing() {
               {
                 icon: Lock,
                 title: 'Your data stays yours',
-                description: 'Zero tracking. Zero servers. Zero subscriptions. Complete privacy, forever.'
+                description: 'Zero tracking. Zero subscriptions. Complete privacy, forever.'
               },
             ].map((feature, index) => {
               const Icon = feature.icon;
@@ -305,7 +370,7 @@ export default function Landing() {
             START BUILDING THE LIFE YOU RESPECT
           </p>
           <p className="text-sm mb-10" style={{ color: 'var(--color-text-tertiary)' }}>
-            No signup. No credit card. No excuses.
+            No credit card. No excuses.
           </p>
           <Link
             to="/app"
@@ -318,7 +383,7 @@ export default function Landing() {
             Launch Aesletics
           </Link>
           <p className="mt-6 text-xs font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
-            ALWAYS FREE • NO ACCOUNT • COMPLETELY PRIVATE
+            ALWAYS FREE • COMPLETELY PRIVATE
           </p>
         </motion.div>
       </section>

@@ -12,6 +12,8 @@ export default function Dashboard() {
   const todaysQuests = getTodaysQuests();
   const levelProgress = getLevelProgress(profile.totalXP);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showDateFilter, setShowDateFilter] = useState(false);
+  const [showCategoryFilter, setShowCategoryFilter] = useState(false);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -76,14 +78,52 @@ export default function Dashboard() {
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <button className="px-4 py-2 rounded-lg glass border transition-all hover:scale-105 flex items-center gap-2" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}>
-                <Calendar size={16} />
-                <span className="text-sm font-mono">Select Dates</span>
-              </button>
-              <button className="px-4 py-2 rounded-lg glass border transition-all hover:scale-105 flex items-center gap-2" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}>
-                <Filter size={16} />
-                <span className="text-sm font-mono">Filter</span>
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setShowDateFilter(!showDateFilter)}
+                  className="px-4 py-2 rounded-lg glass border transition-all hover:scale-105 flex items-center gap-2"
+                  style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
+                >
+                  <Calendar size={16} />
+                  <span className="text-sm font-mono">Select Dates</span>
+                </button>
+                {showDateFilter && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="absolute right-0 mt-2 w-48 glass rounded-lg p-2 border z-10"
+                    style={{ borderColor: 'var(--color-border)' }}
+                  >
+                    <Link to="/app/history" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text)' }}>View History</Link>
+                    <button className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text-secondary)' }}>Today</button>
+                    <button className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text-secondary)' }}>This Week</button>
+                    <button className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text-secondary)' }}>This Month</button>
+                  </motion.div>
+                )}
+              </div>
+              <div className="relative">
+                <button
+                  onClick={() => setShowCategoryFilter(!showCategoryFilter)}
+                  className="px-4 py-2 rounded-lg glass border transition-all hover:scale-105 flex items-center gap-2"
+                  style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
+                >
+                  <Filter size={16} />
+                  <span className="text-sm font-mono">Filter</span>
+                </button>
+                {showCategoryFilter && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="absolute right-0 mt-2 w-48 glass rounded-lg p-2 border z-10"
+                    style={{ borderColor: 'var(--color-border)' }}
+                  >
+                    <Link to="/app/quests" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text)' }}>All Quests</Link>
+                    <Link to="/app/packs" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text)' }}>Quest Packs</Link>
+                    <button className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text-secondary)' }}>By Difficulty</button>
+                    <button className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text-secondary)' }}>By Category</button>
+                  </motion.div>
+                )}
+              </div>
             </div>
           </div>
         </motion.div>
@@ -288,23 +328,45 @@ export default function Dashboard() {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-3">
-              {todaysQuests.map((quest, index) => (
-                <motion.div key={quest.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * index }}>
-                  <Link to={`/app/quests/${quest.id}`} className="block glass rounded-lg p-4 border hover:scale-[1.02] transition-all" style={{ borderColor: 'var(--color-border)' }}>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-base mb-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
-                        <div className="flex items-center gap-2.5 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                          <span className="px-1.5 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'var(--color-border)' }}>{quest.difficulty}</span>
-                          <span>{quest.durationMinutes}min</span>
-                          <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
+              {todaysQuests.map((quest, index) => {
+                // Check if quest belongs to any active pack
+                const questPack = questPacks.find(pack =>
+                  activePacks.includes(pack.id) &&
+                  pack.quests.some(pq => pq.templateId === quest.templateId)
+                );
+                const isPackQuest = !!questPack;
+
+                return (
+                  <motion.div key={quest.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * index }}>
+                    <Link
+                      to={`/app/quests/${quest.id}`}
+                      className="block glass rounded-lg p-4 border hover:scale-[1.02] transition-all relative"
+                      style={{
+                        borderColor: isPackQuest ? 'var(--color-accent)' : 'var(--color-border)',
+                        ...(isPackQuest && { backgroundColor: 'rgba(167, 139, 250, 0.03)' })
+                      }}
+                    >
+                      {isPackQuest && (
+                        <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold" style={{ backgroundColor: 'rgba(167, 139, 250, 0.2)', color: 'var(--color-accent)' }}>
+                          <Package size={12} />
+                          <span>{questPack!.title}</span>
                         </div>
+                      )}
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1" style={{ paddingRight: isPackQuest ? '80px' : '0' }}>
+                          <h3 className="font-semibold text-base mb-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
+                          <div className="flex items-center gap-2.5 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                            <span className="px-1.5 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'var(--color-border)' }}>{quest.difficulty}</span>
+                            <span>{quest.durationMinutes}min</span>
+                            <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
+                          </div>
+                        </div>
+                        <Zap size={20} style={{ color: 'var(--color-accent)' }} />
                       </div>
-                      <Zap size={20} style={{ color: 'var(--color-accent)' }} />
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
+                    </Link>
+                  </motion.div>
+                );
+              })}
             </div>
           )}
         </motion.div>

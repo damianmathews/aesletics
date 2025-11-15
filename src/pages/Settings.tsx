@@ -82,138 +82,132 @@ export default function Settings() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-6 py-8 relative">
+      <main className="max-w-3xl mx-auto px-6 py-6 relative">
         {/* Subtle gradient background */}
         <div className="absolute inset-0 pointer-events-none" style={{
           background: 'radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 60%)'
         }} />
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
-          <h1 className="font-display text-4xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Settings</h1>
-          <p className="mb-8" style={{ color: 'var(--color-text-secondary)' }}>Customize your Aesletics experience</p>
+          <h1 className="font-display text-3xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Settings</h1>
+          <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>Customize your Aesletics experience</p>
         </motion.div>
 
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* Profile */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
-            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Profile</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Nickname</label>
-                <input
-                  type="text"
-                  value={profile.nickname}
-                  onChange={(e) => updateProfile({ nickname: e.target.value })}
-                  className="w-full px-4 py-3 rounded-button glass border focus:outline-none focus:ring-2 transition-all"
-                  style={{
-                    borderColor: 'var(--color-border)',
-                    color: 'var(--color-text)',
-                  }}
-                />
-              </div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Profile</h2>
+            <div>
+              <label className="block text-xs font-medium mb-1.5 font-mono" style={{ color: 'var(--color-text-secondary)' }}>NICKNAME</label>
+              <input
+                type="text"
+                value={profile.nickname}
+                onChange={(e) => updateProfile({ nickname: e.target.value })}
+                className="w-full px-3 py-2 rounded glass border focus:outline-none focus:ring-2 transition-all text-sm"
+                style={{
+                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-text)',
+                }}
+              />
             </div>
           </motion.div>
 
           {/* Stats Overview */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-card p-6 border relative" style={{ borderColor: 'var(--color-border)' }}>
-            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Your Stats</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
-                <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Total XP</div>
-                <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.totalXP.toLocaleString()}</div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-lg p-5 border relative" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Your Stats</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 rounded" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
+                <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>TOTAL XP</div>
+                <div className="text-xl font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>{profile.totalXP.toLocaleString()}</div>
               </div>
-              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
-                <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Level</div>
-                <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.level}</div>
+              <div className="p-3 rounded" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
+                <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>LEVEL</div>
+                <div className="text-xl font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>{profile.level}</div>
               </div>
-              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
-                <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Current Streak</div>
-                <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.currentStreak} days</div>
+              <div className="p-3 rounded" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
+                <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>CURRENT STREAK</div>
+                <div className="text-xl font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>{profile.currentStreak} days</div>
               </div>
-              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
-                <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Completed</div>
-                <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.completedQuests}</div>
+              <div className="p-3 rounded" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
+                <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>COMPLETED</div>
+                <div className="text-xl font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>{profile.completedQuests}</div>
               </div>
             </div>
           </motion.div>
 
           {/* Appearance */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
-            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Appearance</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Theme</label>
-                <select
-                  value={settings.theme}
-                  onChange={(e) => updateSettings({ theme: e.target.value as any })}
-                  className="w-full px-4 py-3 rounded-button glass border focus:outline-none focus:ring-2 transition-all"
-                  style={{
-                    borderColor: 'var(--color-border)',
-                    color: 'var(--color-text)',
-                  }}
-                >
-                  <option value="dark">Dark</option>
-                  <option value="light">Light</option>
-                  <option value="system">System</option>
-                </select>
-              </div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Appearance</h2>
+            <div>
+              <label className="block text-xs font-medium mb-1.5 font-mono" style={{ color: 'var(--color-text-secondary)' }}>THEME</label>
+              <select
+                value={settings.theme}
+                onChange={(e) => updateSettings({ theme: e.target.value as any })}
+                className="w-full px-3 py-2 rounded glass border focus:outline-none focus:ring-2 transition-all text-sm"
+                style={{
+                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-text)',
+                }}
+              >
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="system">System</option>
+              </select>
             </div>
           </motion.div>
 
           {/* Units */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
-            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Preferences</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Measurement System</label>
-                <select
-                  value={settings.units}
-                  onChange={(e) => updateSettings({ units: e.target.value as any })}
-                  className="w-full px-4 py-3 rounded-button glass border focus:outline-none focus:ring-2 transition-all"
-                  style={{
-                    borderColor: 'var(--color-border)',
-                    color: 'var(--color-text)',
-                  }}
-                >
-                  <option value="imperial">Imperial (lbs, miles)</option>
-                  <option value="metric">Metric (kg, km)</option>
-                </select>
-              </div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Preferences</h2>
+            <div>
+              <label className="block text-xs font-medium mb-1.5 font-mono" style={{ color: 'var(--color-text-secondary)' }}>MEASUREMENT SYSTEM</label>
+              <select
+                value={settings.units}
+                onChange={(e) => updateSettings({ units: e.target.value as any })}
+                className="w-full px-3 py-2 rounded glass border focus:outline-none focus:ring-2 transition-all text-sm"
+                style={{
+                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-text)',
+                }}
+              >
+                <option value="imperial">Imperial (lbs, miles)</option>
+                <option value="metric">Metric (kg, km)</option>
+              </select>
             </div>
           </motion.div>
 
           {/* Data Management */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
-            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Data Management</h2>
-            <div className="space-y-3">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Data Management</h2>
+            <div className="space-y-2.5">
               <button
                 onClick={handleExport}
-                className="w-full py-3 rounded-button font-semibold transition-all hover:scale-105"
+                className="w-full py-2.5 rounded font-semibold text-sm transition-all hover:scale-105"
                 style={{ background: 'var(--gradient-primary)', color: 'white' }}
               >
-                📥 Export Backup (JSON)
+                Export Backup (JSON)
               </button>
               <button
                 onClick={handleImport}
-                className="w-full py-3 rounded-button glass font-semibold border transition-all hover:scale-105"
+                className="w-full py-2.5 rounded glass font-semibold text-sm border transition-all hover:scale-105"
                 style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
               >
-                📤 Import Backup
+                Import Backup
               </button>
             </div>
-            <p className="text-sm mt-4" style={{ color: 'var(--color-text-secondary)' }}>
-              🔒 All data is stored locally on your device. Export regularly to create backups.
+            <p className="text-xs mt-3 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+              All data is stored locally on your device. Export regularly to create backups.
             </p>
           </motion.div>
 
           {/* About */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
-            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>About</h2>
-            <div className="space-y-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>About</h2>
+            <div className="space-y-1.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
               <p><strong style={{ color: 'var(--color-text)' }}>Aesletics</strong> — Aesthetic discipline meets athletic execution.</p>
-              <p>Gamified tracking for total well-being. 100% local. No servers. No tracking. No subscriptions.</p>
-              <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--color-border)' }}>
-                <p className="text-xs">Member since: {new Date(profile.joinedAt).toLocaleDateString()}</p>
-                <p className="text-xs">Longest streak: {profile.longestStreak} days</p>
+              <p>Gamified tracking for total well-being. No tracking. No subscriptions.</p>
+              <div className="mt-3 pt-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                <p className="text-xs font-mono">Member since: {new Date(profile.joinedAt).toLocaleDateString()}</p>
+                <p className="text-xs font-mono">Longest streak: {profile.longestStreak} days</p>
               </div>
             </div>
           </motion.div>

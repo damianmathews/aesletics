@@ -3,11 +3,23 @@ import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useState } from 'react';
 import { questPacks } from '../data/seed';
-import { Flame, Package, Target, Trophy } from 'lucide-react';
+import { Flame, Package, Target, Trophy, Zap, Brain, Users, Backpack, Sparkles, Activity, TrendingUp, List, Lock } from 'lucide-react';
 
 export default function QuestPacks() {
   const { profile, activePacks, activatePack, deactivatePack } = useStore();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  // Icon mapping for pack icons (emoji to Lucide)
+  const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string; style?: any }>> = {
+    '🔥': Flame,
+    '⚡': Zap,
+    '🧠': Brain,
+    '👥': Users,
+    '🎒': Backpack,
+    '✨': Sparkles,
+    '🤸': Activity,
+    '🏃': TrendingUp,
+  };
 
   const handleTogglePack = (packId: string) => {
     if (activePacks.includes(packId)) {
@@ -109,7 +121,12 @@ export default function QuestPacks() {
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <span className="text-4xl">{pack.icon}</span>
+                      <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(167, 139, 250, 0.1)' }}>
+                        {(() => {
+                          const IconComponent = iconMap[pack.icon] || Package;
+                          return <IconComponent size={32} style={{ color: 'var(--color-accent)' }} />;
+                        })()}
+                      </div>
                       <div>
                         <h3 className="font-display text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
                           {pack.title}
@@ -156,7 +173,7 @@ export default function QuestPacks() {
 
                   {/* Quest Count */}
                   <div className="flex items-center gap-2 mb-4 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                    <span>📋</span>
+                    <List size={16} />
                     <span>{pack.quests.length} quests included</span>
                   </div>
 
@@ -173,8 +190,8 @@ export default function QuestPacks() {
                   </button>
 
                   {pack.locked && (
-                    <div className="mt-3 text-center text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
-                      🔒 Unlocks at Level {pack.id === 'pack-002' ? '5' : '10'}
+                    <div className="mt-3 text-center text-xs flex items-center justify-center gap-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                      <Lock size={12} /> Unlocks at Level {pack.id === 'pack-002' ? '5' : '10'}
                     </div>
                   )}
                 </motion.div>

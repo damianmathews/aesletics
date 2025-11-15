@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { calculateXP } from '../lib/xp';
-import { Clock, Camera, Zap, AlertTriangle, Check, Flame } from 'lucide-react';
+import { Clock, Camera, AlertTriangle, Check, Flame, X, Award, TrendingUp } from 'lucide-react';
 
 export default function QuestDetail() {
   const { id } = useParams<{ id: string }>();
@@ -79,13 +79,13 @@ export default function QuestDetail() {
       {/* Header */}
       <header className="glass sticky top-0 z-40 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="font-display text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
-            <span className="text-3xl">Æ</span>
-            <span>Aesletics</span>
+          <Link to="/" className="flex items-center gap-3">
+            <img src="/logo.png" alt="Aesletics" className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-6">
             <Link to="/app" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Dashboard</Link>
             <Link to="/app/quests" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text)' }}>Quests</Link>
+            <Link to="/app/leaderboard" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Leaderboard</Link>
             <Link to="/app/history" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>History</Link>
             <Link to="/app/packs" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Packs</Link>
             <div className="relative">
@@ -114,77 +114,127 @@ export default function QuestDetail() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-6 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass rounded-card p-8 border" style={{ borderColor: 'var(--color-border)' }}>
+      <main className="max-w-3xl mx-auto px-6 py-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass rounded-lg p-5 border relative" style={{ borderColor: 'var(--color-border)' }}>
+          {/* Close Button */}
+          <button
+            onClick={() => navigate('/app/quests')}
+            className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 hover:bg-white/10"
+            style={{ color: 'var(--color-text-secondary)' }}
+            title="Close (ESC)"
+          >
+            <X size={20} />
+          </button>
+
           {/* Quest Info */}
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-xs font-medium px-3 py-1 rounded capitalize" style={{ backgroundColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xs font-medium px-2 py-1 rounded capitalize" style={{ backgroundColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
                 {quest.difficulty}
               </span>
-              <span className="text-xs font-medium px-3 py-1 rounded capitalize" style={{ backgroundColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
+              <span className="text-xs font-medium px-2 py-1 rounded capitalize" style={{ backgroundColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
                 {quest.category.replace(/-/g, ' ')}
+              </span>
+              <span className="text-xs font-medium px-2 py-1 rounded flex items-center gap-1" style={{ backgroundColor: 'rgba(167, 139, 250, 0.1)', color: 'var(--color-accent)' }}>
+                <Award size={12} /> {quest.baseXP} XP
               </span>
             </div>
 
-            <h1 className="font-display text-4xl font-bold mb-4" style={{ color: 'var(--color-text)' }}>{quest.title}</h1>
-            <p className="text-lg mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+            <h1 className="font-display text-3xl font-bold mb-3 pr-8" style={{ color: 'var(--color-text)' }}>{quest.title}</h1>
+            <p className="text-base mb-4" style={{ color: 'var(--color-text-secondary)' }}>
               {quest.description}
             </p>
 
-            <div className="flex items-center gap-6 text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
-              <span className="flex items-center gap-1"><Clock size={16} /> {quest.durationMinutes}min</span>
-              <span className="flex items-center gap-1"><Camera size={16} /> {quest.proof}</span>
-              <span className="font-semibold flex items-center gap-1" style={{ color: 'var(--color-accent)' }}><Zap size={16} /> {quest.baseXP} XP</span>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="glass rounded p-2 border" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="text-xs font-mono mb-1" style={{ color: 'var(--color-text-tertiary)' }}>DURATION</div>
+                <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
+                  <Clock size={14} /> {quest.durationMinutes}min
+                </div>
+              </div>
+              <div className="glass rounded p-2 border" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="text-xs font-mono mb-1" style={{ color: 'var(--color-text-tertiary)' }}>PROOF TYPE</div>
+                <div className="flex items-center gap-1 text-sm font-semibold capitalize" style={{ color: 'var(--color-text)' }}>
+                  <Camera size={14} /> {quest.proof}
+                </div>
+              </div>
+              <div className="glass rounded p-2 border" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="text-xs font-mono mb-1" style={{ color: 'var(--color-text-tertiary)' }}>BONUS</div>
+                <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: profile.currentStreak >= 7 ? 'var(--color-success)' : 'var(--color-text)' }}>
+                  <TrendingUp size={14} /> {profile.currentStreak >= 7 ? 'Active' : 'None'}
+                </div>
+              </div>
             </div>
 
+            {/* Tags and Equipment */}
             {quest.tags && quest.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {quest.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-1 rounded text-xs"
-                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', color: 'var(--color-accent)' }}
-                  >
-                    {tag}
-                  </span>
-                ))}
+              <div className="mb-3">
+                <div className="text-xs font-mono mb-1.5" style={{ color: 'var(--color-text-tertiary)' }}>TAGS</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {quest.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-2 py-0.5 rounded text-xs"
+                      style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', color: 'var(--color-accent)' }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {quest.equipment && quest.equipment.length > 0 && (
+              <div>
+                <div className="text-xs font-mono mb-1.5" style={{ color: 'var(--color-text-tertiary)' }}>EQUIPMENT NEEDED</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {quest.equipment.map((item) => (
+                    <span
+                      key={item}
+                      className="px-2 py-0.5 rounded text-xs capitalize"
+                      style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}
+                    >
+                      {item.replace(/-/g, ' ')}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
           </div>
 
           {quest.safety && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mb-8 p-4 rounded-button border border-yellow-500/30" style={{ backgroundColor: 'rgba(251, 191, 36, 0.05)' }}>
-              <p className="text-sm font-medium flex items-center gap-2" style={{ color: 'var(--color-warning)' }}>
-                <AlertTriangle size={16} /> Safety: {quest.safety}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mb-5 p-3 rounded border border-yellow-500/30" style={{ backgroundColor: 'rgba(251, 191, 36, 0.05)' }}>
+              <p className="text-xs font-medium flex items-center gap-2" style={{ color: 'var(--color-warning)' }}>
+                <AlertTriangle size={14} /> {quest.safety}
               </p>
             </motion.div>
           )}
 
           {/* Proof Input */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mb-8">
-            <h2 className="font-display text-2xl font-semibold mb-6" style={{ color: 'var(--color-text)' }}>Complete Quest</h2>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mb-5">
+            <h2 className="font-display text-xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Complete Quest</h2>
 
             {quest.proof === 'check' && (
-              <div className="text-center py-12">
-                <p className="text-lg mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+              <div className="text-center py-8">
+                <p className="text-base mb-3" style={{ color: 'var(--color-text-secondary)' }}>
                   Mark as complete when you finish this quest.
                 </p>
-                <div className="mb-4">
-                  <Check size={64} style={{ color: 'var(--color-accent)' }} className="mx-auto" />
+                <div className="mb-3">
+                  <Check size={48} style={{ color: 'var(--color-accent)' }} className="mx-auto" />
                 </div>
               </div>
             )}
 
             {quest.proof === 'timer' && (
-              <div className="text-center py-12">
-                <div className="text-7xl font-bold tabular-nums mb-8" style={{ color: 'var(--color-text)' }}>
+              <div className="text-center py-8">
+                <div className="text-6xl font-bold tabular-nums mb-6" style={{ color: 'var(--color-text)' }}>
                   {formatTime(timerSeconds)}
                 </div>
                 {!isTimerRunning ? (
                   <button
                     onClick={startTimer}
-                    className="px-8 py-4 rounded-button font-semibold text-lg transition-all hover:scale-105"
+                    className="px-6 py-3 rounded font-semibold text-base transition-all hover:scale-105"
                     style={{ backgroundColor: 'var(--color-success)', color: 'white' }}
                   >
                     ▶ Start Timer
@@ -192,7 +242,7 @@ export default function QuestDetail() {
                 ) : (
                   <button
                     onClick={stopTimer}
-                    className="px-8 py-4 rounded-button font-semibold text-lg transition-all hover:scale-105"
+                    className="px-6 py-3 rounded font-semibold text-base transition-all hover:scale-105"
                     style={{ backgroundColor: 'var(--color-error)', color: 'white' }}
                   >
                     ⏸ Stop Timer
@@ -202,19 +252,19 @@ export default function QuestDetail() {
             )}
 
             {quest.proof === 'counter' && (
-              <div className="text-center py-12">
-                <div className="text-7xl font-bold tabular-nums mb-8" style={{ color: 'var(--color-text)' }}>{counterValue}</div>
-                <div className="flex items-center justify-center gap-6">
+              <div className="text-center py-8">
+                <div className="text-6xl font-bold tabular-nums mb-6" style={{ color: 'var(--color-text)' }}>{counterValue}</div>
+                <div className="flex items-center justify-center gap-4">
                   <button
                     onClick={() => setCounterValue(Math.max(0, counterValue - 1))}
-                    className="w-16 h-16 rounded-full font-bold text-2xl transition-all hover:scale-110"
+                    className="w-14 h-14 rounded-full font-bold text-xl transition-all hover:scale-110"
                     style={{ backgroundColor: 'var(--color-border)', color: 'var(--color-text)' }}
                   >
                     −
                   </button>
                   <button
                     onClick={() => setCounterValue(counterValue + 1)}
-                    className="w-16 h-16 rounded-full font-bold text-2xl transition-all hover:scale-110"
+                    className="w-14 h-14 rounded-full font-bold text-xl transition-all hover:scale-110"
                     style={{ background: 'var(--gradient-primary)', color: 'white' }}
                   >
                     +
@@ -224,12 +274,12 @@ export default function QuestDetail() {
             )}
 
             {quest.proof === 'text' && (
-              <div className="py-4">
+              <div className="py-3">
                 <textarea
                   value={textValue}
                   onChange={(e) => setTextValue(e.target.value)}
                   placeholder="Enter your notes, reflections, or description of completion..."
-                  className="w-full p-4 rounded-button glass border focus:outline-none focus:ring-2 min-h-[160px]"
+                  className="w-full p-3 rounded glass border focus:outline-none focus:ring-2 min-h-[120px] text-sm"
                   style={{
                     borderColor: 'var(--color-border)',
                     color: 'var(--color-text)',
@@ -239,9 +289,9 @@ export default function QuestDetail() {
             )}
 
             {quest.proof === 'photo' && (
-              <div className="text-center py-12" style={{ color: 'var(--color-text-secondary)' }}>
-                <div className="text-6xl mb-4">📷</div>
-                <p className="text-lg mb-2">Photo proof feature coming soon</p>
+              <div className="text-center py-8" style={{ color: 'var(--color-text-secondary)' }}>
+                <Camera size={48} className="mx-auto mb-3" style={{ color: 'var(--color-accent)' }} />
+                <p className="text-base mb-2">Photo proof feature coming soon</p>
                 <p className="text-sm">For now, you can complete without photo</p>
               </div>
             )}
@@ -253,15 +303,15 @@ export default function QuestDetail() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             onClick={handleComplete}
-            className="w-full py-5 rounded-button font-display font-bold text-xl transition-all hover:scale-105 hover:shadow-2xl"
+            className="w-full py-4 rounded font-display font-bold text-lg transition-all hover:scale-105 hover:shadow-2xl"
             style={{ background: 'var(--gradient-primary)', color: 'white' }}
           >
             Complete Quest +{quest.baseXP} XP
           </motion.button>
 
           {profile.currentStreak >= 7 && (
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-center text-sm mt-4 flex items-center justify-center gap-2" style={{ color: 'var(--color-accent)' }}>
-              <Flame size={16} className="text-orange-500" /> Streak bonus active! You'll earn extra XP
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-center text-xs mt-3 flex items-center justify-center gap-2" style={{ color: 'var(--color-accent)' }}>
+              <Flame size={14} className="text-orange-500" /> Streak bonus active! You'll earn extra XP
             </motion.p>
           )}
         </motion.div>
