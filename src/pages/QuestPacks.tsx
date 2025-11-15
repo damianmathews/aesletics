@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useState } from 'react';
 import { questPacks } from '../data/seed';
+import { Flame, Package, Target, Trophy } from 'lucide-react';
 
 export default function QuestPacks() {
   const { profile, activePacks, activatePack, deactivatePack } = useStore();
@@ -21,9 +22,8 @@ export default function QuestPacks() {
       {/* Header */}
       <header className="glass sticky top-0 z-40 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="font-display text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
-            <span className="text-3xl">Æ</span>
-            <span>Aesletics</span>
+          <Link to="/" className="flex items-center gap-3">
+            <img src="/logo.png" alt="Aesletics" className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-6">
             <Link to="/app" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Dashboard</Link>
@@ -56,19 +56,23 @@ export default function QuestPacks() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+      <main className="max-w-7xl mx-auto px-6 py-8 relative">
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 60%)'
+        }} />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
           <h1 className="font-display text-4xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Quest Packs</h1>
           <p className="mb-8" style={{ color: 'var(--color-text-secondary)' }}>Structured programs to accelerate your progress</p>
         </motion.div>
 
         {/* Active Packs */}
         {activePacks.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-8">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-8 relative">
             <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Active Packs</h2>
             <div className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
               <div className="flex items-center gap-3">
-                <span className="text-2xl">🔥</span>
+                <Flame size={32} className="text-orange-500" />
                 <div>
                   <div className="font-semibold" style={{ color: 'var(--color-text)' }}>
                     {activePacks.length} pack{activePacks.length > 1 ? 's' : ''} active
@@ -183,21 +187,27 @@ export default function QuestPacks() {
           <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>How Quest Packs Work</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div>
-              <div className="text-4xl mb-2">📦</div>
+              <div className="mb-2">
+                <Package size={40} style={{ color: 'var(--color-accent)' }} />
+              </div>
               <h3 className="font-semibold mb-2" style={{ color: 'var(--color-text)' }}>Structured Programs</h3>
               <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                 Each pack contains a carefully sequenced set of quests designed to achieve a specific goal.
               </p>
             </div>
             <div>
-              <div className="text-4xl mb-2">🎯</div>
+              <div className="mb-2">
+                <Target size={40} style={{ color: 'var(--color-cyan)' }} />
+              </div>
               <h3 className="font-semibold mb-2" style={{ color: 'var(--color-text)' }}>Daily Guidance</h3>
               <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                 Follow the day-by-day plan. Each quest unlocks on its scheduled day to keep you on track.
               </p>
             </div>
             <div>
-              <div className="text-4xl mb-2">🏆</div>
+              <div className="mb-2">
+                <Trophy size={40} style={{ color: 'var(--color-magenta)' }} />
+              </div>
               <h3 className="font-semibold mb-2" style={{ color: 'var(--color-text)' }}>Proven Results</h3>
               <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                 Complete the pack to earn bonus XP and unlock exclusive badges for your achievements.

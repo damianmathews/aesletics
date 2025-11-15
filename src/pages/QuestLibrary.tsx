@@ -3,12 +3,16 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { questTemplatesExtended, categories } from '../data/seed';
 import { useStore } from '../store/useStore';
+import Toast from '../components/Toast';
+import { Zap } from 'lucide-react';
 
 export default function QuestLibrary() {
   const { profile, addUserQuest } = useStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState({ title: '', subtitle: '' });
 
   const filteredQuests = questTemplatesExtended.filter((quest) => {
     const matchesSearch = quest.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -41,6 +45,13 @@ export default function QuestLibrary() {
     };
 
     addUserQuest(newQuest);
+
+    // Show satisfying confirmation with benefit-focused messaging
+    setToastMessage({
+      title: 'Quest added to your path',
+      subtitle: `Start building momentum with ${template.title}`
+    });
+    setShowToast(true);
   };
 
   return (
@@ -126,7 +137,7 @@ export default function QuestLibrary() {
                 color: selectedCategory === category.id ? 'white' : 'var(--color-text)',
               }}
             >
-              {category.icon} {category.name}
+              {category.name}
             </button>
           ))}
         </motion.div>
@@ -153,9 +164,7 @@ export default function QuestLibrary() {
                     {quest.difficulty}
                   </span>
                 </div>
-                <span className="text-2xl">
-                  {categories.find(c => c.id === quest.category)?.icon || '⚡'}
-                </span>
+                <Zap size={28} style={{ color: 'var(--color-accent)' }} />
               </div>
 
               <h3 className="font-display text-lg font-semibold mb-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
@@ -198,6 +207,15 @@ export default function QuestLibrary() {
           </motion.div>
         )}
       </main>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <Toast
+          message={toastMessage.title}
+          subMessage={toastMessage.subtitle}
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </div>
   );
 }

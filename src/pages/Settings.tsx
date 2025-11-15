@@ -47,9 +47,8 @@ export default function Settings() {
       {/* Header */}
       <header className="glass sticky top-0 z-40 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="font-display text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
-            <span className="text-3xl">Æ</span>
-            <span>Aesletics</span>
+          <Link to="/" className="flex items-center gap-3">
+            <img src="/logo.png" alt="Aesletics" className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-6">
             <Link to="/app" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Dashboard</Link>
@@ -82,8 +81,12 @@ export default function Settings() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-6 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+      <main className="max-w-3xl mx-auto px-6 py-8 relative">
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 60%)'
+        }} />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
           <h1 className="font-display text-4xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Settings</h1>
           <p className="mb-8" style={{ color: 'var(--color-text-secondary)' }}>Customize your Aesletics experience</p>
         </motion.div>
@@ -110,22 +113,22 @@ export default function Settings() {
           </motion.div>
 
           {/* Stats Overview */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-card p-6 border relative" style={{ borderColor: 'var(--color-border)' }}>
             <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Your Stats</h2>
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(56, 226, 140, 0.05)' }}>
+              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
                 <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Total XP</div>
                 <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.totalXP.toLocaleString()}</div>
               </div>
-              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(56, 226, 140, 0.05)' }}>
+              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
                 <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Level</div>
                 <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.level}</div>
               </div>
-              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(56, 226, 140, 0.05)' }}>
+              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
                 <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Current Streak</div>
-                <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.currentStreak} 🔥</div>
+                <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.currentStreak} days</div>
               </div>
-              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(56, 226, 140, 0.05)' }}>
+              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
                 <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Completed</div>
                 <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.completedQuests}</div>
               </div>

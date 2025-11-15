@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useState } from 'react';
+import { Flame, Camera } from 'lucide-react';
 
 export default function History() {
   const { profile, completions, getStats } = useStore();
@@ -43,13 +44,13 @@ export default function History() {
     weeks.push(heatmapData.slice(i, i + 7));
   }
 
-  // Get intensity color based on XP
+  // Get intensity color based on XP (purple gradient)
   const getIntensityColor = (xp: number) => {
     if (xp === 0) return 'var(--color-border)';
-    if (xp < 50) return 'rgba(56, 226, 140, 0.3)';
-    if (xp < 100) return 'rgba(56, 226, 140, 0.5)';
-    if (xp < 200) return 'rgba(56, 226, 140, 0.7)';
-    return 'rgba(56, 226, 140, 1)';
+    if (xp < 50) return 'rgba(167, 139, 250, 0.3)';
+    if (xp < 100) return 'rgba(167, 139, 250, 0.5)';
+    if (xp < 200) return 'rgba(167, 139, 250, 0.7)';
+    return 'rgba(167, 139, 250, 1)';
   };
 
   // Recent completions (last 30)
@@ -62,9 +63,8 @@ export default function History() {
       {/* Header */}
       <header className="glass sticky top-0 z-40 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="font-display text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
-            <span className="text-3xl">Æ</span>
-            <span>Aesletics</span>
+          <Link to="/" className="flex items-center gap-3">
+            <img src="/logo.png" alt="Aesletics" className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-6">
             <Link to="/app" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Dashboard</Link>
@@ -97,14 +97,18 @@ export default function History() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+      <main className="max-w-7xl mx-auto px-6 py-8 relative">
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 60%)'
+        }} />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
           <h1 className="font-display text-4xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Quest History</h1>
           <p className="mb-8" style={{ color: 'var(--color-text-secondary)' }}>Your complete journey of progress and achievements</p>
         </motion.div>
 
         {/* Stats Overview */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
+        <div className="grid md:grid-cols-4 gap-6 mb-8 relative">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
             <div className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Total Completions</div>
             <div className="text-3xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{completions.length}</div>
@@ -219,15 +223,17 @@ export default function History() {
                           {completion.streakBonus && (
                             <>
                               <span>•</span>
-                              <span className="text-orange-400">🔥 Streak bonus</span>
+                              <span className="text-orange-400 flex items-center gap-1">
+                                <Flame size={14} /> Streak bonus
+                              </span>
                             </>
                           )}
                         </div>
                       </div>
                       {completion.proof?.type === 'photo' && (
                         <div className="w-12 h-12 rounded overflow-hidden ml-4">
-                          <div className="w-full h-full bg-gradient-to-br from-green-500/20 to-teal-500/20 flex items-center justify-center text-2xl">
-                            📷
+                          <div className="w-full h-full glass flex items-center justify-center">
+                            <Camera size={20} style={{ color: 'var(--color-text-secondary)' }} />
                           </div>
                         </div>
                       )}

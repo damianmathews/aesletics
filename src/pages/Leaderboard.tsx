@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useState } from 'react';
+import { Zap, Trophy, Flame, Calendar, CheckCircle, Circle, Check } from 'lucide-react';
 
 export default function Leaderboard() {
   const { profile, completions, getStats } = useStore();
@@ -39,12 +40,12 @@ export default function Leaderboard() {
 
   // Personal records
   const records = [
-    { title: 'Total XP', value: profile.totalXP.toLocaleString(), icon: '⚡', color: 'var(--gradient-primary)' },
-    { title: 'Level Reached', value: profile.level.toString(), icon: '🏆', color: 'var(--gradient-primary)' },
-    { title: 'Longest Streak', value: `${profile.longestStreak} days`, icon: '🔥', color: 'var(--gradient-secondary)' },
-    { title: 'Current Streak', value: `${profile.currentStreak} days`, icon: '⚡', color: 'var(--gradient-primary)' },
-    { title: 'Total Quests', value: completions.length.toString(), icon: '✓', color: 'var(--gradient-primary)' },
-    { title: 'This Month', value: stats.completedThisMonth.toString(), icon: '📅', color: 'var(--gradient-secondary)' },
+    { title: 'Total XP', value: profile.totalXP.toLocaleString(), Icon: Zap, color: 'var(--gradient-primary)' },
+    { title: 'Level Reached', value: profile.level.toString(), Icon: Trophy, color: 'var(--gradient-primary)' },
+    { title: 'Longest Streak', value: `${profile.longestStreak} days`, Icon: Flame, color: 'var(--gradient-secondary)' },
+    { title: 'Current Streak', value: `${profile.currentStreak} days`, Icon: Zap, color: 'var(--gradient-primary)' },
+    { title: 'Total Quests', value: completions.length.toString(), Icon: CheckCircle, color: 'var(--gradient-primary)' },
+    { title: 'This Month', value: stats.completedThisMonth.toString(), Icon: Calendar, color: 'var(--gradient-secondary)' },
   ];
 
   // Milestones
@@ -68,9 +69,8 @@ export default function Leaderboard() {
       {/* Header */}
       <header className="glass sticky top-0 z-40 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="font-display text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
-            <span className="text-3xl">Æ</span>
-            <span>Aesletics</span>
+          <Link to="/" className="flex items-center gap-3">
+            <img src="/logo.png" alt="Aesletics" className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-6">
             <Link to="/app" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Dashboard</Link>
@@ -103,44 +103,51 @@ export default function Leaderboard() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+      <main className="max-w-7xl mx-auto px-6 py-8 relative">
+        {/* Subtle gradient background */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 60%)'
+        }} />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
           <h1 className="font-display text-4xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>You vs. You</h1>
           <p className="mb-8" style={{ color: 'var(--color-text-secondary)' }}>Track your personal records and category performance</p>
         </motion.div>
 
         {/* Personal Records */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="relative">
           <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Personal Records</h2>
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            {records.map((record, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + index * 0.05 }}
-                className="glass rounded-card p-6 border"
-                style={{ borderColor: 'var(--color-border)' }}
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>{record.title}</span>
-                  <span className="text-3xl">{record.icon}</span>
-                </div>
-                <div className="text-4xl font-bold tabular-nums" style={{
-                  background: record.color,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}>
-                  {record.value}
-                </div>
-              </motion.div>
-            ))}
+            {records.map((record, index) => {
+              const IconComponent = record.Icon;
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + index * 0.05 }}
+                  className="glass rounded-card p-6 border"
+                  style={{ borderColor: 'var(--color-border)' }}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>{record.title}</span>
+                    <IconComponent size={32} style={{ color: 'var(--color-accent)' }} />
+                  </div>
+                  <div className="text-4xl font-bold tabular-nums" style={{
+                    background: record.color,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                  }}>
+                    {record.value}
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
 
         {/* Category Performance */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-8 relative">
           <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Category Performance</h2>
           <div className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
             {sortedCategories.length === 0 ? (
@@ -210,12 +217,12 @@ export default function Leaderboard() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.05 * index }}
-                className={`p-4 rounded-card glass border ${milestone.achieved ? 'border-green-500/30' : ''}`}
-                style={{ borderColor: milestone.achieved ? 'rgba(56, 226, 140, 0.3)' : 'var(--color-border)' }}
+                className="p-4 rounded-card glass border"
+                style={{ borderColor: milestone.achieved ? 'var(--color-accent)' : 'var(--color-border)' }}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-lg ${milestone.achieved ? 'bg-green-500/20' : 'bg-white/5'}`}>
-                    {milestone.achieved ? '✓' : '○'}
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${milestone.achieved ? '' : 'bg-white/5'}`} style={{ backgroundColor: milestone.achieved ? 'var(--color-accent)' : undefined }}>
+                    {milestone.achieved ? <Check size={16} color="white" /> : <Circle size={16} style={{ color: 'var(--color-text-secondary)' }} />}
                   </div>
                   <div>
                     <div className="font-semibold" style={{ color: milestone.achieved ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}>

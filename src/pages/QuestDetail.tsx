@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { calculateXP } from '../lib/xp';
+import { Clock, Camera, Zap, AlertTriangle, Check, Flame } from 'lucide-react';
 
 export default function QuestDetail() {
   const { id } = useParams<{ id: string }>();
@@ -132,9 +133,9 @@ export default function QuestDetail() {
             </p>
 
             <div className="flex items-center gap-6 text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
-              <span>⏱️ {quest.durationMinutes}min</span>
-              <span>📸 {quest.proof}</span>
-              <span className="font-semibold" style={{ color: 'var(--color-accent)' }}>⚡ {quest.baseXP} XP</span>
+              <span className="flex items-center gap-1"><Clock size={16} /> {quest.durationMinutes}min</span>
+              <span className="flex items-center gap-1"><Camera size={16} /> {quest.proof}</span>
+              <span className="font-semibold flex items-center gap-1" style={{ color: 'var(--color-accent)' }}><Zap size={16} /> {quest.baseXP} XP</span>
             </div>
 
             {quest.tags && quest.tags.length > 0 && (
@@ -143,7 +144,7 @@ export default function QuestDetail() {
                   <span
                     key={tag}
                     className="px-2 py-1 rounded text-xs"
-                    style={{ backgroundColor: 'rgba(56, 226, 140, 0.1)', color: 'var(--color-accent)' }}
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', color: 'var(--color-accent)' }}
                   >
                     {tag}
                   </span>
@@ -154,7 +155,9 @@ export default function QuestDetail() {
 
           {quest.safety && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mb-8 p-4 rounded-button border border-yellow-500/30" style={{ backgroundColor: 'rgba(251, 191, 36, 0.05)' }}>
-              <p className="text-sm font-medium" style={{ color: 'var(--color-warning)' }}>⚠️ Safety: {quest.safety}</p>
+              <p className="text-sm font-medium flex items-center gap-2" style={{ color: 'var(--color-warning)' }}>
+                <AlertTriangle size={16} /> Safety: {quest.safety}
+              </p>
             </motion.div>
           )}
 
@@ -167,7 +170,9 @@ export default function QuestDetail() {
                 <p className="text-lg mb-4" style={{ color: 'var(--color-text-secondary)' }}>
                   Mark as complete when you finish this quest.
                 </p>
-                <div className="text-6xl mb-4">✓</div>
+                <div className="mb-4">
+                  <Check size={64} style={{ color: 'var(--color-accent)' }} className="mx-auto" />
+                </div>
               </div>
             )}
 
@@ -255,8 +260,8 @@ export default function QuestDetail() {
           </motion.button>
 
           {profile.currentStreak >= 7 && (
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-center text-sm mt-4" style={{ color: 'var(--color-accent)' }}>
-              🔥 Streak bonus active! You'll earn extra XP
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-center text-sm mt-4 flex items-center justify-center gap-2" style={{ color: 'var(--color-accent)' }}>
+              <Flame size={16} className="text-orange-500" /> Streak bonus active! You'll earn extra XP
             </motion.p>
           )}
         </motion.div>
