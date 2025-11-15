@@ -8,6 +8,9 @@ import Dashboard from './pages/Dashboard';
 import QuestLibrary from './pages/QuestLibrary';
 import QuestDetail from './pages/QuestDetail';
 import Settings from './pages/Settings';
+import History from './pages/History';
+import Leaderboard from './pages/Leaderboard';
+import QuestPacks from './pages/QuestPacks';
 
 function App() {
   const { initialize, settings } = useStore();
@@ -32,6 +35,9 @@ function App() {
         <Route path="/app" element={<Dashboard />} />
         <Route path="/app/quests" element={<QuestLibrary />} />
         <Route path="/app/quests/:id" element={<QuestDetail />} />
+        <Route path="/app/history" element={<History />} />
+        <Route path="/app/leaderboard" element={<Leaderboard />} />
+        <Route path="/app/packs" element={<QuestPacks />} />
         <Route path="/app/settings" element={<Settings />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { exportData, importData } from '../lib/storage';
 
 export default function Settings() {
-  const { settings, updateSettings, profile, updateProfile } = useStore();
+  const { profile, settings, updateSettings, updateProfile } = useStore();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const handleExport = () => {
     const data = exportData();
@@ -29,7 +32,7 @@ export default function Settings() {
         const content = event.target?.result as string;
         const success = importData(content);
         if (success) {
-          alert('Data imported successfully! Reload the page to see changes.');
+          window.location.reload();
         } else {
           alert('Failed to import data. Please check the file format.');
         }
@@ -40,123 +43,176 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
+    <div className="min-h-screen bg-pattern-grid" style={{ backgroundColor: 'var(--color-bg)' }}>
       {/* Header */}
-      <header className="border-b" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }}>
+      <header className="glass sticky top-0 z-40 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/app" className="font-display text-2xl font-bold">Æ</Link>
-          <Link to="/app" className="text-sm font-medium hover:opacity-70">Back to Dashboard</Link>
+          <Link to="/" className="font-display text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+            <span className="text-3xl">Æ</span>
+            <span>Aesletics</span>
+          </Link>
+          <div className="flex items-center gap-6">
+            <Link to="/app" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Dashboard</Link>
+            <Link to="/app/quests" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Quests</Link>
+            <Link to="/app/history" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>History</Link>
+            <Link to="/app/packs" className="text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Packs</Link>
+            <div className="relative">
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all hover:scale-105"
+                style={{ background: 'var(--gradient-primary)', color: 'white' }}
+              >
+                {profile.nickname.charAt(0).toUpperCase()}
+              </button>
+              {showProfileMenu && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute right-0 mt-2 w-48 glass rounded-button p-2 border"
+                  style={{ borderColor: 'var(--color-border)' }}
+                >
+                  <Link to="/app/settings" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Settings</Link>
+                  <Link to="/app/history" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>History</Link>
+                  <Link to="/app/leaderboard" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Leaderboard</Link>
+                </motion.div>
+              )}
+            </div>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-3xl mx-auto px-6 py-8">
-        <h1 className="font-display text-4xl font-bold mb-8">Settings</h1>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="font-display text-4xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Settings</h1>
+          <p className="mb-8" style={{ color: 'var(--color-text-secondary)' }}>Customize your Aesletics experience</p>
+        </motion.div>
 
         <div className="space-y-6">
           {/* Profile */}
-          <div className="rounded-card p-6 shadow-soft" style={{ backgroundColor: 'var(--color-surface)' }}>
-            <h2 className="font-display text-xl font-semibold mb-4">Profile</h2>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Profile</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Nickname</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Nickname</label>
                 <input
                   type="text"
                   value={profile.nickname}
                   onChange={(e) => updateProfile({ nickname: e.target.value })}
-                  className="w-full px-4 py-2 rounded-button border focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-3 rounded-button glass border focus:outline-none focus:ring-2 transition-all"
                   style={{
                     borderColor: 'var(--color-border)',
-                    backgroundColor: 'var(--color-bg)',
                     color: 'var(--color-text)',
                   }}
                 />
               </div>
             </div>
-          </div>
+          </motion.div>
+
+          {/* Stats Overview */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Your Stats</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(56, 226, 140, 0.05)' }}>
+                <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Total XP</div>
+                <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.totalXP.toLocaleString()}</div>
+              </div>
+              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(56, 226, 140, 0.05)' }}>
+                <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Level</div>
+                <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.level}</div>
+              </div>
+              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(56, 226, 140, 0.05)' }}>
+                <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Current Streak</div>
+                <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.currentStreak} 🔥</div>
+              </div>
+              <div className="p-4 rounded-button" style={{ backgroundColor: 'rgba(56, 226, 140, 0.05)' }}>
+                <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Completed</div>
+                <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{profile.completedQuests}</div>
+              </div>
+            </div>
+          </motion.div>
 
           {/* Appearance */}
-          <div className="rounded-card p-6 shadow-soft" style={{ backgroundColor: 'var(--color-surface)' }}>
-            <h2 className="font-display text-xl font-semibold mb-4">Appearance</h2>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Appearance</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Theme</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Theme</label>
                 <select
                   value={settings.theme}
                   onChange={(e) => updateSettings({ theme: e.target.value as any })}
-                  className="w-full px-4 py-2 rounded-button border focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-3 rounded-button glass border focus:outline-none focus:ring-2 transition-all"
                   style={{
                     borderColor: 'var(--color-border)',
-                    backgroundColor: 'var(--color-bg)',
                     color: 'var(--color-text)',
                   }}
                 >
-                  <option value="light">Light</option>
                   <option value="dark">Dark</option>
+                  <option value="light">Light</option>
                   <option value="system">System</option>
                 </select>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Units */}
-          <div className="rounded-card p-6 shadow-soft" style={{ backgroundColor: 'var(--color-surface)' }}>
-            <h2 className="font-display text-xl font-semibold mb-4">Units</h2>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Preferences</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Measurement System</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Measurement System</label>
                 <select
                   value={settings.units}
                   onChange={(e) => updateSettings({ units: e.target.value as any })}
-                  className="w-full px-4 py-2 rounded-button border focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-3 rounded-button glass border focus:outline-none focus:ring-2 transition-all"
                   style={{
                     borderColor: 'var(--color-border)',
-                    backgroundColor: 'var(--color-bg)',
                     color: 'var(--color-text)',
                   }}
                 >
-                  <option value="metric">Metric</option>
-                  <option value="imperial">Imperial</option>
+                  <option value="imperial">Imperial (lbs, miles)</option>
+                  <option value="metric">Metric (kg, km)</option>
                 </select>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Data */}
-          <div className="rounded-card p-6 shadow-soft" style={{ backgroundColor: 'var(--color-surface)' }}>
-            <h2 className="font-display text-xl font-semibold mb-4">Data</h2>
+          {/* Data Management */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Data Management</h2>
             <div className="space-y-3">
               <button
                 onClick={handleExport}
-                className="w-full py-3 rounded-button font-medium transition-all"
-                style={{ backgroundColor: 'var(--color-accent)', color: 'white' }}
+                className="w-full py-3 rounded-button font-semibold transition-all hover:scale-105"
+                style={{ background: 'var(--gradient-primary)', color: 'white' }}
               >
-                Export Data (JSON)
+                📥 Export Backup (JSON)
               </button>
               <button
                 onClick={handleImport}
-                className="w-full py-3 rounded-button font-medium border transition-all"
-                style={{ borderColor: 'var(--color-border)' }}
+                className="w-full py-3 rounded-button glass font-semibold border transition-all hover:scale-105"
+                style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
               >
-                Import Data
+                📤 Import Backup
               </button>
             </div>
             <p className="text-sm mt-4" style={{ color: 'var(--color-text-secondary)' }}>
-              All data is stored locally on your device. Export to create backups.
+              🔒 All data is stored locally on your device. Export regularly to create backups.
             </p>
-          </div>
+          </motion.div>
 
-          {/* Stats */}
-          <div className="rounded-card p-6 shadow-soft" style={{ backgroundColor: 'var(--color-surface)' }}>
-            <h2 className="font-display text-xl font-semibold mb-4">Stats</h2>
+          {/* About */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>About</h2>
             <div className="space-y-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-              <p>Total XP: <span className="font-semibold" style={{ color: 'var(--color-text)' }}>{profile.totalXP.toLocaleString()}</span></p>
-              <p>Level: <span className="font-semibold" style={{ color: 'var(--color-text)' }}>{profile.level}</span></p>
-              <p>Quests Completed: <span className="font-semibold" style={{ color: 'var(--color-text)' }}>{profile.completedQuests}</span></p>
-              <p>Current Streak: <span className="font-semibold" style={{ color: 'var(--color-text)' }}>{profile.currentStreak} days</span></p>
-              <p>Longest Streak: <span className="font-semibold" style={{ color: 'var(--color-text)' }}>{profile.longestStreak} days</span></p>
+              <p><strong style={{ color: 'var(--color-text)' }}>Aesletics</strong> — Aesthetic discipline meets athletic execution.</p>
+              <p>Gamified tracking for total well-being. 100% local. No servers. No tracking. No subscriptions.</p>
+              <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                <p className="text-xs">Member since: {new Date(profile.joinedAt).toLocaleDateString()}</p>
+                <p className="text-xs">Longest streak: {profile.longestStreak} days</p>
+              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </main>
     </div>

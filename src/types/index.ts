@@ -87,6 +87,7 @@ export interface Completion {
   metrics?: CompletionMetrics;
   proof?: CompletionProof;
   streakDay?: number;
+  streakBonus?: boolean;
 }
 
 export interface Badge {
