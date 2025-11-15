@@ -79,28 +79,28 @@ export default function QuestPacks() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8 relative">
+      <main className="max-w-7xl mx-auto px-6 py-6 relative">
         {/* Subtle gradient background */}
         <div className="absolute inset-0 pointer-events-none" style={{
           background: 'radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 60%)'
         }} />
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
-          <h1 className="font-display text-4xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Quest Packs</h1>
-          <p className="mb-8" style={{ color: 'var(--color-text-secondary)' }}>Structured programs to accelerate your progress</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative mb-5">
+          <h1 className="font-display text-2xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>Quest Packs</h1>
+          <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>{questPacks.length} programs • Structured progression</p>
         </motion.div>
 
         {/* Active Packs */}
         {activePacks.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-8 relative">
-            <h2 className="font-display text-2xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Active Packs</h2>
-            <div className="glass rounded-card p-6 border" style={{ borderColor: 'var(--color-border)' }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-5 relative">
+            <h2 className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>ACTIVE PACKS</h2>
+            <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-accent)', backgroundColor: 'rgba(167, 139, 250, 0.05)' }}>
               <div className="flex items-center gap-3">
-                <Flame size={32} className="text-orange-500" />
+                <Flame size={24} className="text-orange-500" />
                 <div>
-                  <div className="font-semibold" style={{ color: 'var(--color-text)' }}>
-                    {activePacks.length} pack{activePacks.length > 1 ? 's' : ''} active
+                  <div className="font-semibold font-mono text-sm" style={{ color: 'var(--color-text)' }}>
+                    {activePacks.length} PACK{activePacks.length > 1 ? 'S' : ''} ACTIVE
                   </div>
-                  <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                  <div className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
                     Keep going! Consistency is everything.
                   </div>
                 </div>
@@ -111,8 +111,8 @@ export default function QuestPacks() {
 
         {/* Available Packs */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <h2 className="font-display text-2xl font-semibold mb-6" style={{ color: 'var(--color-text)' }}>Available Programs</h2>
-          <div className="grid md:grid-cols-2 gap-6">
+          <h2 className="text-xs font-medium mb-3 font-mono" style={{ color: 'var(--color-text-secondary)' }}>AVAILABLE PROGRAMS</h2>
+          <div className="grid md:grid-cols-2 gap-4">
             {questPacks.map((pack, index) => {
               const isActive = activePacks.includes(pack.id);
 
@@ -121,32 +121,32 @@ export default function QuestPacks() {
                   key={pack.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + index * 0.1 }}
-                  className={`glass rounded-card p-6 border transition-all hover:scale-[1.02] ${isActive ? 'ring-2' : ''}`}
+                  transition={{ delay: 0.05 + index * 0.05 }}
+                  className={`glass rounded-lg p-4 border transition-all hover:scale-[1.01] ${isActive ? 'ring-2' : ''}`}
                   style={{
                     borderColor: isActive ? 'var(--color-accent)' : 'var(--color-border)',
                     ...(isActive && { '--tw-ring-color': 'var(--color-accent)' } as any)
                   }}
                 >
                   {/* Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(167, 139, 250, 0.1)' }}>
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded" style={{ backgroundColor: 'rgba(167, 139, 250, 0.1)' }}>
                         {(() => {
                           const IconComponent = iconMap[pack.icon] || Package;
-                          return <IconComponent size={32} style={{ color: 'var(--color-accent)' }} />;
+                          return <IconComponent size={20} style={{ color: 'var(--color-accent)' }} />;
                         })()}
                       </div>
                       <div>
-                        <h3 className="font-display text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
+                        <h3 className="font-display text-base font-semibold" style={{ color: 'var(--color-text)' }}>
                           {pack.title}
                         </h3>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="px-2 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="px-1.5 py-0.5 rounded text-xs font-mono font-medium uppercase" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', color: 'var(--color-text-secondary)' }}>
                             {pack.difficulty}
                           </span>
-                          <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
-                            {pack.durationDays} days
+                          <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                            {pack.durationDays}d
                           </span>
                         </div>
                       </div>
@@ -155,26 +155,26 @@ export default function QuestPacks() {
                       <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="px-2 py-1 rounded text-xs font-semibold"
+                        className="px-2 py-0.5 rounded text-xs font-mono font-semibold"
                         style={{ background: 'var(--gradient-primary)', color: 'white' }}
                       >
-                        Active
+                        ACTIVE
                       </motion.div>
                     )}
                   </div>
 
                   {/* Description */}
-                  <p className="mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+                  <p className="text-xs mb-3" style={{ color: 'var(--color-text-secondary)' }}>
                     {pack.description}
                   </p>
 
                   {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="flex flex-wrap gap-1.5 mb-3">
                     {pack.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 rounded text-xs"
-                        style={{ backgroundColor: 'rgba(56, 226, 140, 0.1)', color: 'var(--color-accent)' }}
+                        className="px-1.5 py-0.5 rounded text-xs font-mono"
+                        style={{ backgroundColor: 'rgba(167, 139, 250, 0.1)', color: 'var(--color-accent)' }}
                       >
                         {tag}
                       </span>
@@ -184,14 +184,14 @@ export default function QuestPacks() {
                   {/* Quest Count & View Button */}
                   <button
                     onClick={() => setExpandedPack(expandedPack === pack.id ? null : pack.id)}
-                    className="w-full flex items-center justify-between mb-4 text-sm p-3 rounded glass border transition-all hover:scale-[1.01]"
+                    className="w-full flex items-center justify-between mb-3 text-xs p-2 rounded glass border transition-all hover:scale-[1.01] font-mono"
                     style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}
                   >
-                    <div className="flex items-center gap-2">
-                      <List size={16} />
-                      <span>{pack.quests.length} quests included</span>
+                    <div className="flex items-center gap-1.5">
+                      <List size={14} />
+                      <span>{pack.quests.length} QUESTS</span>
                     </div>
-                    {expandedPack === pack.id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    {expandedPack === pack.id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                   </button>
 
                   {/* Quest List */}
@@ -202,9 +202,9 @@ export default function QuestPacks() {
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="overflow-hidden mb-4"
+                        className="overflow-hidden mb-3"
                       >
-                        <div className="max-h-80 overflow-y-auto space-y-2 p-3 rounded glass border" style={{ borderColor: 'var(--color-border)' }}>
+                        <div className="max-h-64 overflow-y-auto space-y-1.5 p-2 rounded glass border" style={{ borderColor: 'var(--color-border)' }}>
                           {pack.quests.map((packQuest) => {
                             const questTemplate = questTemplatesExtended.find(q => q.id === packQuest.templateId);
                             if (!questTemplate) return null;
@@ -217,12 +217,12 @@ export default function QuestPacks() {
                               >
                                 <div className="flex items-start justify-between gap-2">
                                   <div className="flex-1 min-w-0">
-                                    <div className="font-medium text-sm truncate" style={{ color: 'var(--color-text)' }}>
+                                    <div className="font-medium text-xs truncate" style={{ color: 'var(--color-text)' }}>
                                       {questTemplate.title}
                                     </div>
-                                    <div className="flex items-center gap-2 mt-1">
+                                    <div className="flex items-center gap-1.5 mt-0.5">
                                       <span
-                                        className="px-1.5 py-0.5 rounded text-xs font-medium capitalize"
+                                        className="px-1 py-0.5 rounded text-xs font-mono font-medium uppercase"
                                         style={{
                                           backgroundColor: `${getDifficultyColor(questTemplate.difficulty)}15`,
                                           color: getDifficultyColor(questTemplate.difficulty)
@@ -230,12 +230,12 @@ export default function QuestPacks() {
                                       >
                                         {questTemplate.difficulty}
                                       </span>
-                                      <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                                        {questTemplate.baseXP} XP
+                                      <span className="text-xs font-mono tabular-nums font-bold" style={{ color: 'var(--color-accent)' }}>
+                                        {questTemplate.baseXP}xp
                                       </span>
                                       {questTemplate.durationMinutes > 0 && (
-                                        <span className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
-                                          • {questTemplate.durationMinutes} min
+                                        <span className="text-xs font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
+                                          • {questTemplate.durationMinutes}m
                                         </span>
                                       )}
                                     </div>
@@ -252,13 +252,13 @@ export default function QuestPacks() {
                   {/* Action Button */}
                   <button
                     onClick={() => handleTogglePack(pack.id)}
-                    className={`w-full py-3 rounded-button font-semibold transition-all hover:scale-105 ${isActive ? 'hover:opacity-80' : ''}`}
+                    className={`w-full py-2 rounded font-mono font-semibold text-xs transition-all hover:scale-105 ${isActive ? 'hover:opacity-80' : ''}`}
                     style={{
-                      background: isActive ? 'var(--color-border)' : 'var(--gradient-primary)',
+                      background: isActive ? 'rgba(255, 255, 255, 0.03)' : 'var(--gradient-primary)',
                       color: isActive ? 'var(--color-text)' : 'white'
                     }}
                   >
-                    {isActive ? 'Deactivate Pack' : 'Activate Pack'}
+                    {isActive ? 'DEACTIVATE' : 'ACTIVATE'}
                   </button>
 
                   {pack.locked && (

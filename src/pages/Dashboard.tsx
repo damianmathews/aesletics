@@ -2,23 +2,54 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { getLevelProgress } from '../lib/xp';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TrendingUp, TrendingDown, Target, Zap, Flame, Trophy, Calendar, Filter, Package } from 'lucide-react';
-import { questPacks } from '../data/seed';
+import { questPacks, categories } from '../data/seed';
 
 export default function Dashboard() {
   const { profile, getStats, getTodaysQuests, activePacks } = useStore();
   const stats = getStats();
-  const todaysQuests = getTodaysQuests();
+  const allTodaysQuests = getTodaysQuests();
   const levelProgress = getLevelProgress(profile.totalXP);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showDateFilter, setShowDateFilter] = useState(false);
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
+  const [selectedDateRange, setSelectedDateRange] = useState<'today' | 'week' | 'month' | 'all'>('today');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const dateFilterRef = useRef<HTMLDivElement>(null);
+  const categoryFilterRef = useRef<HTMLDivElement>(null);
 
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Close dropdowns on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dateFilterRef.current && !dateFilterRef.current.contains(event.target as Node)) {
+        setShowDateFilter(false);
+      }
+      if (categoryFilterRef.current && !categoryFilterRef.current.contains(event.target as Node)) {
+        setShowCategoryFilter(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Filter quests based on date and category
+  const todaysQuests = allTodaysQuests.filter(quest => {
+    // Category filter
+    if (selectedCategory && quest.category !== selectedCategory) {
+      return false;
+    }
+    // Date filter is applied to "today's quests" which are already filtered by date
+    // For now we'll keep the same quests, but in a real app you'd filter by createdAt/completedAt
+    return true;
+  });
 
   // Calculate weekly change
   const lastWeekXP = stats.last14DaysXP.slice(0, 7).reduce((a, b) => a + b, 0);
@@ -78,49 +109,98 @@ export default function Dashboard() {
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <div className="relative">
+              <div className="relative" ref={dateFilterRef}>
                 <button
-                  onClick={() => setShowDateFilter(!showDateFilter)}
+                  onClick={() => {
+                    setShowDateFilter(!showDateFilter);
+                    setShowCategoryFilter(false); // Close other dropdown
+                  }}
                   className="px-4 py-2 rounded-lg glass border transition-all hover:scale-105 flex items-center gap-2"
                   style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
                 >
                   <Calendar size={16} />
-                  <span className="text-sm font-mono">Select Dates</span>
+                  <span className="text-sm font-mono">{selectedDateRange === 'today' ? 'Today' : selectedDateRange === 'week' ? 'This Week' : selectedDateRange === 'month' ? 'This Month' : 'All Time'}</span>
                 </button>
                 {showDateFilter && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
+                    onMouseLeave={() => setShowDateFilter(false)}
                     className="absolute right-0 mt-2 w-48 glass rounded-lg p-2 border z-10"
                     style={{ borderColor: 'var(--color-border)' }}
                   >
                     <Link to="/app/history" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text)' }}>View History</Link>
-                    <button className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text-secondary)' }}>Today</button>
-                    <button className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text-secondary)' }}>This Week</button>
-                    <button className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text-secondary)' }}>This Month</button>
+                    <button
+                      onClick={() => { setSelectedDateRange('today'); setShowDateFilter(false); }}
+                      className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm font-mono"
+                      style={{ color: selectedDateRange === 'today' ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}
+                    >
+                      Today
+                    </button>
+                    <button
+                      onClick={() => { setSelectedDateRange('week'); setShowDateFilter(false); }}
+                      className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm font-mono"
+                      style={{ color: selectedDateRange === 'week' ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}
+                    >
+                      This Week
+                    </button>
+                    <button
+                      onClick={() => { setSelectedDateRange('month'); setShowDateFilter(false); }}
+                      className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm font-mono"
+                      style={{ color: selectedDateRange === 'month' ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}
+                    >
+                      This Month
+                    </button>
+                    <button
+                      onClick={() => { setSelectedDateRange('all'); setShowDateFilter(false); }}
+                      className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm font-mono"
+                      style={{ color: selectedDateRange === 'all' ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}
+                    >
+                      All Time
+                    </button>
                   </motion.div>
                 )}
               </div>
-              <div className="relative">
+              <div className="relative" ref={categoryFilterRef}>
                 <button
-                  onClick={() => setShowCategoryFilter(!showCategoryFilter)}
+                  onClick={() => {
+                    setShowCategoryFilter(!showCategoryFilter);
+                    setShowDateFilter(false); // Close other dropdown
+                  }}
                   className="px-4 py-2 rounded-lg glass border transition-all hover:scale-105 flex items-center gap-2"
                   style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
                 >
                   <Filter size={16} />
-                  <span className="text-sm font-mono">Filter</span>
+                  <span className="text-sm font-mono">{selectedCategory ? categories.find(c => c.id === selectedCategory)?.name : 'All Categories'}</span>
                 </button>
                 {showCategoryFilter && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="absolute right-0 mt-2 w-48 glass rounded-lg p-2 border z-10"
+                    onMouseLeave={() => setShowCategoryFilter(false)}
+                    className="absolute right-0 mt-2 w-52 glass rounded-lg p-2 border z-10"
                     style={{ borderColor: 'var(--color-border)' }}
                   >
-                    <Link to="/app/quests" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text)' }}>All Quests</Link>
+                    <Link to="/app/quests" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text)' }}>View All Quests</Link>
                     <Link to="/app/packs" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text)' }}>Quest Packs</Link>
-                    <button className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text-secondary)' }}>By Difficulty</button>
-                    <button className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text-secondary)' }}>By Category</button>
+                    <div className="border-t my-2" style={{ borderColor: 'var(--color-border)' }} />
+                    <button
+                      onClick={() => { setSelectedCategory(null); setShowCategoryFilter(false); }}
+                      className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm font-mono"
+                      style={{ color: !selectedCategory ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}
+                    >
+                      All Categories
+                    </button>
+                    {categories.map(category => (
+                      <button
+                        key={category.id}
+                        onClick={() => { setSelectedCategory(category.id); setShowCategoryFilter(false); }}
+                        className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-xs"
+                        style={{ color: selectedCategory === category.id ? 'var(--color-accent)' : 'var(--color-text-secondary)' }}
+                      >
+                        {category.name}
+                      </button>
+                    ))}
                   </motion.div>
                 )}
               </div>

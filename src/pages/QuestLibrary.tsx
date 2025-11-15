@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { questTemplatesExtended, categories } from '../data/seed';
 import { useStore } from '../store/useStore';
 import Toast from '../components/Toast';
-import { Zap } from 'lucide-react';
 
 export default function QuestLibrary() {
   const { profile, addUserQuest } = useStore();
@@ -94,20 +93,41 @@ export default function QuestLibrary() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="font-display text-4xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Quest Library</h1>
-          <p className="mb-8" style={{ color: 'var(--color-text-secondary)' }}>Browse 150+ quests across all categories</p>
+      <main className="max-w-7xl mx-auto px-6 py-6">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-5">
+          <h1 className="font-display text-2xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>Quest Library</h1>
+          <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>{questTemplatesExtended.length} quests • 12 categories</p>
         </motion.div>
 
+        {/* Stats Grid */}
+        <div className="grid md:grid-cols-4 gap-4 mb-5">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-lg p-3 border" style={{ borderColor: 'var(--color-border)' }}>
+            <p className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>TOTAL QUESTS</p>
+            <h3 className="text-xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-text)' }}>{questTemplatesExtended.length}</h3>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="glass rounded-lg p-3 border" style={{ borderColor: 'var(--color-border)' }}>
+            <p className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>CATEGORIES</p>
+            <h3 className="text-xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-text)' }}>{categories.length}</h3>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-lg p-3 border" style={{ borderColor: 'var(--color-border)' }}>
+            <p className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>AVG XP</p>
+            <h3 className="text-xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-text)' }}>{Math.round(questTemplatesExtended.reduce((sum, q) => sum + q.baseXP, 0) / questTemplatesExtended.length)}</h3>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="glass rounded-lg p-3 border" style={{ borderColor: 'var(--color-border)' }}>
+            <p className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>FILTERED</p>
+            <h3 className="text-xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-text)' }}>{filteredQuests.length}</h3>
+          </motion.div>
+        </div>
+
         {/* Search */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mb-4">
           <input
             type="text"
             placeholder="Search quests..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-6 py-4 rounded-button glass border focus:outline-none focus:ring-2 transition-all"
+            className="w-full px-4 py-3 rounded-lg glass border focus:outline-none focus:ring-2 transition-all text-sm"
             style={{
               borderColor: 'var(--color-border)',
               color: 'var(--color-text)',
@@ -116,73 +136,67 @@ export default function QuestLibrary() {
         </motion.div>
 
         {/* Category Filters */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex flex-wrap gap-2 mb-8">
-          <button
-            onClick={() => setSelectedCategory(null)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all hover:scale-105 ${!selectedCategory ? 'shadow-lg' : ''}`}
-            style={{
-              background: !selectedCategory ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.05)',
-              color: !selectedCategory ? 'white' : 'var(--color-text)',
-            }}
-          >
-            All
-          </button>
-          {categories.map((category) => (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="mb-5">
+          <p className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>FILTER BY CATEGORY</p>
+          <div className="flex flex-wrap gap-2">
             <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all hover:scale-105 ${selectedCategory === category.id ? 'shadow-lg' : ''}`}
+              onClick={() => setSelectedCategory(null)}
+              className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 ${!selectedCategory ? 'shadow-lg' : ''}`}
               style={{
-                background: selectedCategory === category.id ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.05)',
-                color: selectedCategory === category.id ? 'white' : 'var(--color-text)',
+                background: !selectedCategory ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
+                color: !selectedCategory ? 'white' : 'var(--color-text)',
               }}
             >
-              {category.name}
+              ALL
             </button>
-          ))}
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 ${selectedCategory === category.id ? 'shadow-lg' : ''}`}
+                style={{
+                  background: selectedCategory === category.id ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
+                  color: selectedCategory === category.id ? 'white' : 'var(--color-text)',
+                }}
+              >
+                {category.name.toUpperCase()}
+              </button>
+            ))}
+          </div>
         </motion.div>
 
-        {/* Quest Count */}
-        <div className="mb-4 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-          Showing {filteredQuests.length} quest{filteredQuests.length !== 1 ? 's' : ''}
-        </div>
-
         {/* Quest Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredQuests.map((quest, index) => (
             <motion.div
               key={quest.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 * (index % 12) }}
-              className="glass rounded-card p-6 border hover:scale-[1.02] transition-all"
+              transition={{ delay: 0.02 * (index % 12) }}
+              className="glass rounded-lg p-4 border hover:scale-[1.01] transition-all"
               style={{ borderColor: 'var(--color-border)' }}
             >
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <span className="text-xs font-medium px-2 py-1 rounded capitalize" style={{ backgroundColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
-                    {quest.difficulty}
-                  </span>
-                </div>
-                <Zap size={28} style={{ color: 'var(--color-accent)' }} />
+              <div className="flex items-start justify-between mb-2">
+                <span className="text-xs font-medium font-mono px-2 py-0.5 rounded uppercase" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', color: 'var(--color-text-secondary)' }}>
+                  {quest.difficulty}
+                </span>
+                <span className="text-xs font-mono font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>{quest.baseXP} XP</span>
               </div>
 
-              <h3 className="font-display text-lg font-semibold mb-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
-              <p className="text-sm mb-4 line-clamp-2" style={{ color: 'var(--color-text-secondary)' }}>
+              <h3 className="font-display text-base font-semibold mb-1.5" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
+              <p className="text-xs mb-3 line-clamp-2" style={{ color: 'var(--color-text-secondary)' }}>
                 {quest.description}
               </p>
 
-              <div className="flex items-center justify-between text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
-                <span>{quest.durationMinutes}min</span>
-                <span>·</span>
-                <span className="capitalize">{quest.proof}</span>
-                <span>·</span>
-                <span className="font-semibold" style={{ color: 'var(--color-accent)' }}>{quest.baseXP} XP</span>
+              <div className="flex items-center gap-2 text-xs mb-3 font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
+                <span>{quest.durationMinutes}m</span>
+                <span>•</span>
+                <span className="uppercase">{quest.proof}</span>
               </div>
 
               <button
                 onClick={() => handleAddQuest(quest.id)}
-                className="w-full py-3 rounded-button font-semibold transition-all hover:scale-105 hover:shadow-lg"
+                className="w-full py-2 rounded font-semibold text-xs transition-all hover:scale-105"
                 style={{ background: 'var(--gradient-primary)', color: 'white' }}
               >
                 Add to Queue
