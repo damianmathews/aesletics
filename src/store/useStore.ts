@@ -139,7 +139,7 @@ export const useStore = create<StoreState>()(
 
       addUserQuest: (quest) =>
         set((state) => ({
-          userQuests: [...state.userQuests, quest],
+          userQuests: [quest, ...state.userQuests],
         })),
 
       removeUserQuest: (questId) =>
