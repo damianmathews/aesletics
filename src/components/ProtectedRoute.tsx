@@ -1,8 +1,11 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useStore } from '../store/useStore';
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
+  const { onboardingComplete } = useStore();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -17,6 +20,16 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // If user hasn't completed onboarding and not on onboarding page, redirect to onboarding
+  if (!onboardingComplete && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  // If user has completed onboarding and on onboarding page, redirect to app
+  if (onboardingComplete && location.pathname === '/onboarding') {
+    return <Navigate to="/app" replace />;
   }
 
   return <>{children}</>;

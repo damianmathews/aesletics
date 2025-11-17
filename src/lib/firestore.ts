@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from './firebase';
-import type { UserProfile, UserQuest, Completion, Settings } from '../types';
+import type { UserProfile, UserQuest, Completion, Settings, OnboardingData } from '../types';
 
 export interface UserData {
   profile: UserProfile;
@@ -8,6 +8,9 @@ export interface UserData {
   completions: Completion[];
   activePacks: string[];
   settings: Settings;
+  onboardingComplete?: boolean;
+  onboardingData?: OnboardingData | null;
+  showTutorial?: boolean;
   lastSynced: string;
 }
 

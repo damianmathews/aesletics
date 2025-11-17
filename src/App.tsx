@@ -3,10 +3,12 @@ import { useEffect } from 'react';
 import { useStore } from './store/useStore';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import TutorialOverlay from './components/TutorialOverlay';
 
 // Pages
 import Landing from './pages/Landing';
 import Auth from './pages/Auth';
+import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import QuestLibrary from './pages/QuestLibrary';
 import QuestDetail from './pages/QuestDetail';
@@ -37,6 +39,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
           <Route path="/app" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/app/quests" element={<ProtectedRoute><QuestLibrary /></ProtectedRoute>} />
           <Route path="/app/quests/:id" element={<ProtectedRoute><QuestDetail /></ProtectedRoute>} />
@@ -46,6 +49,7 @@ function App() {
           <Route path="/app/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <TutorialOverlay />
       </BrowserRouter>
     </AuthProvider>
   );

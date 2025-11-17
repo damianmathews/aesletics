@@ -8,6 +8,7 @@ import type {
   UserProfile,
   Settings,
   UserStats,
+  OnboardingData,
 } from '../types';
 import { calculateLevel, calculateStreak } from '../lib/xp';
 import { questTemplatesExtended } from '../data/seed';
@@ -18,6 +19,8 @@ interface StoreState extends AppState {
   initializeFromAuth: (displayName: string | null, email: string | null) => void;
   loadFromFirestore: (data: any) => void;
   completeOnboarding: () => void;
+  saveOnboardingData: (data: OnboardingData) => void;
+  setShowTutorial: (show: boolean) => void;
   addUserQuest: (quest: UserQuest) => void;
   removeUserQuest: (questId: string) => void;
   toggleQuestActive: (questId: string) => void;
@@ -63,6 +66,8 @@ export const useStore = create<StoreState>()(
       currentSeason: undefined,
       initialized: false,
       onboardingComplete: false,
+      onboardingData: null,
+      showTutorial: false,
 
       initialize: () => {
         const state = get();
@@ -119,11 +124,18 @@ export const useStore = create<StoreState>()(
           completions: data.completions || [],
           activePacks: data.activePacks || [],
           settings: data.settings || initialSettings,
+          onboardingComplete: data.onboardingComplete !== undefined ? data.onboardingComplete : false,
+          onboardingData: data.onboardingData || null,
+          showTutorial: data.showTutorial || false,
           initialized: true,
         });
       },
 
       completeOnboarding: () => set({ onboardingComplete: true }),
+
+      saveOnboardingData: (data) => set({ onboardingData: data }),
+
+      setShowTutorial: (show) => set({ showTutorial: show }),
 
       addUserQuest: (quest) =>
         set((state) => ({

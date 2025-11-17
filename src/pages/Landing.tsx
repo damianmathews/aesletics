@@ -158,7 +158,7 @@ export default function Landing() {
                   color: 'white',
                 }}
               >
-                <span className="relative z-10">Start Trial</span>
+                <span className="relative z-10">Get Started</span>
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
                      style={{ background: 'var(--gradient-secondary)' }} />
               </Link>

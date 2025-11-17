@@ -148,6 +148,13 @@ export interface Settings {
   weekStartsOn: number; // 0-6, Sunday = 0
 }
 
+export interface OnboardingData {
+  selectedCategories: string[];
+  experienceLevel: 'beginner' | 'intermediate' | 'advanced';
+  timeCommitment: '15-30' | '30-60' | '60+';
+  questPreferences: string[];
+}
+
 export interface AppState {
   profile: UserProfile;
   settings: Settings;
@@ -157,6 +164,8 @@ export interface AppState {
   currentSeason?: Season;
   initialized: boolean;
   onboardingComplete: boolean;
+  onboardingData: OnboardingData | null;
+  showTutorial: boolean;
 }
 
 // Filters for quest library

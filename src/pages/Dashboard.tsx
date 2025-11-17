@@ -279,7 +279,7 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Total XP - Large */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-6" data-tutorial="xp-display">
           <p className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>TOTAL XP</p>
           <div className="flex items-baseline gap-4">
             <h2 className="text-5xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>
@@ -477,7 +477,7 @@ export default function Dashboard() {
               </Link>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 gap-3">
+            <div className="grid md:grid-cols-2 gap-3" data-tutorial="quest-cards">
               {todaysQuests.map((quest, index) => {
                 // Check if quest belongs to any active pack
                 const questPack = questPacks.find(pack =>
