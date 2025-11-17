@@ -16,6 +16,7 @@ interface StoreState extends AppState {
   // Actions
   initialize: () => void;
   initializeFromAuth: (displayName: string | null, email: string | null) => void;
+  loadFromFirestore: (data: any) => void;
   completeOnboarding: () => void;
   addUserQuest: (quest: UserQuest) => void;
   removeUserQuest: (questId: string) => void;
@@ -108,6 +109,18 @@ export const useStore = create<StoreState>()(
             },
           }));
         }
+      },
+
+      loadFromFirestore: (data) => {
+        if (!data) return;
+        set({
+          profile: data.profile || initialProfile,
+          userQuests: data.userQuests || [],
+          completions: data.completions || [],
+          activePacks: data.activePacks || [],
+          settings: data.settings || initialSettings,
+          initialized: true,
+        });
       },
 
       completeOnboarding: () => set({ onboardingComplete: true }),
