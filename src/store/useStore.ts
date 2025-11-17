@@ -24,12 +24,20 @@ interface LevelUpData {
   totalXP: number;
 }
 
+interface DailyLoginData {
+  dayNumber: number;
+  xpBonus: number;
+  isNewStreak: boolean;
+}
+
 interface StoreState extends AppState {
   // Celebration modals
   showQuestCompleteModal: boolean;
   questCompleteData: QuestCompleteData | null;
   showLevelUpModal: boolean;
   levelUpData: LevelUpData | null;
+  showDailyLoginModal: boolean;
+  dailyLoginData: DailyLoginData | null;
 
   // Actions
   initialize: () => void;
@@ -48,6 +56,8 @@ interface StoreState extends AppState {
   deactivatePack: (packId: string) => void;
   closeQuestCompleteModal: () => void;
   closeLevelUpModal: () => void;
+  closeDailyLoginModal: () => void;
+  checkDailyLogin: () => void;
 
   // Computed
   getStats: () => UserStats;
@@ -64,6 +74,10 @@ const initialProfile: UserProfile = {
   longestStreak: 0,
   completedQuests: 0,
   badges: [],
+  lastLoginDate: undefined,
+  loginStreakDays: 0,
+  longestLoginStreak: 0,
+  streakFreezes: 0,
 };
 
 const initialSettings: Settings = {
@@ -91,6 +105,8 @@ export const useStore = create<StoreState>()(
       questCompleteData: null,
       showLevelUpModal: false,
       levelUpData: null,
+      showDailyLoginModal: false,
+      dailyLoginData: null,
 
       initialize: () => {
         const state = get();
@@ -273,6 +289,72 @@ export const useStore = create<StoreState>()(
           showLevelUpModal: false,
           levelUpData: null,
         }),
+
+      closeDailyLoginModal: () =>
+        set({
+          showDailyLoginModal: false,
+          dailyLoginData: null,
+        }),
+
+      checkDailyLogin: () => {
+        const state = get();
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+        // If already logged in today, don't show modal
+        if (state.profile.lastLoginDate === today) {
+          return;
+        }
+
+        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        const lastLogin = state.profile.lastLoginDate;
+
+        // Calculate new streak
+        let newLoginStreak = 1;
+        let isNewStreak = true;
+
+        if (lastLogin === yesterday) {
+          // Continued streak
+          newLoginStreak = state.profile.loginStreakDays + 1;
+          isNewStreak = false;
+        } else if (lastLogin && lastLogin !== today) {
+          // Streak broken, start over
+          newLoginStreak = 1;
+          isNewStreak = true;
+        }
+
+        // Calculate XP bonus based on day in 7-day cycle
+        const dayInCycle = ((newLoginStreak - 1) % 7) + 1;
+        const xpBonuses = [100, 150, 200, 300, 400, 600, 1000]; // Days 1-7
+        const xpBonus = xpBonuses[dayInCycle - 1];
+
+        // Award streak freeze every 7 days
+        const streakFreezesEarned = Math.floor(newLoginStreak / 7) - Math.floor((state.profile.loginStreakDays || 0) / 7);
+
+        // Update profile
+        set((state) => ({
+          profile: {
+            ...state.profile,
+            lastLoginDate: today,
+            loginStreakDays: newLoginStreak,
+            longestLoginStreak: Math.max(state.profile.longestLoginStreak || 0, newLoginStreak),
+            totalXP: state.profile.totalXP + xpBonus,
+            level: calculateLevel(state.profile.totalXP + xpBonus),
+            streakFreezes: (state.profile.streakFreezes || 0) + streakFreezesEarned,
+          },
+        }));
+
+        // Show daily login modal
+        setTimeout(() => {
+          set({
+            showDailyLoginModal: true,
+            dailyLoginData: {
+              dayNumber: dayInCycle,
+              xpBonus,
+              isNewStreak,
+            },
+          });
+        }, 500); // Small delay after page load
+      },
 
       getStats: (): UserStats => {
         const state = get();

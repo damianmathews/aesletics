@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import TutorialOverlay from './components/TutorialOverlay';
 import QuestCompleteModal from './components/QuestCompleteModal';
 import LevelUpModal from './components/LevelUpModal';
+import DailyLoginModal from './components/DailyLoginModal';
 
 // Pages
 import Landing from './pages/Landing';
@@ -23,17 +24,26 @@ function App() {
   const {
     initialize,
     settings,
+    profile,
     showQuestCompleteModal,
     questCompleteData,
     showLevelUpModal,
     levelUpData,
+    showDailyLoginModal,
+    dailyLoginData,
     closeQuestCompleteModal,
-    closeLevelUpModal
+    closeLevelUpModal,
+    closeDailyLoginModal,
+    checkDailyLogin
   } = useStore();
 
   useEffect(() => {
     initialize();
-  }, [initialize]);
+    // Check for daily login bonus after initialization
+    setTimeout(() => {
+      checkDailyLogin();
+    }, 1000);
+  }, [initialize, checkDailyLogin]);
 
   // Apply theme
   useEffect(() => {
@@ -76,6 +86,17 @@ function App() {
             newLevel={levelUpData.newLevel}
             totalXP={levelUpData.totalXP}
             onClose={closeLevelUpModal}
+          />
+        )}
+        {showDailyLoginModal && dailyLoginData && (
+          <DailyLoginModal
+            isOpen={showDailyLoginModal}
+            dayNumber={dailyLoginData.dayNumber}
+            xpBonus={dailyLoginData.xpBonus}
+            totalLoginStreak={profile.loginStreakDays}
+            isNewStreak={dailyLoginData.isNewStreak}
+            streakFreezesEarned={Math.floor(profile.loginStreakDays / 7) - Math.floor((profile.loginStreakDays - 1) / 7)}
+            onClose={closeDailyLoginModal}
           />
         )}
       </BrowserRouter>

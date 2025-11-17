@@ -138,6 +138,10 @@ export interface UserProfile {
   longestStreak: number;
   completedQuests: number;
   badges: string[]; // badge IDs
+  lastLoginDate?: string; // ISO date (YYYY-MM-DD)
+  loginStreakDays: number; // consecutive daily logins
+  longestLoginStreak: number;
+  streakFreezes: number; // Number of freeze items earned
 }
 
 export interface Settings {
