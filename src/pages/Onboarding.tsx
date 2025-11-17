@@ -6,7 +6,7 @@ import { generateRecommendedQuests } from '../lib/questRecommendations';
 import { categories } from '../data/seed';
 import {
   Dumbbell, Activity, Footprints, Zap, Sparkles, Brain, Shield, Heart,
-  Users, Mountain, Briefcase, Palette, ChevronLeft, ChevronRight, X,
+  Users, Mountain, Briefcase, Palette, ChevronLeft, ChevronRight,
   Weight, BookOpen, Smile, Pizza, TrendingUp, Lightbulb
 } from 'lucide-react';
 import type { OnboardingData } from '../types';
@@ -39,11 +39,6 @@ export default function Onboarding() {
   const [experienceLevel, setExperienceLevel] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner');
   const [timeCommitment, setTimeCommitment] = useState<'15-30' | '30-60' | '60+'>('30-60');
   const [questPreferences, setQuestPreferences] = useState<string[]>([]);
-
-  const handleSkip = () => {
-    completeOnboarding();
-    navigate('/app');
-  };
 
   const handleBack = () => {
     if (step > 1) setStep(step - 1);
@@ -112,16 +107,6 @@ export default function Onboarding() {
 
   return (
     <div className="min-h-screen bg-pattern-dots flex items-center justify-center px-6 py-12" style={{ backgroundColor: 'var(--color-bg)' }}>
-      {/* Skip button */}
-      <button
-        onClick={handleSkip}
-        className="fixed top-6 right-6 z-50 text-sm font-mono transition-opacity hover:opacity-70"
-        style={{ color: 'var(--color-text-tertiary)' }}
-      >
-        <X size={20} className="inline mr-1" />
-        SKIP
-      </button>
-
       {/* Progress indicator */}
       <div className="fixed top-8 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2">
         {[1, 2, 3, 4, 5].map((s) => (
