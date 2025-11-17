@@ -271,6 +271,24 @@ export default function Settings() {
           {/* Logout */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
             <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Account</h2>
+
+            {/* Reset Onboarding Button */}
+            <button
+              onClick={() => {
+                if (confirm('Reset onboarding? This will restart the tutorial and questionnaire.')) {
+                  const { saveOnboardingData, setShowTutorial } = useStore.getState();
+                  saveOnboardingData(null as any);
+                  setShowTutorial(false);
+                  useStore.setState({ onboardingComplete: false });
+                  navigate('/onboarding');
+                }
+              }}
+              className="w-full py-2.5 rounded font-semibold text-sm transition-all hover:scale-105 flex items-center justify-center gap-2 border mb-3"
+              style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
+            >
+              Reset Onboarding
+            </button>
+
             <button
               onClick={async () => {
                 await logout();
