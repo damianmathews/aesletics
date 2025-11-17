@@ -177,81 +177,68 @@ export default function TutorialOverlay() {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         maxWidth: '90vw',
+        maxHeight: 'calc(100vh - 32px)',
       };
     }
 
     const padding = 20;
     const tooltipWidth = 448; // max-w-md = 448px
-    const tooltipHeight = 200; // estimated height
+    const tooltipHeight = 250; // estimated height with buttons
     const margin = 16; // minimum margin from screen edge
 
-    let position: any = {};
+    let top = 0;
+    let left = 0;
 
+    // Calculate ideal position based on step.position
     switch (step.position) {
       case 'bottom':
-        // Try to position below target
-        const bottomSpace = window.innerHeight - targetRect.bottom - padding;
-        if (bottomSpace < tooltipHeight) {
-          // Not enough space below, position above instead
-          position.bottom = window.innerHeight - targetRect.top + padding;
-        } else {
-          position.top = targetRect.bottom + padding;
-        }
-
-        // Center horizontally, but keep on screen
-        let leftPos = targetRect.left + targetRect.width / 2;
-        if (leftPos - tooltipWidth / 2 < margin) {
-          leftPos = margin + tooltipWidth / 2;
-        } else if (leftPos + tooltipWidth / 2 > window.innerWidth - margin) {
-          leftPos = window.innerWidth - margin - tooltipWidth / 2;
-        }
-        position.left = leftPos;
-        position.transform = 'translateX(-50%)';
+        top = targetRect.bottom + padding;
+        left = targetRect.left + targetRect.width / 2 - tooltipWidth / 2;
         break;
 
       case 'top':
-        // Try to position above target
-        const topSpace = targetRect.top - padding;
-        if (topSpace < tooltipHeight) {
-          // Not enough space above, position below instead
-          position.top = targetRect.bottom + padding;
-        } else {
-          position.bottom = window.innerHeight - targetRect.top + padding;
-        }
-
-        // Center horizontally, but keep on screen
-        let leftPosTop = targetRect.left + targetRect.width / 2;
-        if (leftPosTop - tooltipWidth / 2 < margin) {
-          leftPosTop = margin + tooltipWidth / 2;
-        } else if (leftPosTop + tooltipWidth / 2 > window.innerWidth - margin) {
-          leftPosTop = window.innerWidth - margin - tooltipWidth / 2;
-        }
-        position.left = leftPosTop;
-        position.transform = 'translateX(-50%)';
+        top = targetRect.top - tooltipHeight - padding;
+        left = targetRect.left + targetRect.width / 2 - tooltipWidth / 2;
         break;
 
       case 'left':
-        position.top = Math.max(margin, Math.min(targetRect.top + targetRect.height / 2, window.innerHeight - margin));
-        position.right = window.innerWidth - targetRect.left + padding;
-        position.transform = 'translateY(-50%)';
+        top = targetRect.top + targetRect.height / 2 - tooltipHeight / 2;
+        left = targetRect.left - tooltipWidth - padding;
         break;
 
       case 'right':
-        position.top = Math.max(margin, Math.min(targetRect.top + targetRect.height / 2, window.innerHeight - margin));
-        position.left = targetRect.right + padding;
-        position.transform = 'translateY(-50%)';
+        top = targetRect.top + targetRect.height / 2 - tooltipHeight / 2;
+        left = targetRect.right + padding;
         break;
-
-      default:
-        position = {
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-        };
     }
 
-    position.maxWidth = '90vw';
-    return position;
+    // Force tooltip to stay on screen with margins
+    // Constrain horizontally
+    if (left < margin) {
+      left = margin;
+    } else if (left + tooltipWidth > window.innerWidth - margin) {
+      left = window.innerWidth - tooltipWidth - margin;
+    }
+
+    // Constrain vertically
+    if (top < margin) {
+      top = margin;
+    } else if (top + tooltipHeight > window.innerHeight - margin) {
+      top = window.innerHeight - tooltipHeight - margin;
+    }
+
+    // Ensure top is never negative
+    top = Math.max(margin, top);
+    left = Math.max(margin, left);
+
+    return {
+      top: `${top}px`,
+      left: `${left}px`,
+      transform: 'none',
+      maxWidth: `${Math.min(tooltipWidth, window.innerWidth - 2 * margin)}px`,
+      maxHeight: `${window.innerHeight - 2 * margin}px`,
+      overflowY: 'auto' as const,
+    };
   };
 
   return (
