@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, User } from 'lucide-react';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -22,7 +23,7 @@ export default function Auth() {
       if (isLogin) {
         await login(email, password);
       } else {
-        await signup(email, password);
+        await signup(email, password, fullName);
       }
       navigate('/app');
     } catch (err: any) {
@@ -72,6 +73,29 @@ export default function Auth() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4 mb-6">
+            {!isLogin && (
+              <div>
+                <label className="block text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                  FULL NAME
+                </label>
+                <div className="relative">
+                  <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-text-tertiary)' }} />
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="John Doe"
+                    required
+                    className="w-full pl-10 pr-4 py-3 rounded-lg glass border focus:outline-none focus:ring-2 transition-all"
+                    style={{
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text)',
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
             <div>
               <label className="block text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
                 EMAIL

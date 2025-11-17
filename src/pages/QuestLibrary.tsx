@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { questTemplatesExtended, categories } from '../data/seed';
 import { useStore } from '../store/useStore';
 import Toast from '../components/Toast';
-import { Menu, X, Dumbbell, Activity, Footprints, Zap, Sparkles, Brain, Shield, Heart, Users, Mountain, Briefcase, Palette, Plus } from 'lucide-react';
+import { Menu, X, Dumbbell, Activity, Footprints, Zap, Sparkles, Brain, Shield, Heart, Users, Mountain, Briefcase, Palette, Plus, Check } from 'lucide-react';
 
 const getCategoryIcon = (categoryId: string) => {
   const iconMap: Record<string, React.ReactNode> = {
@@ -32,6 +32,7 @@ export default function QuestLibrary() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState({ title: '', subtitle: '' });
+  const [addedQuests, setAddedQuests] = useState<Set<string>>(new Set());
 
   const filteredQuests = questTemplatesExtended.filter((quest) => {
     const matchesSearch = quest.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -68,6 +69,16 @@ export default function QuestLibrary() {
     };
 
     addUserQuest(newQuest);
+
+    // Show checkmark animation
+    setAddedQuests(prev => new Set(prev).add(templateId));
+    setTimeout(() => {
+      setAddedQuests(prev => {
+        const next = new Set(prev);
+        next.delete(templateId);
+        return next;
+      });
+    }, 1500);
 
     // Show satisfying confirmation with benefit-focused messaging
     setToastMessage({
@@ -270,10 +281,33 @@ export default function QuestLibrary() {
 
               <button
                 onClick={() => handleAddQuest(quest.id)}
-                className="absolute bottom-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:scale-110"
+                disabled={addedQuests.has(quest.id)}
+                className="absolute bottom-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:scale-110 disabled:cursor-default"
                 style={{ background: 'var(--gradient-primary)', color: 'white' }}
               >
-                <Plus size={18} />
+                <AnimatePresence mode="wait">
+                  {addedQuests.has(quest.id) ? (
+                    <motion.div
+                      key="check"
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      exit={{ scale: 0, rotate: 180 }}
+                      transition={{ duration: 0.3, type: "spring" }}
+                    >
+                      <Check size={18} />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="plus"
+                      initial={{ scale: 0, rotate: 180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      exit={{ scale: 0, rotate: -180 }}
+                      transition={{ duration: 0.3, type: "spring" }}
+                    >
+                      <Plus size={18} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </button>
             </motion.div>
           ))}

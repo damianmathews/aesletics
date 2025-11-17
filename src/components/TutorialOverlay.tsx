@@ -87,13 +87,19 @@ export default function TutorialOverlay() {
       if (location.pathname !== targetPath) {
         setIsNavigating(true);
         navigate(targetPath!);
-        // Wait for navigation to complete before showing spotlight
+        // Wait longer for navigation and layout to complete
         setTimeout(() => {
           setIsNavigating(false);
+          // Multiple recalculation attempts to ensure accurate positioning
           updateTargetPosition();
-        }, 300);
+          setTimeout(updateTargetPosition, 100);
+          setTimeout(updateTargetPosition, 300);
+        }, 500);
       } else {
+        // Even on same page, recalculate with delays
         updateTargetPosition();
+        setTimeout(updateTargetPosition, 100);
+        setTimeout(updateTargetPosition, 300);
       }
     }
   }, [currentStep, showTutorial, navigate, location]);
@@ -101,18 +107,36 @@ export default function TutorialOverlay() {
   useEffect(() => {
     if (showTutorial && !isNavigating) {
       updateTargetPosition();
-      window.addEventListener('resize', updateTargetPosition);
-      return () => window.removeEventListener('resize', updateTargetPosition);
+
+      // Recalculate on scroll and resize
+      const handleRecalculate = () => {
+        requestAnimationFrame(updateTargetPosition);
+      };
+
+      window.addEventListener('resize', handleRecalculate);
+      window.addEventListener('scroll', handleRecalculate, true); // true = capture phase, catches all scrolls
+
+      return () => {
+        window.removeEventListener('resize', handleRecalculate);
+        window.removeEventListener('scroll', handleRecalculate, true);
+      };
     }
   }, [showTutorial, currentStep, isNavigating]);
 
   const updateTargetPosition = () => {
     const step = tutorialSteps[currentStep];
     if (step.target) {
-      const element = document.querySelector(step.target);
-      if (element) {
-        setTargetRect(element.getBoundingClientRect());
-      }
+      // Use requestAnimationFrame to ensure layout is complete
+      requestAnimationFrame(() => {
+        const element = document.querySelector(step.target!);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          // Only update if rect has actual dimensions (element is rendered)
+          if (rect.width > 0 && rect.height > 0) {
+            setTargetRect(rect);
+          }
+        }
+      });
     } else {
       setTargetRect(null);
     }
@@ -145,49 +169,89 @@ export default function TutorialOverlay() {
       }
     : null;
 
-  // Calculate tooltip position
+  // Calculate tooltip position (keep on screen)
   const getTooltipPosition = () => {
     if (!targetRect || step.position === 'center') {
       return {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
+        maxWidth: '90vw',
       };
     }
 
     const padding = 20;
+    const tooltipWidth = 448; // max-w-md = 448px
+    const tooltipHeight = 200; // estimated height
+    const margin = 16; // minimum margin from screen edge
+
+    let position: any = {};
+
     switch (step.position) {
       case 'bottom':
-        return {
-          top: targetRect.bottom + padding,
-          left: targetRect.left + targetRect.width / 2,
-          transform: 'translateX(-50%)',
-        };
+        // Try to position below target
+        const bottomSpace = window.innerHeight - targetRect.bottom - padding;
+        if (bottomSpace < tooltipHeight) {
+          // Not enough space below, position above instead
+          position.bottom = window.innerHeight - targetRect.top + padding;
+        } else {
+          position.top = targetRect.bottom + padding;
+        }
+
+        // Center horizontally, but keep on screen
+        let leftPos = targetRect.left + targetRect.width / 2;
+        if (leftPos - tooltipWidth / 2 < margin) {
+          leftPos = margin + tooltipWidth / 2;
+        } else if (leftPos + tooltipWidth / 2 > window.innerWidth - margin) {
+          leftPos = window.innerWidth - margin - tooltipWidth / 2;
+        }
+        position.left = leftPos;
+        position.transform = 'translateX(-50%)';
+        break;
+
       case 'top':
-        return {
-          bottom: window.innerHeight - targetRect.top + padding,
-          left: targetRect.left + targetRect.width / 2,
-          transform: 'translateX(-50%)',
-        };
+        // Try to position above target
+        const topSpace = targetRect.top - padding;
+        if (topSpace < tooltipHeight) {
+          // Not enough space above, position below instead
+          position.top = targetRect.bottom + padding;
+        } else {
+          position.bottom = window.innerHeight - targetRect.top + padding;
+        }
+
+        // Center horizontally, but keep on screen
+        let leftPosTop = targetRect.left + targetRect.width / 2;
+        if (leftPosTop - tooltipWidth / 2 < margin) {
+          leftPosTop = margin + tooltipWidth / 2;
+        } else if (leftPosTop + tooltipWidth / 2 > window.innerWidth - margin) {
+          leftPosTop = window.innerWidth - margin - tooltipWidth / 2;
+        }
+        position.left = leftPosTop;
+        position.transform = 'translateX(-50%)';
+        break;
+
       case 'left':
-        return {
-          top: targetRect.top + targetRect.height / 2,
-          right: window.innerWidth - targetRect.left + padding,
-          transform: 'translateY(-50%)',
-        };
+        position.top = Math.max(margin, Math.min(targetRect.top + targetRect.height / 2, window.innerHeight - margin));
+        position.right = window.innerWidth - targetRect.left + padding;
+        position.transform = 'translateY(-50%)';
+        break;
+
       case 'right':
-        return {
-          top: targetRect.top + targetRect.height / 2,
-          left: targetRect.right + padding,
-          transform: 'translateY(-50%)',
-        };
+        position.top = Math.max(margin, Math.min(targetRect.top + targetRect.height / 2, window.innerHeight - margin));
+        position.left = targetRect.right + padding;
+        position.transform = 'translateY(-50%)';
+        break;
+
       default:
-        return {
+        position = {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
         };
     }
+
+    position.maxWidth = '90vw';
+    return position;
   };
 
   return (
