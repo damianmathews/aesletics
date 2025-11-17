@@ -4,6 +4,8 @@ import { useStore } from './store/useStore';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import TutorialOverlay from './components/TutorialOverlay';
+import QuestCompleteModal from './components/QuestCompleteModal';
+import LevelUpModal from './components/LevelUpModal';
 
 // Pages
 import Landing from './pages/Landing';
@@ -18,7 +20,16 @@ import Leaderboard from './pages/Leaderboard';
 import QuestPacks from './pages/QuestPacks';
 
 function App() {
-  const { initialize, settings } = useStore();
+  const {
+    initialize,
+    settings,
+    showQuestCompleteModal,
+    questCompleteData,
+    showLevelUpModal,
+    levelUpData,
+    closeQuestCompleteModal,
+    closeLevelUpModal
+  } = useStore();
 
   useEffect(() => {
     initialize();
@@ -50,6 +61,23 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <TutorialOverlay />
+        {showQuestCompleteModal && questCompleteData && (
+          <QuestCompleteModal
+            isOpen={showQuestCompleteModal}
+            questTitle={questCompleteData.questTitle}
+            xpEarned={questCompleteData.xpEarned}
+            streakBonus={questCompleteData.streakBonus}
+            onClose={closeQuestCompleteModal}
+          />
+        )}
+        {showLevelUpModal && levelUpData && (
+          <LevelUpModal
+            isOpen={showLevelUpModal}
+            newLevel={levelUpData.newLevel}
+            totalXP={levelUpData.totalXP}
+            onClose={closeLevelUpModal}
+          />
+        )}
       </BrowserRouter>
     </AuthProvider>
   );

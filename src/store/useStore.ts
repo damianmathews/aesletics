@@ -13,7 +13,24 @@ import type {
 import { calculateLevel, calculateStreak } from '../lib/xp';
 import { questTemplatesExtended } from '../data/seed';
 
+interface QuestCompleteData {
+  questTitle: string;
+  xpEarned: number;
+  streakBonus: number;
+}
+
+interface LevelUpData {
+  newLevel: number;
+  totalXP: number;
+}
+
 interface StoreState extends AppState {
+  // Celebration modals
+  showQuestCompleteModal: boolean;
+  questCompleteData: QuestCompleteData | null;
+  showLevelUpModal: boolean;
+  levelUpData: LevelUpData | null;
+
   // Actions
   initialize: () => void;
   initializeFromAuth: (displayName: string | null, email: string | null) => void;
@@ -29,6 +46,8 @@ interface StoreState extends AppState {
   updateProfile: (profile: Partial<UserProfile>) => void;
   activatePack: (packId: string) => void;
   deactivatePack: (packId: string) => void;
+  closeQuestCompleteModal: () => void;
+  closeLevelUpModal: () => void;
 
   // Computed
   getStats: () => UserStats;
@@ -68,6 +87,10 @@ export const useStore = create<StoreState>()(
       onboardingComplete: false,
       onboardingData: null,
       showTutorial: false,
+      showQuestCompleteModal: false,
+      questCompleteData: null,
+      showLevelUpModal: false,
+      levelUpData: null,
 
       initialize: () => {
         const state = get();
@@ -166,9 +189,41 @@ export const useStore = create<StoreState>()(
 
         set((state) => {
           const newCompletions = [...state.completions, newCompletion];
+          const oldLevel = state.profile.level;
           const newTotalXP = state.profile.totalXP + completion.xp;
           const newLevel = calculateLevel(newTotalXP);
           const streakData = calculateStreak(newCompletions);
+          const didLevelUp = newLevel > oldLevel;
+
+          // Calculate streak bonus amount if applicable
+          const streakBonusAmount = completion.streakBonus && state.profile.currentStreak > 0
+            ? Math.floor(completion.xp * (Math.min(state.profile.currentStreak * 0.02, 0.3) / (1 + Math.min(state.profile.currentStreak * 0.02, 0.3))))
+            : 0;
+
+          // Show quest complete modal
+          setTimeout(() => {
+            set({
+              showQuestCompleteModal: true,
+              questCompleteData: {
+                questTitle: completion.questTitle,
+                xpEarned: completion.xp - streakBonusAmount,
+                streakBonus: streakBonusAmount,
+              },
+            });
+
+            // If leveled up, show level up modal after quest complete modal closes
+            if (didLevelUp) {
+              setTimeout(() => {
+                set({
+                  showLevelUpModal: true,
+                  levelUpData: {
+                    newLevel,
+                    totalXP: newTotalXP,
+                  },
+                });
+              }, 3200); // Show after quest complete modal (3s) + small delay
+            }
+          }, 100);
 
           return {
             completions: newCompletions,
@@ -206,6 +261,18 @@ export const useStore = create<StoreState>()(
         set((state) => ({
           activePacks: state.activePacks.filter((id) => id !== packId),
         })),
+
+      closeQuestCompleteModal: () =>
+        set({
+          showQuestCompleteModal: false,
+          questCompleteData: null,
+        }),
+
+      closeLevelUpModal: () =>
+        set({
+          showLevelUpModal: false,
+          levelUpData: null,
+        }),
 
       getStats: (): UserStats => {
         const state = get();
