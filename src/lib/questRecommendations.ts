@@ -97,7 +97,11 @@ export function generateRecommendedQuests(data: OnboardingData): UserQuest[] {
     durationMinutes: template.durationMinutes,
     proof: template.proof,
     baseXP: template.baseXP,
-    schedule: { type: template.recurrence },
+    schedule: {
+      type: template.recurrence,
+      // For weekly quests, default to all days so they always show
+      ...(template.recurrence === 'weekly' && { daysOfWeek: [0, 1, 2, 3, 4, 5, 6] }),
+    },
     equipment: template.equipment,
     tags: template.tags,
     safety: template.safety,

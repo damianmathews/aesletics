@@ -89,7 +89,11 @@ export const useStore = create<StoreState>()(
                 durationMinutes: template.durationMinutes,
                 proof: template.proof,
                 baseXP: template.baseXP,
-                schedule: { type: template.recurrence },
+                schedule: {
+                  type: template.recurrence,
+                  // For weekly quests, default to all days so they always show
+                  ...(template.recurrence === 'weekly' && { daysOfWeek: [0, 1, 2, 3, 4, 5, 6] }),
+                },
                 equipment: template.equipment,
                 tags: template.tags,
                 safety: template.safety,
@@ -289,7 +293,13 @@ export const useStore = create<StoreState>()(
         return state.userQuests.filter((q) => {
           if (!q.active) return false;
           if (q.schedule.type === 'daily') return true;
-          if (q.schedule.type === 'weekly' && q.schedule.daysOfWeek) {
+          if (q.schedule.type === 'once') return true; // One-time quests always show
+          if (q.schedule.type === 'program') return true; // Program quests always show
+          if (q.schedule.type === 'weekly') {
+            // If no daysOfWeek specified, show every day
+            if (!q.schedule.daysOfWeek || q.schedule.daysOfWeek.length === 0) {
+              return true;
+            }
             return q.schedule.daysOfWeek.includes(today);
           }
           return false;
