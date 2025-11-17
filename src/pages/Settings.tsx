@@ -1,12 +1,15 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
+import { useAuth } from '../contexts/AuthContext';
 import { exportData, importData } from '../lib/storage';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
 
 export default function Settings() {
   const { profile, settings, updateSettings, updateProfile } = useStore();
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
@@ -258,8 +261,27 @@ export default function Settings() {
               <div className="mt-3 pt-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
                 <p className="text-xs font-mono">Member since: {new Date(profile.joinedAt).toLocaleDateString()}</p>
                 <p className="text-xs font-mono">Longest streak: {profile.longestStreak} days</p>
+                {user && (
+                  <p className="text-xs font-mono">Signed in as: {user.email}</p>
+                )}
               </div>
             </div>
+          </motion.div>
+
+          {/* Logout */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
+            <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Account</h2>
+            <button
+              onClick={async () => {
+                await logout();
+                navigate('/');
+              }}
+              className="w-full py-2.5 rounded font-semibold text-sm transition-all hover:scale-105 flex items-center justify-center gap-2 border"
+              style={{ borderColor: 'var(--color-error)', color: 'var(--color-error)' }}
+            >
+              <LogOut size={16} />
+              Sign Out
+            </button>
           </motion.div>
         </div>
       </main>

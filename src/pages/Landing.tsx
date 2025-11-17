@@ -151,7 +151,7 @@ export default function Landing() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
-                to="/app"
+                to="/auth"
                 className="group px-8 py-4 rounded-lg font-display font-semibold text-lg transition-all hover:scale-105 hover:shadow-2xl relative overflow-hidden"
                 style={{
                   background: 'var(--gradient-primary)',
@@ -354,7 +354,7 @@ export default function Landing() {
             No credit card. No excuses.
           </p>
           <Link
-            to="/app"
+            to="/auth"
             className="inline-block px-12 py-5 rounded-lg font-display font-bold text-xl transition-all hover:scale-105 hover:shadow-2xl"
             style={{
               background: 'var(--gradient-primary)',
@@ -380,7 +380,7 @@ export default function Landing() {
               </span>
             </div>
             <div className="flex gap-6">
-              <Link to="/app" className="hover:opacity-70 transition-opacity font-mono text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              <Link to="/auth" className="hover:opacity-70 transition-opacity font-mono text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                 App
               </Link>
               <Link to="/app/quests" className="hover:opacity-70 transition-opacity font-mono text-sm" style={{ color: 'var(--color-text-secondary)' }}>
