@@ -1,9 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useStore } from './store/useStore';
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Pages
 import Landing from './pages/Landing';
+import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
 import QuestLibrary from './pages/QuestLibrary';
 import QuestDetail from './pages/QuestDetail';
@@ -29,19 +32,22 @@ function App() {
   }, [settings.theme]);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/app" element={<Dashboard />} />
-        <Route path="/app/quests" element={<QuestLibrary />} />
-        <Route path="/app/quests/:id" element={<QuestDetail />} />
-        <Route path="/app/history" element={<History />} />
-        <Route path="/app/leaderboard" element={<Leaderboard />} />
-        <Route path="/app/packs" element={<QuestPacks />} />
-        <Route path="/app/settings" element={<Settings />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/app" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/app/quests" element={<ProtectedRoute><QuestLibrary /></ProtectedRoute>} />
+          <Route path="/app/quests/:id" element={<ProtectedRoute><QuestDetail /></ProtectedRoute>} />
+          <Route path="/app/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+          <Route path="/app/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
+          <Route path="/app/packs" element={<ProtectedRoute><QuestPacks /></ProtectedRoute>} />
+          <Route path="/app/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
