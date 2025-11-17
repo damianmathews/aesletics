@@ -4,7 +4,25 @@ import { motion } from 'framer-motion';
 import { questTemplatesExtended, categories } from '../data/seed';
 import { useStore } from '../store/useStore';
 import Toast from '../components/Toast';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Dumbbell, Activity, Footprints, Zap, Sparkles, Brain, Shield, Heart, Users, Mountain, Briefcase, Palette, Plus } from 'lucide-react';
+
+const getCategoryIcon = (categoryId: string) => {
+  const iconMap: Record<string, React.ReactNode> = {
+    'fitness-strength': <Dumbbell size={14} />,
+    'conditioning': <Activity size={14} />,
+    'mobility': <Footprints size={14} />,
+    'athletics-skill': <Zap size={14} />,
+    'body-aesthetics': <Sparkles size={14} />,
+    'intelligence': <Brain size={14} />,
+    'discipline': <Shield size={14} />,
+    'mental': <Heart size={14} />,
+    'social-leadership': <Users size={14} />,
+    'adventure-outdoors': <Mountain size={14} />,
+    'finance-career': <Briefcase size={14} />,
+    'creativity': <Palette size={14} />,
+  };
+  return iconMap[categoryId] || null;
+};
 
 export default function QuestLibrary() {
   const { profile, addUserQuest } = useStore();
@@ -171,26 +189,6 @@ export default function QuestLibrary() {
           <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>{questTemplatesExtended.length} quests • 12 categories</p>
         </motion.div>
 
-        {/* Stats Grid */}
-        <div className="grid md:grid-cols-4 gap-4 mb-5">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-lg p-3 border" style={{ borderColor: 'var(--color-border)' }}>
-            <p className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>TOTAL QUESTS</p>
-            <h3 className="text-xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-text)' }}>{questTemplatesExtended.length}</h3>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="glass rounded-lg p-3 border" style={{ borderColor: 'var(--color-border)' }}>
-            <p className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>CATEGORIES</p>
-            <h3 className="text-xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-text)' }}>{categories.length}</h3>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-lg p-3 border" style={{ borderColor: 'var(--color-border)' }}>
-            <p className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>AVG XP</p>
-            <h3 className="text-xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-text)' }}>{Math.round(questTemplatesExtended.reduce((sum, q) => sum + q.baseXP, 0) / questTemplatesExtended.length)}</h3>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="glass rounded-lg p-3 border" style={{ borderColor: 'var(--color-border)' }}>
-            <p className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>FILTERED</p>
-            <h3 className="text-xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-text)' }}>{filteredQuests.length}</h3>
-          </motion.div>
-        </div>
-
         {/* Search */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mb-4">
           <input
@@ -212,7 +210,7 @@ export default function QuestLibrary() {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setSelectedCategory(null)}
-              className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 ${!selectedCategory ? 'shadow-lg' : ''}`}
+              className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 flex items-center gap-1.5 ${!selectedCategory ? 'shadow-lg' : ''}`}
               style={{
                 background: !selectedCategory ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
                 color: !selectedCategory ? 'white' : 'var(--color-text)',
@@ -224,12 +222,13 @@ export default function QuestLibrary() {
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 ${selectedCategory === category.id ? 'shadow-lg' : ''}`}
+                className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 flex items-center gap-1.5 ${selectedCategory === category.id ? 'shadow-lg' : ''}`}
                 style={{
                   background: selectedCategory === category.id ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
                   color: selectedCategory === category.id ? 'white' : 'var(--color-text)',
                 }}
               >
+                {getCategoryIcon(category.id)}
                 {category.name.toUpperCase()}
               </button>
             ))}
@@ -244,7 +243,7 @@ export default function QuestLibrary() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.02 * (index % 12) }}
-              className="glass rounded-lg p-4 border hover:scale-[1.01] transition-all"
+              className="glass rounded-lg p-4 border hover:scale-[1.01] transition-all relative"
               style={{ borderColor: 'var(--color-border)' }}
             >
               <div className="flex items-start justify-between mb-2">
@@ -259,7 +258,7 @@ export default function QuestLibrary() {
                 {quest.description}
               </p>
 
-              <div className="flex items-center gap-2 text-xs mb-3 font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
+              <div className="flex items-center gap-2 text-xs font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
                 <span>{quest.durationMinutes}m</span>
                 <span>•</span>
                 <span className="uppercase">{quest.proof}</span>
@@ -267,10 +266,10 @@ export default function QuestLibrary() {
 
               <button
                 onClick={() => handleAddQuest(quest.id)}
-                className="w-full py-2 rounded font-semibold text-xs transition-all hover:scale-105"
+                className="absolute bottom-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:scale-110"
                 style={{ background: 'var(--gradient-primary)', color: 'white' }}
               >
-                Add to Queue
+                <Plus size={18} />
               </button>
             </motion.div>
           ))}
