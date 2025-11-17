@@ -6,7 +6,8 @@ import { generateRecommendedQuests } from '../lib/questRecommendations';
 import { categories } from '../data/seed';
 import {
   Dumbbell, Activity, Footprints, Zap, Sparkles, Brain, Shield, Heart,
-  Users, Mountain, Briefcase, Palette, ChevronLeft, ChevronRight, X
+  Users, Mountain, Briefcase, Palette, ChevronLeft, ChevronRight, X,
+  Weight, BookOpen, Smile, Pizza, TrendingUp, Lightbulb
 } from 'lucide-react';
 import type { OnboardingData } from '../types';
 
@@ -126,9 +127,10 @@ export default function Onboarding() {
         {[1, 2, 3, 4, 5].map((s) => (
           <div
             key={s}
-            className="h-1 w-12 rounded-full transition-all"
+            className="h-1.5 w-14 rounded-full transition-all"
             style={{
-              background: s <= step ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.1)',
+              background: s <= step ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.2)',
+              boxShadow: s <= step ? '0 0 8px rgba(167, 139, 250, 0.5)' : 'none',
             }}
           />
         ))}
@@ -331,21 +333,21 @@ export default function Onboarding() {
 
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { value: 'Bodyweight Training', label: 'Bodyweight Training', icon: '💪' },
-                  { value: 'Gym Workouts', label: 'Gym Workouts', icon: '🏋️' },
-                  { value: 'Learning & Reading', label: 'Learning & Reading', icon: '📚' },
-                  { value: 'Mindfulness', label: 'Mindfulness', icon: '🧘' },
-                  { value: 'Cardio & Endurance', label: 'Cardio & Endurance', icon: '🏃' },
-                  { value: 'Nutrition & Health', label: 'Nutrition & Health', icon: '🍎' },
-                  { value: 'Career & Finance', label: 'Career & Finance', icon: '💼' },
-                  { value: 'Creative Projects', label: 'Creative Projects', icon: '🎨' },
+                  { value: 'Bodyweight Training', label: 'Bodyweight Training', icon: <Dumbbell size={28} /> },
+                  { value: 'Gym Workouts', label: 'Gym Workouts', icon: <Weight size={28} /> },
+                  { value: 'Learning & Reading', label: 'Learning & Reading', icon: <BookOpen size={28} /> },
+                  { value: 'Mindfulness', label: 'Mindfulness', icon: <Smile size={28} /> },
+                  { value: 'Cardio & Endurance', label: 'Cardio & Endurance', icon: <Activity size={28} /> },
+                  { value: 'Nutrition & Health', label: 'Nutrition & Health', icon: <Pizza size={28} /> },
+                  { value: 'Career & Finance', label: 'Career & Finance', icon: <TrendingUp size={28} /> },
+                  { value: 'Creative Projects', label: 'Creative Projects', icon: <Lightbulb size={28} /> },
                 ].map((option) => {
                   const isSelected = questPreferences.includes(option.value);
                   return (
                     <button
                       key={option.value}
                       onClick={() => togglePreference(option.value)}
-                      className={`p-4 rounded-lg border transition-all hover:scale-105 text-center ${
+                      className={`p-4 rounded-lg border transition-all hover:scale-105 flex flex-col items-center gap-2 text-center ${
                         isSelected ? 'shadow-lg' : ''
                       }`}
                       style={{
@@ -354,7 +356,7 @@ export default function Onboarding() {
                         color: isSelected ? 'white' : 'var(--color-text)',
                       }}
                     >
-                      <div className="text-2xl mb-2">{option.icon}</div>
+                      {option.icon}
                       <div className="text-sm font-medium">{option.label}</div>
                     </button>
                   );
