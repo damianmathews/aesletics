@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight } from 'lucide-react';
 import { useStore } from '../store/useStore';
@@ -8,40 +9,102 @@ interface TutorialStep {
   description: string;
   target?: string; // CSS selector for element to highlight
   position?: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  navigateTo?: string; // Path to navigate to before showing this step
+  buttonText?: string; // Custom button text
 }
 
 const tutorialSteps: TutorialStep[] = [
   {
-    title: 'Welcome to your command center!',
-    description: 'Track your XP, level, and streak here. Your custom quests are already added based on your goals.',
+    title: 'Welcome to your Dashboard!',
+    description: 'This is your command center. Track your total XP, current level, and streak all in one place.',
     target: '[data-tutorial="xp-display"]',
     position: 'bottom',
+    navigateTo: '/app',
   },
   {
-    title: 'These are your active quests',
-    description: 'Tap any quest card to start and submit proof when complete. You\'ll earn XP and build your streak!',
+    title: 'Your active quests',
+    description: 'These are the quests in your queue. Tap any card to view details and submit proof when complete.',
     target: '[data-tutorial="quest-cards"]',
     position: 'top',
+    navigateTo: '/app',
   },
   {
-    title: 'Explore more features',
-    description: 'Quest Library has 320+ more quests. Leaderboard tracks your progress. History shows all completions. Packs are structured programs.',
+    title: 'Quest Library - 320+ Quests',
+    description: 'Browse hundreds of quests across 12 categories. Use filters to find exactly what you\'re looking for, then tap + to add to your queue.',
+    target: '[data-tutorial="quest-grid"]',
+    position: 'top',
+    navigateTo: '/app/quests',
+  },
+  {
+    title: 'Quest Details',
+    description: 'When you\'re ready to complete a quest, tap on it to view full details. You can submit proof (photo, timer, counter, or text) and earn XP instantly.',
     position: 'center',
+    navigateTo: '/app/quests',
+    buttonText: 'Got it',
+  },
+  {
+    title: 'Track Your Progress',
+    description: 'The History page shows every quest you\'ve completed with a visual heatmap. See your consistency and build momentum over time.',
+    target: '[data-tutorial="history-container"]',
+    position: 'top',
+    navigateTo: '/app/history',
+  },
+  {
+    title: 'Compete With Yourself',
+    description: 'The Leaderboard compares you against yourself over time. Track your rank, milestones, and personal records.',
+    target: '[data-tutorial="leaderboard-container"]',
+    position: 'top',
+    navigateTo: '/app/leaderboard',
+  },
+  {
+    title: 'Quest Packs - Structured Programs',
+    description: 'Quest Packs are curated programs with multiple quests. Activate a pack to add all its quests to your queue at once.',
+    target: '[data-tutorial="packs-container"]',
+    position: 'top',
+    navigateTo: '/app/packs',
+  },
+  {
+    title: 'You\'re all set!',
+    description: 'Explore Settings to customize your experience, or head back to your Dashboard to start completing quests and earning XP. Let\'s level up! 🚀',
+    position: 'center',
+    navigateTo: '/app',
+    buttonText: 'Start Leveling Up',
   },
 ];
 
 export default function TutorialOverlay() {
   const { showTutorial, setShowTutorial } = useStore();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [currentStep, setCurrentStep] = useState(0);
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  // Navigate when step changes and has navigateTo
+  useEffect(() => {
+    if (showTutorial && tutorialSteps[currentStep]?.navigateTo) {
+      const targetPath = tutorialSteps[currentStep].navigateTo;
+      if (location.pathname !== targetPath) {
+        setIsNavigating(true);
+        navigate(targetPath!);
+        // Wait for navigation to complete before showing spotlight
+        setTimeout(() => {
+          setIsNavigating(false);
+          updateTargetPosition();
+        }, 300);
+      } else {
+        updateTargetPosition();
+      }
+    }
+  }, [currentStep, showTutorial, navigate, location]);
 
   useEffect(() => {
-    if (showTutorial) {
+    if (showTutorial && !isNavigating) {
       updateTargetPosition();
       window.addEventListener('resize', updateTargetPosition);
       return () => window.removeEventListener('resize', updateTargetPosition);
     }
-  }, [showTutorial, currentStep]);
+  }, [showTutorial, currentStep, isNavigating]);
 
   const updateTargetPosition = () => {
     const step = tutorialSteps[currentStep];
@@ -230,7 +293,7 @@ export default function TutorialOverlay() {
               className="px-4 py-2 rounded-lg font-semibold text-sm transition-all hover:scale-105 flex items-center gap-1"
               style={{ background: 'var(--gradient-primary)', color: 'white' }}
             >
-              {currentStep === tutorialSteps.length - 1 ? 'Start Leveling Up' : 'Next'}
+              {step.buttonText || (currentStep === tutorialSteps.length - 1 ? 'Finish' : 'Next')}
               <ChevronRight size={16} />
             </button>
           </div>

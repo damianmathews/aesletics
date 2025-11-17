@@ -240,7 +240,7 @@ export default function QuestLibrary() {
         </motion.div>
 
         {/* Quest Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4" data-tutorial="quest-grid">
           {filteredQuests.map((quest, index) => (
             <motion.div
               key={quest.id}

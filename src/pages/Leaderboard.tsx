@@ -194,7 +194,7 @@ export default function Leaderboard() {
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-5 relative">
+      <main className="max-w-7xl mx-auto px-6 py-5 relative" data-tutorial="leaderboard-container">
         {/* Subtle gradient background */}
         <div className="absolute inset-0 pointer-events-none" style={{
           background: 'radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.02) 0%, transparent 60%)'
