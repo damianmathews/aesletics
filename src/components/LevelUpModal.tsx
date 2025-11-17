@@ -68,15 +68,8 @@ export default function LevelUpModal({ isOpen, newLevel, totalXP, onClose }: Lev
       setShowContent(false);
       // Delay content to let backdrop animate in first
       setTimeout(() => setShowContent(true), 300);
-
-      // Auto-close after 4 seconds
-      const timer = setTimeout(() => {
-        onClose();
-      }, 4000);
-
-      return () => clearTimeout(timer);
     }
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   // Generate more particles with variety
   const particles = Array.from({ length: 60 }, (_, i) => {

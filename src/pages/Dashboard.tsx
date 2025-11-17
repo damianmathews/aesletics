@@ -77,7 +77,6 @@ export default function Dashboard() {
             <Link to="/app" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text)' }}>Dashboard</Link>
             <Link to="/app/quests" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Quests</Link>
             <Link to="/app/leaderboard" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Leaderboard</Link>
-            <Link to="/app/history" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>History</Link>
             <Link to="/app/packs" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Packs</Link>
             <div className="relative">
               <button
@@ -95,6 +94,7 @@ export default function Dashboard() {
                   style={{ borderColor: 'var(--color-border)' }}
                 >
                   <Link to="/app/settings" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Profile</Link>
+                  <Link to="/app/history" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>History</Link>
                   <Link to="/app/settings" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Settings</Link>
                 </motion.div>
               )}
@@ -136,14 +136,6 @@ export default function Dashboard() {
               style={{ color: 'var(--color-text)' }}
             >
               Leaderboard
-            </Link>
-            <Link
-              to="/app/history"
-              onClick={() => setShowMobileMenu(false)}
-              className="text-lg font-medium py-3 px-4 rounded-lg hover:bg-white/5 transition-colors"
-              style={{ color: 'var(--color-text)' }}
-            >
-              History
             </Link>
             <Link
               to="/app/packs"

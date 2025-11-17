@@ -44,15 +44,8 @@ export default function QuestCompleteModal({ isOpen, questTitle, xpEarned, strea
       setShowContent(false);
       // Delay content to let backdrop animate in first
       setTimeout(() => setShowContent(true), 200);
-
-      // Auto-close after 3 seconds
-      const timer = setTimeout(() => {
-        onClose();
-      }, 3000);
-
-      return () => clearTimeout(timer);
     }
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   // Generate particles in a burst pattern
   const particles = Array.from({ length: 40 }, (_, i) => {
