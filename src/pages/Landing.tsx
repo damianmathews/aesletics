@@ -158,7 +158,7 @@ export default function Landing() {
                   color: 'white',
                 }}
               >
-                <span className="relative z-10">Start Free</span>
+                <span className="relative z-10">Start Trial</span>
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
                      style={{ background: 'var(--gradient-secondary)' }} />
               </Link>
@@ -364,7 +364,7 @@ export default function Landing() {
             Launch IRLXP
           </Link>
           <p className="mt-6 text-xs font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
-            ALWAYS FREE • COMPLETELY PRIVATE
+            START YOUR FREE MONTH TODAY
           </p>
         </motion.div>
       </section>

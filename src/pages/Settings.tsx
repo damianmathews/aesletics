@@ -257,7 +257,7 @@ export default function Settings() {
             <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>About</h2>
             <div className="space-y-1.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
               <p><strong style={{ color: 'var(--color-text)' }}>IRLXP</strong> — Aesthetic discipline meets athletic execution.</p>
-              <p>Gamified tracking for total well-being. No tracking. No subscriptions.</p>
+              <p>Gamified tracking for total well-being.</p>
               <div className="mt-3 pt-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
                 <p className="text-xs font-mono">Member since: {new Date(profile.joinedAt).toLocaleDateString()}</p>
                 <p className="text-xs font-mono">Longest streak: {profile.longestStreak} days</p>
