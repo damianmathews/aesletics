@@ -10,6 +10,7 @@ import {
 } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 import { auth } from '../lib/firebase';
+import { useStore } from '../store/useStore';
 
 interface AuthContextType {
   user: User | null;
@@ -33,15 +34,21 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { initializeFromAuth } = useStore();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
+
+      // Update store with user data from Google/Auth
+      if (user) {
+        initializeFromAuth(user.displayName, user.email);
+      }
     });
 
     return unsubscribe;
-  }, []);
+  }, [initializeFromAuth]);
 
   const signup = async (email: string, password: string) => {
     await createUserWithEmailAndPassword(auth, email, password);

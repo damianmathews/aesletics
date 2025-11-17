@@ -15,6 +15,7 @@ import { questTemplatesExtended } from '../data/seed';
 interface StoreState extends AppState {
   // Actions
   initialize: () => void;
+  initializeFromAuth: (displayName: string | null, email: string | null) => void;
   completeOnboarding: () => void;
   addUserQuest: (quest: UserQuest) => void;
   removeUserQuest: (questId: string) => void;
@@ -93,6 +94,19 @@ export const useStore = create<StoreState>()(
             .filter(Boolean) as UserQuest[];
 
           set({ userQuests: starterQuests, initialized: true });
+        }
+      },
+
+      initializeFromAuth: (displayName, _email) => {
+        const state = get();
+        // Only update nickname if it's still the default 'Athlete'
+        if (state.profile.nickname === 'Athlete' && displayName) {
+          set((state) => ({
+            profile: {
+              ...state.profile,
+              nickname: displayName,
+            },
+          }));
         }
       },
 
