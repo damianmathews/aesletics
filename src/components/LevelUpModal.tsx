@@ -102,7 +102,6 @@ export default function LevelUpModal({ isOpen, newLevel, totalXP, onClose }: Lev
           transition={{ duration: 0.4 }}
           className="fixed inset-0 z-[250] flex items-center justify-center overflow-hidden"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.98)' }}
-          onClick={onClose}
         >
           {/* Light rays */}
           <div className="absolute inset-0 overflow-hidden">
@@ -275,22 +274,23 @@ export default function LevelUpModal({ isOpen, newLevel, totalXP, onClose }: Lev
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 1.1 }}
-                className="text-sm mt-8 mb-4"
+                className="text-sm mt-8 mb-6"
                 style={{ color: 'var(--color-text-secondary)' }}
               >
                 You're getting stronger. Keep pushing forward.
               </motion.p>
 
-              {/* Tap to continue */}
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.6 }}
+              {/* Keep Working Button */}
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 1.4 }}
-                className="text-xs font-mono"
-                style={{ color: 'var(--color-text-tertiary)' }}
+                onClick={onClose}
+                className="px-8 py-3 rounded-lg font-semibold text-sm font-mono transition-all hover:scale-105 active:scale-95"
+                style={{ background: 'var(--gradient-primary)', color: 'white' }}
               >
-                TAP ANYWHERE TO CONTINUE
-              </motion.p>
+                KEEP WORKING →
+              </motion.button>
             </motion.div>
           )}
         </motion.div>
