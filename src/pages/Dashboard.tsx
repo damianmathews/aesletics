@@ -3,21 +3,15 @@ import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { getLevelProgress } from '../lib/xp';
 import { useState, useEffect, useRef } from 'react';
-import { TrendingUp, TrendingDown, Target, Zap, Trophy, Calendar, Filter, Package, Menu, X } from 'lucide-react';
+import { TrendingUp, TrendingDown, Target, Zap, Trophy, Calendar, Filter, Package, Menu, X, Flame, Shield } from 'lucide-react';
 import { questPacks, categories } from '../data/seed';
-import StreakDisplay from '../components/StreakDisplay';
-import { getLocalDateString } from '../lib/dateUtils';
 
 export default function Dashboard() {
-  const { profile, getStats, getTodaysQuests, activePacks, completions } = useStore();
+  const { profile, getStats, getTodaysQuests, activePacks } = useStore();
   const stats = getStats();
   const allTodaysQuests = getTodaysQuests();
   const levelProgress = getLevelProgress(profile.totalXP);
 
-  // Get last completion date for streak display (in local timezone)
-  const lastCompletionDate = completions.length > 0
-    ? getLocalDateString(new Date(completions[completions.length - 1].at))
-    : undefined;
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showDateFilter, setShowDateFilter] = useState(false);
@@ -169,12 +163,12 @@ export default function Dashboard() {
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-6">
+      <main className="max-w-7xl mx-auto px-6 py-4">
         {/* Page Title */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-2">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="font-display text-3xl font-bold" style={{ color: 'var(--color-text)' }}>
+              <h1 className="font-display text-2xl font-bold" style={{ color: 'var(--color-text)' }}>
                 Welcome back
               </h1>
             </div>
@@ -278,195 +272,186 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        {/* Level & XP - Compact */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-4 glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }} data-tutorial="xp-display">
-          <div className="flex items-center justify-between mb-3">
-            {/* Level Badge - Compact */}
-            <div className="flex items-center gap-3">
-              <motion.div
-                animate={{
-                  boxShadow: [
-                    '0 0 15px rgba(167, 139, 250, 0.3)',
-                    '0 0 25px rgba(167, 139, 250, 0.5)',
-                    '0 0 15px rgba(167, 139, 250, 0.3)',
-                  ],
-                }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="relative flex items-center justify-center w-16 h-16 rounded-lg"
-                style={{ background: 'var(--gradient-primary)' }}
-              >
-                <Trophy size={20} color="white" className="absolute top-1" />
-                <div className="text-center mt-1">
-                  <div className="text-2xl font-bold text-white tabular-nums">{profile.level}</div>
+        {/* Compact Single Row - 4 Cards */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-3">
+          <div className="flex gap-3 overflow-x-auto">
+            {/* Card 1: Level & XP */}
+            <div className="glass rounded-lg p-3 border flex-shrink-0" style={{ borderColor: 'var(--color-border)', minWidth: '220px' }} data-tutorial="xp-display">
+              <p className="text-xs font-mono font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>LEVEL & XP</p>
+
+              <div className="flex items-center gap-3 mb-3">
+                {/* 80x80 Level Badge */}
+                <motion.div
+                  animate={{
+                    boxShadow: [
+                      '0 0 15px rgba(167, 139, 250, 0.3)',
+                      '0 0 25px rgba(167, 139, 250, 0.5)',
+                      '0 0 15px rgba(167, 139, 250, 0.3)',
+                    ],
+                  }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="relative flex items-center justify-center rounded-lg flex-shrink-0"
+                  style={{ background: 'var(--gradient-primary)', width: '80px', height: '80px' }}
+                >
+                  <Trophy size={24} color="white" className="absolute top-2" />
+                  <div className="text-center mt-2">
+                    <div className="text-3xl font-bold text-white tabular-nums">{profile.level}</div>
+                  </div>
+                </motion.div>
+
+                {/* Info with better hierarchy */}
+                <div className="flex-1">
+                  <div className="mb-2">
+                    <div className="text-lg font-bold tabular-nums leading-none" style={{ color: 'var(--color-text)' }}>
+                      {profile.totalXP.toLocaleString()}
+                    </div>
+                    <div className="text-xs font-mono mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+                      Total XP
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded" style={{ backgroundColor: 'rgba(167, 139, 250, 0.15)' }}>
+                    <span className="text-xs font-mono font-bold" style={{ color: 'var(--color-accent)' }}>
+                      {Math.round(levelProgress.progress * 100)}%
+                    </span>
+                    <span className="text-xs font-mono" style={{ color: 'var(--color-accent)' }}>
+                      to Lv.{profile.level + 1}
+                    </span>
+                  </div>
                 </div>
-              </motion.div>
-
-              {/* Compact Info */}
-              <div>
-                <h2 className="text-xl font-bold leading-tight mb-0.5" style={{ color: 'var(--color-text)' }}>
-                  Level {profile.level}
-                </h2>
-                <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                  {profile.totalXP.toLocaleString()} XP • {Math.round(levelProgress.progress * 100)}% to Lv.{profile.level + 1}
-                </p>
               </div>
+
+              {/* Progress Bar */}
+              <div className="relative h-2.5 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
+                <div
+                  className="h-full rounded-full transition-all duration-500 ease-out"
+                  style={{
+                    width: `${levelProgress.progress * 100}%`,
+                    background: 'var(--gradient-primary)'
+                  }}
+                />
+              </div>
+              <p className="text-xs font-mono mt-1.5 text-center" style={{ color: 'var(--color-text-tertiary)' }}>
+                {levelProgress.xpToNextLevel.toLocaleString()} XP needed
+              </p>
             </div>
 
-            {/* XP to Next Level */}
-            <div className="text-right">
-              <div className="text-lg font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>
-                {levelProgress.xpToNextLevel.toLocaleString()}
-              </div>
-              <p className="text-xs font-mono" style={{ color: 'var(--color-text-tertiary)' }}>XP needed</p>
-            </div>
-          </div>
+            {/* Card 2: Streak */}
+            <div className="glass rounded-lg p-3 border flex-shrink-0 flex flex-col" style={{ borderColor: 'var(--color-border)', minWidth: '200px' }}>
+              <p className="text-xs font-mono font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>STREAK</p>
 
-          {/* Compact Animated Progress Bar */}
-          <div className="relative h-3 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${levelProgress.progress * 100}%` }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              className="h-full rounded-full relative"
-              style={{ background: 'var(--gradient-primary)' }}
-            >
-              {/* Animated shine */}
-              <motion.div
-                animate={{ x: ['-100%', '200%'] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
-                className="absolute inset-0 w-1/3"
-                style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)' }}
-              />
-            </motion.div>
-            {/* Progress text overlay */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-xs font-mono font-bold text-white drop-shadow">
-                {levelProgress.currentLevelXP.toLocaleString()} / {levelProgress.nextLevelXP.toLocaleString()} XP
-              </span>
+              <div className="flex items-center gap-3 flex-1">
+                <motion.div
+                  animate={{
+                    scale: [1, 1.05, 1],
+                    filter: `drop-shadow(0 0 12px rgba(167, 139, 250, 0.6))`,
+                  }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Flame
+                    size={40}
+                    style={{ color: 'var(--color-accent)' }}
+                    fill="currentColor"
+                  />
+                </motion.div>
+
+                <div className="flex-1">
+                  <div className="text-3xl font-bold tabular-nums leading-none" style={{ color: 'var(--color-accent)' }}>
+                    {profile.currentStreak}
+                  </div>
+                  <div className="text-xs font-mono mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+                    {profile.currentStreak === 1 ? 'DAY' : 'DAYS'}
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-2">
+                    <span className="text-xs font-mono" style={{ color: 'var(--color-text-tertiary)' }}>BEST:</span>
+                    <span className="text-xs font-bold font-mono tabular-nums" style={{ color: 'var(--color-text)' }}>
+                      {profile.longestStreak}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {profile.streakFreezes > 0 && (
+                <div className="flex items-center gap-2 mt-2 px-2 py-1.5 rounded-lg" style={{ backgroundColor: 'rgba(6, 182, 212, 0.15)' }}>
+                  <Shield size={16} style={{ color: '#06B6D4' }} />
+                  <span className="text-xs font-mono font-bold" style={{ color: '#06B6D4' }}>
+                    {profile.streakFreezes} FREEZES
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Card 3: Weekly Performance */}
+            <div className="glass rounded-lg p-3 border flex-shrink-0 flex flex-col" style={{ borderColor: 'var(--color-border)', minWidth: '200px' }}>
+              <p className="text-xs font-mono font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>WEEKLY XP</p>
+
+              <div className="flex items-center gap-2 mb-2">
+                <div>
+                  <div className="text-3xl font-bold tabular-nums leading-none" style={{ color: 'var(--color-accent)' }}>
+                    {stats.xpThisWeek.toLocaleString()}
+                  </div>
+                  <p className="text-xs font-mono mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>This Week</p>
+                </div>
+                <div className="flex items-center gap-1 text-xs font-mono px-1.5 py-0.5 rounded" style={{
+                  color: weeklyChange >= 0 ? 'var(--color-success)' : 'var(--color-error)',
+                  backgroundColor: weeklyChange >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'
+                }}>
+                  {weeklyChange >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                  {Math.abs(weeklyChange).toFixed(0)}%
+                </div>
+              </div>
+
+              <div className="flex items-end gap-1 h-12 flex-1">
+                {stats.last14DaysXP.slice(7, 14).map((xp, i) => {
+                  const maxXP = Math.max(...stats.last14DaysXP);
+                  const height = maxXP > 0 ? (xp / maxXP) * 100 : 0;
+                  return (
+                    <div key={i} className="flex-1 rounded-t transition-all hover:opacity-70" style={{
+                      height: `${height}%`,
+                      background: 'var(--gradient-primary)',
+                      minHeight: '4px'
+                    }} />
+                  );
+                })}
+              </div>
+
+              <p className="text-xs font-mono mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
+                {stats.completedThisWeek} quests
+              </p>
+            </div>
+
+            {/* Card 4: Today's Progress */}
+            <div className="glass rounded-lg p-3 border flex-shrink-0 flex flex-col" style={{ borderColor: 'var(--color-border)', minWidth: '180px' }}>
+              <p className="text-xs font-mono font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>TODAY</p>
+
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <div className="text-3xl font-bold tabular-nums leading-none" style={{ color: 'var(--color-accent)' }}>
+                    {stats.completedToday}
+                  </div>
+                  <p className="text-xs font-mono mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>Quests</p>
+                </div>
+                <Target size={28} style={{ color: 'var(--color-accent)', opacity: 0.3 }} />
+              </div>
+
+              <div className="space-y-1.5 flex-1">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>XP</span>
+                  <span className="text-sm font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{stats.xpToday}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>Month</span>
+                  <span className="text-sm font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{stats.completedThisMonth}</span>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Main Stats Grid - 2x2 Balanced Layout */}
-        <div className="grid md:grid-cols-2 md:grid-rows-2 gap-3 mb-4" style={{ gridTemplateRows: 'repeat(2, 1fr)' }}>
-          {/* Row 1 Left: Streak + Milestones */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="h-full">
-            <StreakDisplay
-              currentStreak={profile.currentStreak}
-              longestStreak={profile.longestStreak}
-              streakFreezes={profile.streakFreezes}
-              lastCompletionDate={lastCompletionDate}
-            />
-          </motion.div>
-
-          {/* Row 1 Right: Weekly Performance */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-lg p-4 border h-full flex flex-col" style={{ borderColor: 'var(--color-border)' }}>
-            <p className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>WEEKLY PERFORMANCE</p>
-
-            <div className="flex items-center gap-3 mb-3">
-              <div>
-                <h3 className="text-4xl font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>{stats.xpThisWeek.toLocaleString()}</h3>
-                <p className="text-xs font-mono mt-1" style={{ color: 'var(--color-text-secondary)' }}>XP This Week</p>
-              </div>
-              <div className="flex items-center gap-1 text-sm font-mono px-2 py-1 rounded" style={{
-                color: weeklyChange >= 0 ? 'var(--color-success)' : 'var(--color-error)',
-                backgroundColor: weeklyChange >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'
-              }}>
-                {weeklyChange >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                {Math.abs(weeklyChange).toFixed(0)}%
-              </div>
-            </div>
-
-            <div className="flex items-end gap-1 h-16 mb-2">
-              {stats.last14DaysXP.slice(7, 14).map((xp, i) => {
-                const maxXP = Math.max(...stats.last14DaysXP);
-                const height = maxXP > 0 ? (xp / maxXP) * 100 : 0;
-                return (
-                  <div key={i} className="flex-1 rounded-t transition-all hover:opacity-70" style={{
-                    height: `${height}%`,
-                    background: 'var(--gradient-primary)',
-                    minHeight: '4px'
-                  }} />
-                );
-              })}
-            </div>
-
-            <p className="text-xs font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
-              {stats.completedThisWeek} quests completed this week
-            </p>
-          </motion.div>
-
-          {/* Row 2 Left: Today's Progress */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass rounded-lg p-4 border h-full flex flex-col" style={{ borderColor: 'var(--color-border)' }}>
-            <p className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>TODAY'S PROGRESS</p>
-
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-4xl font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>{stats.completedToday}</h3>
-                <p className="text-xs font-mono mt-1" style={{ color: 'var(--color-text-secondary)' }}>Quests Completed</p>
-              </div>
-              <Target size={32} style={{ color: 'var(--color-accent)', opacity: 0.3 }} />
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>XP Today</span>
-                <span className="text-sm font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{stats.xpToday}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>This Month</span>
-                <span className="text-sm font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{stats.completedThisMonth} quests</span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Row 2 Right: Level Progress */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass rounded-lg p-4 border h-full flex flex-col" style={{ borderColor: 'var(--color-border)' }}>
-            <p className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>LEVEL PROGRESS</p>
-
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <h3 className="text-4xl font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>{profile.level}</h3>
-                <p className="text-xs font-mono mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>Current Level</p>
-              </div>
-              <Trophy size={28} style={{ color: 'var(--color-accent)', opacity: 0.3 }} />
-            </div>
-
-            {/* Animated Purple Progress Bar */}
-            <div className="flex-1 flex flex-col justify-center">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-xs font-mono font-bold" style={{ color: 'var(--color-text)' }}>Level {profile.level} → {profile.level + 1}</span>
-                <span className="text-xs font-mono font-bold" style={{ color: 'var(--color-accent)' }}>{Math.round(levelProgress.progress * 100)}%</span>
-              </div>
-              <div className="relative h-3 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${levelProgress.progress * 100}%` }}
-                  transition={{ duration: 1.5, ease: "easeOut" }}
-                  className="h-full rounded-full relative"
-                  style={{ background: 'var(--gradient-primary)' }}
-                >
-                  {/* Animated shine effect */}
-                  <motion.div
-                    animate={{ x: ['-100%', '200%'] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
-                    className="absolute inset-0 w-1/3"
-                    style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)' }}
-                  />
-                </motion.div>
-              </div>
-              <p className="text-xs font-mono mt-1 text-center" style={{ color: 'var(--color-text-tertiary)' }}>
-                {levelProgress.xpToNextLevel.toLocaleString()} XP to next level
-              </p>
-            </div>
-          </motion.div>
-        </div>
-
         {/* Active Packs - Prominent Section */}
         {activePacks.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mb-6">
-            <div className="glass rounded-lg p-6 border-2" style={{ borderColor: 'var(--color-accent)', background: 'rgba(167, 139, 250, 0.03)' }}>
-              <div className="flex items-center gap-3 mb-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mb-3">
+            <div className="glass rounded-lg p-4 border-2" style={{ borderColor: 'var(--color-accent)', background: 'rgba(167, 139, 250, 0.03)' }}>
+              <div className="flex items-center gap-3 mb-3">
                 <Package size={24} style={{ color: 'var(--color-accent)' }} />
                 <div>
                   <h2 className="font-display text-xl font-bold" style={{ color: 'var(--color-text)' }}>Active Quest Packs</h2>
@@ -511,8 +496,8 @@ export default function Dashboard() {
         )}
 
         {/* Today's Quests */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mb-6">
-          <div className="flex items-center justify-between mb-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mb-3">
+          <div className="flex items-center justify-between mb-3">
             <h2 className="font-display text-xl font-semibold" style={{ color: 'var(--color-text)' }}>Today's Quests</h2>
             <Link to="/app/quests" className="text-sm font-mono transition-opacity hover:opacity-70 flex items-center gap-2" style={{ color: 'var(--color-accent)' }}>
               View All
@@ -572,30 +557,6 @@ export default function Dashboard() {
               })}
             </div>
           )}
-        </motion.div>
-
-        {/* Level Progress */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <h3 className="font-display text-lg font-semibold mb-1" style={{ color: 'var(--color-text)' }}>Level Progress</h3>
-              <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                {levelProgress.xpToNextLevel.toLocaleString()} XP to Level {profile.level + 1}
-              </p>
-            </div>
-            <div className="text-3xl font-bold font-mono" style={{ color: 'var(--color-accent)' }}>
-              {Math.round(levelProgress.progress * 100)}%
-            </div>
-          </div>
-          <div className="w-full h-2.5 rounded-full" style={{ backgroundColor: 'var(--color-border)' }}>
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${levelProgress.progress * 100}%` }}
-              transition={{ duration: 1, delay: 0.8 }}
-              className="h-full rounded-full"
-              style={{ background: 'var(--gradient-primary)' }}
-            />
-          </div>
         </motion.div>
       </main>
     </div>
