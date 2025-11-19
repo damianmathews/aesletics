@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { questTemplatesExtended, categories } from '../data/seed';
 import { useStore } from '../store/useStore';
 import Toast from '../components/Toast';
-import { Menu, X, Dumbbell, Zap, Sparkles, Brain, Shield, Heart, Users, Mountain, Briefcase, Palette, Plus, Check } from 'lucide-react';
+import { Menu, X, Dumbbell, Zap, Sparkles, Brain, Shield, Heart, Users, Mountain, Briefcase, Palette, Plus, Check, ChevronDown } from 'lucide-react';
 
 const getCategoryIcon = (categoryId: string) => {
   const iconMap: Record<string, React.ReactNode> = {
@@ -26,12 +26,36 @@ export default function QuestLibrary() {
   const { profile, addUserQuest } = useStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<'none' | 'xp-low' | 'xp-high'>('none');
+  const [sortBy, setSortBy] = useState<'none' | 'xp-low' | 'xp-high' | 'difficulty-low' | 'difficulty-high'>('none');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState({ title: '', subtitle: '' });
   const [addedQuests, setAddedQuests] = useState<Set<string>>(new Set());
+  const sortDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target as Node)) {
+        setShowSortDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Get display label for current sort
+  const getSortLabel = () => {
+    switch (sortBy) {
+      case 'xp-low': return 'XP: Low → High';
+      case 'xp-high': return 'XP: High → Low';
+      case 'difficulty-low': return 'Difficulty: Easy → Hard';
+      case 'difficulty-high': return 'Difficulty: Hard → Easy';
+      default: return 'Default';
+    }
+  };
 
   let filteredQuests = questTemplatesExtended.filter((quest) => {
     const matchesSearch = quest.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -41,10 +65,16 @@ export default function QuestLibrary() {
   });
 
   // Apply sorting
+  const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3, extreme: 4 };
+
   if (sortBy === 'xp-low') {
     filteredQuests = [...filteredQuests].sort((a, b) => a.baseXP - b.baseXP);
   } else if (sortBy === 'xp-high') {
     filteredQuests = [...filteredQuests].sort((a, b) => b.baseXP - a.baseXP);
+  } else if (sortBy === 'difficulty-low') {
+    filteredQuests = [...filteredQuests].sort((a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]);
+  } else if (sortBy === 'difficulty-high') {
+    filteredQuests = [...filteredQuests].sort((a, b) => difficultyOrder[b.difficulty] - difficultyOrder[a.difficulty]);
   }
 
   const handleAddQuest = (templateId: string) => {
@@ -221,40 +251,62 @@ export default function QuestLibrary() {
           />
         </motion.div>
 
-        {/* Sort by XP */}
+        {/* Sort Dropdown */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32 }} className="mb-4">
           <p className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>SORT BY</p>
-          <div className="flex flex-wrap gap-2">
+          <div className="relative" ref={sortDropdownRef}>
             <button
-              onClick={() => setSortBy('none')}
-              className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 ${sortBy === 'none' ? 'shadow-lg' : ''}`}
-              style={{
-                background: sortBy === 'none' ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
-                color: sortBy === 'none' ? 'white' : 'var(--color-text)',
-              }}
+              onClick={() => setShowSortDropdown(!showSortDropdown)}
+              className="px-4 py-2.5 rounded-lg glass border transition-all hover:scale-[1.02] flex items-center gap-2 min-w-[200px] justify-between"
+              style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
             >
-              DEFAULT
+              <span className="text-xs font-mono font-medium">{getSortLabel()}</span>
+              <ChevronDown size={16} className={`transition-transform ${showSortDropdown ? 'rotate-180' : ''}`} />
             </button>
-            <button
-              onClick={() => setSortBy('xp-low')}
-              className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 ${sortBy === 'xp-low' ? 'shadow-lg' : ''}`}
-              style={{
-                background: sortBy === 'xp-low' ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
-                color: sortBy === 'xp-low' ? 'white' : 'var(--color-text)',
-              }}
-            >
-              XP: LOW → HIGH
-            </button>
-            <button
-              onClick={() => setSortBy('xp-high')}
-              className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 ${sortBy === 'xp-high' ? 'shadow-lg' : ''}`}
-              style={{
-                background: sortBy === 'xp-high' ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
-                color: sortBy === 'xp-high' ? 'white' : 'var(--color-text)',
-              }}
-            >
-              XP: HIGH → LOW
-            </button>
+            {showSortDropdown && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute left-0 mt-2 w-full glass rounded-lg p-2 border z-10"
+                style={{ borderColor: 'var(--color-border)' }}
+              >
+                <button
+                  onClick={() => { setSortBy('none'); setShowSortDropdown(false); }}
+                  className="w-full text-left px-3 py-2 rounded hover:bg-white/5 transition-colors text-xs font-mono font-medium"
+                  style={{ color: sortBy === 'none' ? 'var(--color-accent)' : 'var(--color-text)' }}
+                >
+                  Default
+                </button>
+                <button
+                  onClick={() => { setSortBy('xp-low'); setShowSortDropdown(false); }}
+                  className="w-full text-left px-3 py-2 rounded hover:bg-white/5 transition-colors text-xs font-mono font-medium"
+                  style={{ color: sortBy === 'xp-low' ? 'var(--color-accent)' : 'var(--color-text)' }}
+                >
+                  XP: Low → High
+                </button>
+                <button
+                  onClick={() => { setSortBy('xp-high'); setShowSortDropdown(false); }}
+                  className="w-full text-left px-3 py-2 rounded hover:bg-white/5 transition-colors text-xs font-mono font-medium"
+                  style={{ color: sortBy === 'xp-high' ? 'var(--color-accent)' : 'var(--color-text)' }}
+                >
+                  XP: High → Low
+                </button>
+                <button
+                  onClick={() => { setSortBy('difficulty-low'); setShowSortDropdown(false); }}
+                  className="w-full text-left px-3 py-2 rounded hover:bg-white/5 transition-colors text-xs font-mono font-medium"
+                  style={{ color: sortBy === 'difficulty-low' ? 'var(--color-accent)' : 'var(--color-text)' }}
+                >
+                  Difficulty: Easy → Hard
+                </button>
+                <button
+                  onClick={() => { setSortBy('difficulty-high'); setShowSortDropdown(false); }}
+                  className="w-full text-left px-3 py-2 rounded hover:bg-white/5 transition-colors text-xs font-mono font-medium"
+                  style={{ color: sortBy === 'difficulty-high' ? 'var(--color-accent)' : 'var(--color-text)' }}
+                >
+                  Difficulty: Hard → Easy
+                </button>
+              </motion.div>
+            )}
           </div>
         </motion.div>
 
