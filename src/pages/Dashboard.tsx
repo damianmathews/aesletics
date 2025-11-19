@@ -281,23 +281,13 @@ export default function Dashboard() {
 
               <div className="flex items-center gap-3 mb-3">
                 {/* 80x80 Level Badge */}
-                <motion.div
-                  animate={{
-                    boxShadow: [
-                      '0 0 15px rgba(167, 139, 250, 0.3)',
-                      '0 0 25px rgba(167, 139, 250, 0.5)',
-                      '0 0 15px rgba(167, 139, 250, 0.3)',
-                    ],
-                  }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                  className="relative flex items-center justify-center rounded-lg flex-shrink-0"
+                <div
+                  className="flex flex-col items-center justify-center rounded-lg flex-shrink-0"
                   style={{ background: 'var(--gradient-primary)', width: '80px', height: '80px' }}
                 >
-                  <Trophy size={24} color="white" className="absolute top-2" />
-                  <div className="text-center mt-2">
-                    <div className="text-3xl font-bold text-white tabular-nums">{profile.level}</div>
-                  </div>
-                </motion.div>
+                  <div className="text-xs font-mono font-bold text-white opacity-70 mb-0.5">LEVEL</div>
+                  <div className="text-3xl font-bold text-white tabular-nums">{profile.level}</div>
+                </div>
 
                 {/* Info with better hierarchy */}
                 <div className="flex-1">
