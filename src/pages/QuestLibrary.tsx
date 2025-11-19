@@ -4,15 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { questTemplatesExtended, categories } from '../data/seed';
 import { useStore } from '../store/useStore';
 import Toast from '../components/Toast';
-import { Menu, X, Dumbbell, Activity, Footprints, Zap, Sparkles, Brain, Shield, Heart, Users, Mountain, Briefcase, Palette, Plus, Check } from 'lucide-react';
+import { Menu, X, Dumbbell, Zap, Sparkles, Brain, Shield, Heart, Users, Mountain, Briefcase, Palette, Plus, Check } from 'lucide-react';
 
 const getCategoryIcon = (categoryId: string) => {
   const iconMap: Record<string, React.ReactNode> = {
-    'fitness-strength': <Dumbbell size={14} />,
-    'conditioning': <Activity size={14} />,
-    'mobility': <Footprints size={14} />,
+    'fitness': <Dumbbell size={14} />,
+    'body-wellness': <Sparkles size={14} />,
     'athletics-skill': <Zap size={14} />,
-    'body-aesthetics': <Sparkles size={14} />,
     'intelligence': <Brain size={14} />,
     'discipline': <Shield size={14} />,
     'mental': <Heart size={14} />,
@@ -28,18 +26,26 @@ export default function QuestLibrary() {
   const { profile, addUserQuest } = useStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'none' | 'xp-low' | 'xp-high'>('none');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState({ title: '', subtitle: '' });
   const [addedQuests, setAddedQuests] = useState<Set<string>>(new Set());
 
-  const filteredQuests = questTemplatesExtended.filter((quest) => {
+  let filteredQuests = questTemplatesExtended.filter((quest) => {
     const matchesSearch = quest.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          quest.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = !selectedCategory || quest.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  // Apply sorting
+  if (sortBy === 'xp-low') {
+    filteredQuests = [...filteredQuests].sort((a, b) => a.baseXP - b.baseXP);
+  } else if (sortBy === 'xp-high') {
+    filteredQuests = [...filteredQuests].sort((a, b) => b.baseXP - a.baseXP);
+  }
 
   const handleAddQuest = (templateId: string) => {
     const template = questTemplatesExtended.find(q => q.id === templateId);
@@ -93,7 +99,7 @@ export default function QuestLibrary() {
       {/* Header */}
       <header className="glass sticky top-0 z-40 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/app" className="flex items-center gap-3">
             <img src="/logo.png" alt="IRLXP" className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-3 md:gap-6">
@@ -121,8 +127,12 @@ export default function QuestLibrary() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute right-0 mt-2 w-48 glass rounded-button p-2 border"
-                  style={{ borderColor: 'var(--color-border)' }}
+                  className="absolute right-0 mt-2 w-48 rounded-lg p-2 border shadow-2xl"
+                  style={{
+                    borderColor: 'var(--color-accent)',
+                    backgroundColor: 'rgba(17, 17, 24, 0.98)',
+                    backdropFilter: 'blur(20px)'
+                  }}
                 >
                   <Link to="/app/settings" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Profile</Link>
                   <Link to="/app/history" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>History</Link>
@@ -193,7 +203,7 @@ export default function QuestLibrary() {
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-5">
           <h1 className="font-display text-2xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>Quest Library</h1>
-          <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>{questTemplatesExtended.length} quests • 12 categories</p>
+          <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>{questTemplatesExtended.length} quests • {categories.length} categories</p>
         </motion.div>
 
         {/* Search */}
@@ -209,6 +219,43 @@ export default function QuestLibrary() {
               color: 'var(--color-text)',
             }}
           />
+        </motion.div>
+
+        {/* Sort by XP */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32 }} className="mb-4">
+          <p className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>SORT BY</p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setSortBy('none')}
+              className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 ${sortBy === 'none' ? 'shadow-lg' : ''}`}
+              style={{
+                background: sortBy === 'none' ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
+                color: sortBy === 'none' ? 'white' : 'var(--color-text)',
+              }}
+            >
+              DEFAULT
+            </button>
+            <button
+              onClick={() => setSortBy('xp-low')}
+              className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 ${sortBy === 'xp-low' ? 'shadow-lg' : ''}`}
+              style={{
+                background: sortBy === 'xp-low' ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
+                color: sortBy === 'xp-low' ? 'white' : 'var(--color-text)',
+              }}
+            >
+              XP: LOW → HIGH
+            </button>
+            <button
+              onClick={() => setSortBy('xp-high')}
+              className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 ${sortBy === 'xp-high' ? 'shadow-lg' : ''}`}
+              style={{
+                background: sortBy === 'xp-high' ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
+                color: sortBy === 'xp-high' ? 'white' : 'var(--color-text)',
+              }}
+            >
+              XP: HIGH → LOW
+            </button>
+          </div>
         </motion.div>
 
         {/* Category Filters */}

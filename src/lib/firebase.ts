@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -18,5 +18,15 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Set persistence once at module load
+void setPersistence(auth, browserLocalPersistence);
+
+// For AuthContext to await before setting up listener
+export async function initializeAuthPersistence(): Promise<void> {
+  return setPersistence(auth, browserLocalPersistence)
+    .then(() => console.log('✓ Firebase persistence set'))
+    .catch(() => console.warn('⚠ Failed to set persistence (incognito mode?)'));
+}
 
 export default app;

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useState } from 'react';
 import { Flame, Camera, Menu, X } from 'lucide-react';
+import { getLocalDateString } from '../lib/dateUtils';
 
 export default function History() {
   const { profile, completions, getStats } = useStore();
@@ -20,7 +21,7 @@ export default function History() {
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = getLocalDateString(date);
 
       const dayCompletions = completions.filter(
         (c) => c.at.split('T')[0] === dateStr
@@ -64,7 +65,7 @@ export default function History() {
       {/* Header */}
       <header className="glass sticky top-0 z-40 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/app" className="flex items-center gap-3">
             <img src="/logo.png" alt="IRLXP" className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-3 md:gap-6">
@@ -92,8 +93,12 @@ export default function History() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute right-0 mt-2 w-48 glass rounded-button p-2 border"
-                  style={{ borderColor: 'var(--color-border)' }}
+                  className="absolute right-0 mt-2 w-48 rounded-lg p-2 border shadow-2xl"
+                  style={{
+                    borderColor: 'var(--color-accent)',
+                    backgroundColor: 'rgba(17, 17, 24, 0.98)',
+                    backdropFilter: 'blur(20px)'
+                  }}
                 >
                   <Link to="/app/settings" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Profile</Link>
                   <Link to="/app/history" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>History</Link>
@@ -194,10 +199,10 @@ export default function History() {
         </div>
 
         {/* Calendar Heatmap */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass rounded-lg p-5 mb-6 border" style={{ borderColor: 'var(--color-border)' }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass rounded-lg p-5 mb-6 border overflow-visible" style={{ borderColor: 'var(--color-border)' }}>
           <h2 className="font-display text-xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Activity</h2>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto overflow-y-visible pb-12">
             <div className="inline-flex gap-1">
               {weeks.map((week, weekIdx) => (
                 <div key={weekIdx} className="flex flex-col gap-1">
@@ -208,11 +213,17 @@ export default function History() {
                     return (
                       <div
                         key={dayIdx}
-                        className="w-3 h-3 rounded-sm transition-all hover:scale-150 hover:z-10 relative group"
-                        style={{ backgroundColor: getIntensityColor(day.xp) }}
+                        className="w-3 h-3 rounded-sm transition-all hover:scale-150 relative group"
+                        style={{ backgroundColor: getIntensityColor(day.xp), zIndex: 10 }}
                         title={`${dateStr}: ${day.count} quests, ${day.xp} XP`}
                       >
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs rounded glass opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50" style={{ color: 'var(--color-text)' }}>
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none font-medium shadow-xl border" style={{
+                          color: 'var(--color-text)',
+                          backgroundColor: 'rgba(17, 17, 24, 0.98)',
+                          backdropFilter: 'blur(20px)',
+                          borderColor: 'var(--color-accent)',
+                          zIndex: 9999
+                        }}>
                           {dateStr}<br />
                           {day.count} quests<br />
                           {day.xp} XP

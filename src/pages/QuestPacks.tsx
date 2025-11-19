@@ -10,6 +10,7 @@ export default function QuestPacks() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [expandedPack, setExpandedPack] = useState<string | null>(null);
+  const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
 
   // Icon mapping for pack icons (emoji to Lucide)
   const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string; style?: any }>> = {
@@ -45,7 +46,7 @@ export default function QuestPacks() {
       {/* Header */}
       <header className="glass sticky top-0 z-40 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/app" className="flex items-center gap-3">
             <img src="/logo.png" alt="IRLXP" className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-3 md:gap-6">
@@ -73,8 +74,12 @@ export default function QuestPacks() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute right-0 mt-2 w-48 glass rounded-button p-2 border"
-                  style={{ borderColor: 'var(--color-border)' }}
+                  className="absolute right-0 mt-2 w-48 rounded-lg p-2 border shadow-2xl"
+                  style={{
+                    borderColor: 'var(--color-accent)',
+                    backgroundColor: 'rgba(17, 17, 24, 0.98)',
+                    backdropFilter: 'blur(20px)'
+                  }}
                 >
                   <Link to="/app/settings" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Profile</Link>
                   <Link to="/app/history" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>History</Link>
@@ -173,9 +178,30 @@ export default function QuestPacks() {
 
         {/* Available Packs */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <h2 className="text-xs font-medium mb-3 font-mono" style={{ color: 'var(--color-text-secondary)' }}>AVAILABLE PROGRAMS</h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xs font-medium font-mono" style={{ color: 'var(--color-text-secondary)' }}>AVAILABLE PROGRAMS</h2>
+            <select
+              value={difficultyFilter}
+              onChange={(e) => setDifficultyFilter(e.target.value)}
+              className="px-3 py-1.5 rounded text-xs font-mono font-medium glass border transition-all hover:scale-105"
+              style={{
+                borderColor: 'var(--color-border)',
+                color: 'var(--color-text)',
+                backgroundColor: 'rgba(255, 255, 255, 0.03)'
+              }}
+            >
+              <option value="all">All Difficulties</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+              <option value="elite">Elite</option>
+              <option value="legendary">Legendary</option>
+            </select>
+          </div>
           <div className="grid md:grid-cols-2 gap-4">
-            {questPacks.map((pack, index) => {
+            {questPacks
+              .filter(pack => difficultyFilter === 'all' || pack.difficulty === difficultyFilter)
+              .map((pack, index) => {
               const isActive = activePacks.includes(pack.id);
 
               return (

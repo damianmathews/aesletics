@@ -3,11 +3,9 @@ import type { Category, QuestTemplate, QuestPack, Badge } from '../types';
 
 // Categories
 export const categories: Category[] = [
-  { id: 'fitness-strength', slug: 'fitness-strength', name: 'Fitness & Strength', icon: '💪', description: 'Build strength and muscle' },
-  { id: 'conditioning', slug: 'conditioning', name: 'Conditioning', icon: '🏃', description: 'Cardio and endurance training' },
-  { id: 'mobility', slug: 'mobility', name: 'Mobility & Recovery', icon: '🧘', description: 'Flexibility and recovery work' },
+  { id: 'fitness', slug: 'fitness', name: 'Fitness', icon: '💪', description: 'Strength, cardio, and conditioning' },
+  { id: 'body-wellness', slug: 'body-wellness', name: 'Body & Wellness', icon: '✨', description: 'Nutrition, sleep, recovery, and aesthetics' },
   { id: 'athletics-skill', slug: 'athletics-skill', name: 'Athletics & Skill', icon: '⚡', description: 'Athletic performance and skills' },
-  { id: 'body-aesthetics', slug: 'body-aesthetics', name: 'Body & Aesthetics', icon: '✨', description: 'Nutrition, sleep, and body optimization' },
   { id: 'intelligence', slug: 'intelligence', name: 'Intelligence', icon: '🧠', description: 'Learning and cognitive development' },
   { id: 'discipline', slug: 'discipline', name: 'Discipline', icon: '⚔️', description: 'Willpower and habit formation' },
   { id: 'mental', slug: 'mental', name: 'Mental', icon: '🧘‍♂️', description: 'Mindfulness and mental health' },
@@ -20,115 +18,115 @@ export const categories: Category[] = [
 // Quest Templates (200+ quests)
 export const questTemplates: QuestTemplate[] = [
   // FITNESS & STRENGTH (45 quests)
-  { id: 'q001', slug: '100-air-squats', title: '100 Air Squats', category: 'fitness-strength', difficulty: 'easy', description: 'Complete 100 bodyweight squats with good form', durationMinutes: 10, proof: 'counter', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'legs'], baseXP: 10 },
-  { id: 'q002', slug: 'push-pull-core', title: 'Push-Pull-Core Circuit', category: 'fitness-strength', difficulty: 'easy', description: '3 rounds: 10 push-ups, 10 rows, 20 crunches', durationMinutes: 12, proof: 'counter', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'circuit'], baseXP: 10 },
-  { id: 'q003', slug: '30-pullups', title: '30 Pull-Ups Total', category: 'fitness-strength', difficulty: 'hard', description: 'Complete 30 pull-ups in any number of sets', durationMinutes: 25, proof: 'counter', recurrence: 'daily', equipment: ['pull-up-bar'], tags: ['pull', 'back'], baseXP: 40, safety: 'Use proper grip and shoulder engagement' },
-  { id: 'q004', slug: 'one-arm-pushup', title: 'One-Arm Push-Up 5 Each Side', category: 'fitness-strength', difficulty: 'elite', description: 'Perform 5 strict one-arm push-ups per side', durationMinutes: 20, proof: 'photo', recurrence: 'once', equipment: [], tags: ['bodyweight', 'advanced'], baseXP: 80, safety: 'Ensure proper form to avoid shoulder injury' },
-  { id: 'q005', slug: '2xbw-deadlift', title: '2x Bodyweight Deadlift', category: 'fitness-strength', difficulty: 'legendary', description: 'Lift twice your bodyweight for 1 rep', durationMinutes: 25, proof: 'photo', recurrence: 'once', equipment: ['barbell'], tags: ['strength', 'powerlifting'], baseXP: 160, safety: 'Use proper form, consider a spotter' },
-  { id: 'q006', slug: '50-pushups', title: '50 Push-Ups', category: 'fitness-strength', difficulty: 'easy', description: 'Complete 50 push-ups with good form', durationMinutes: 8, proof: 'counter', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'push'], baseXP: 10 },
-  { id: 'q007', slug: 'bench-press-bw', title: 'Bench Press Bodyweight 10 Reps', category: 'fitness-strength', difficulty: 'medium', description: 'Bench press your bodyweight for 10 reps', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['barbell'], tags: ['chest', 'strength'], baseXP: 20 },
-  { id: 'q008', slug: 'weighted-pullup-5', title: '5 Weighted Pull-Ups (+25lbs)', category: 'fitness-strength', difficulty: 'hard', description: 'Complete 5 pull-ups with 25lbs added', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['pull-up-bar', 'weight'], tags: ['pull', 'strength'], baseXP: 40 },
-  { id: 'q009', slug: 'pistol-squats-10', title: '10 Pistol Squats Each Leg', category: 'fitness-strength', difficulty: 'hard', description: 'Perform 10 single-leg squats per leg', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'legs', 'balance'], baseXP: 40 },
-  { id: 'q010', slug: 'kb-swing-100', title: '100 Kettlebell Swings', category: 'fitness-strength', difficulty: 'medium', description: 'Complete 100 KB swings with proper hip hinge', durationMinutes: 12, proof: 'counter', recurrence: 'daily', equipment: ['kettlebell'], tags: ['kb', 'power'], baseXP: 20 },
-  { id: 'q011', slug: 'turkish-getup-5', title: '5 Turkish Get-Ups Each Side', category: 'fitness-strength', difficulty: 'hard', description: 'Perform 5 TGUs per side with moderate weight', durationMinutes: 20, proof: 'counter', recurrence: 'daily', equipment: ['kettlebell'], tags: ['kb', 'full-body'], baseXP: 40 },
-  { id: 'q012', slug: 'farmer-carry-heavy', title: 'Heavy Farmers Carry 100m', category: 'fitness-strength', difficulty: 'medium', description: 'Carry heavy weight (BW total) for 100m', durationMinutes: 10, proof: 'timer', recurrence: 'daily', equipment: ['dumbbells'], tags: ['grip', 'core'], baseXP: 20 },
-  { id: 'q013', slug: 'front-squat-5x5', title: 'Front Squat 5x5', category: 'fitness-strength', difficulty: 'hard', description: '5 sets of 5 front squats at 75% 1RM', durationMinutes: 30, proof: 'counter', recurrence: 'weekly', equipment: ['barbell'], tags: ['legs', 'strength'], baseXP: 40 },
-  { id: 'q014', slug: 'muscle-up-5', title: '5 Muscle-Ups', category: 'fitness-strength', difficulty: 'elite', description: 'Complete 5 strict muscle-ups', durationMinutes: 20, proof: 'photo', recurrence: 'daily', equipment: ['pull-up-bar'], tags: ['bodyweight', 'advanced'], baseXP: 80, safety: 'Master pull-ups and dips first' },
-  { id: 'q015', slug: 'handstand-pushup-10', title: '10 Handstand Push-Ups', category: 'fitness-strength', difficulty: 'elite', description: 'Perform 10 strict HSPU', durationMinutes: 15, proof: 'photo', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'push', 'advanced'], baseXP: 80 },
-  { id: 'q016', slug: 'squat-20-rep-max', title: 'Squat 20-Rep Max', category: 'fitness-strength', difficulty: 'legendary', description: 'Complete 20 reps of back squat at challenging weight', durationMinutes: 30, proof: 'photo', recurrence: 'once', equipment: ['barbell'], tags: ['legs', 'mental'], baseXP: 160, safety: 'Use safety bars, have spotter' },
-  { id: 'q017', slug: 'burpee-100', title: '100 Burpees', category: 'fitness-strength', difficulty: 'hard', description: 'Complete 100 burpees for time', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'cardio'], baseXP: 40 },
-  { id: 'q018', slug: 'db-press-50', title: 'Dumbbell Press 50 Total Reps', category: 'fitness-strength', difficulty: 'medium', description: '50 total reps of DB press (any scheme)', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['dumbbells'], tags: ['push', 'chest'], baseXP: 20 },
-  { id: 'q019', slug: 'plank-5min', title: '5-Minute Plank Hold', category: 'fitness-strength', difficulty: 'hard', description: 'Hold a plank position for 5 minutes total', durationMinutes: 8, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['core', 'isometric'], baseXP: 40 },
-  { id: 'q020', slug: 'lunge-walk-100', title: '100 Walking Lunges', category: 'fitness-strength', difficulty: 'easy', description: 'Complete 100 walking lunges (50 each leg)', durationMinutes: 12, proof: 'counter', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'legs'], baseXP: 10 },
-  { id: 'q021', slug: 'ring-dips-20', title: '20 Ring Dips', category: 'fitness-strength', difficulty: 'hard', description: 'Perform 20 dips on gymnastic rings', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['rings'], tags: ['push', 'bodyweight'], baseXP: 40 },
-  { id: 'q022', slug: 'clean-and-jerk-complex', title: 'Clean & Jerk Complex 5x3', category: 'fitness-strength', difficulty: 'elite', description: '5 sets of 3 clean and jerks', durationMinutes: 30, proof: 'counter', recurrence: 'weekly', equipment: ['barbell'], tags: ['olympic', 'power'], baseXP: 80, safety: 'Master technique with coach first' },
-  { id: 'q023', slug: 'snatch-practice', title: 'Snatch Practice 20 Minutes', category: 'fitness-strength', difficulty: 'elite', description: 'Technical snatch practice', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: ['barbell'], tags: ['olympic', 'skill'], baseXP: 80, safety: 'Requires coaching and practice' },
-  { id: 'q024', slug: 'chin-ups-30', title: '30 Chin-Ups', category: 'fitness-strength', difficulty: 'medium', description: 'Complete 30 chin-ups total', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['pull-up-bar'], tags: ['pull', 'back'], baseXP: 20 },
-  { id: 'q025', slug: 'goblet-squat-50', title: '50 Goblet Squats', category: 'fitness-strength', difficulty: 'easy', description: 'Complete 50 goblet squats with KB or DB', durationMinutes: 12, proof: 'counter', recurrence: 'daily', equipment: ['kettlebell'], tags: ['legs', 'squat'], baseXP: 10 },
-  { id: 'q026', slug: 'dips-50', title: '50 Parallel Bar Dips', category: 'fitness-strength', difficulty: 'medium', description: 'Complete 50 dips on parallel bars', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['dip-bars'], tags: ['push', 'triceps'], baseXP: 20 },
-  { id: 'q027', slug: 'overhead-press-bw', title: 'Overhead Press 0.75x BW for 5', category: 'fitness-strength', difficulty: 'hard', description: 'Press 75% bodyweight overhead for 5 reps', durationMinutes: 15, proof: 'counter', recurrence: 'weekly', equipment: ['barbell'], tags: ['push', 'shoulders'], baseXP: 40 },
-  { id: 'q028', slug: 'row-machine-500', title: '500 Inverted Rows', category: 'fitness-strength', difficulty: 'hard', description: 'Complete 500 inverted rows (any scheme)', durationMinutes: 40, proof: 'counter', recurrence: 'once', equipment: [], tags: ['pull', 'back'], baseXP: 40 },
-  { id: 'q029', slug: 'ab-circuit-20min', title: '20-Minute Ab Circuit', category: 'fitness-strength', difficulty: 'medium', description: 'Complete varied ab exercises for 20 minutes', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['core', 'circuit'], baseXP: 20 },
-  { id: 'q030', slug: 'wall-sit-10min', title: '10-Minute Wall Sit Total', category: 'fitness-strength', difficulty: 'hard', description: 'Accumulate 10 minutes of wall sit', durationMinutes: 15, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['legs', 'isometric'], baseXP: 40 },
-  { id: 'q031', slug: 'bear-crawl-500m', title: '500m Bear Crawl', category: 'fitness-strength', difficulty: 'hard', description: 'Crawl 500m on all fours', durationMinutes: 25, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['bodyweight', 'conditioning'], baseXP: 40 },
-  { id: 'q032', slug: 'zercher-squat-work', title: 'Zercher Squat Session', category: 'fitness-strength', difficulty: 'elite', description: 'Complete Zercher squat working sets', durationMinutes: 30, proof: 'counter', recurrence: 'weekly', equipment: ['barbell'], tags: ['legs', 'core', 'advanced'], baseXP: 80 },
-  { id: 'q033', slug: 'rope-climb-5', title: '5 Rope Climbs', category: 'fitness-strength', difficulty: 'hard', description: 'Climb a 15ft rope 5 times', durationMinutes: 15, proof: 'counter', recurrence: 'weekly', equipment: ['rope'], tags: ['pull', 'grip'], baseXP: 40, safety: 'Use crash mat, practice technique' },
-  { id: 'q034', slug: 'sandbag-carry-mile', title: 'Sandbag Carry 1 Mile', category: 'fitness-strength', difficulty: 'elite', description: 'Carry heavy sandbag for 1 mile', durationMinutes: 35, proof: 'timer', recurrence: 'weekly', equipment: ['sandbag'], tags: ['carry', 'endurance'], baseXP: 80 },
-  { id: 'q035', slug: 'front-lever-hold', title: 'Front Lever 30s Total', category: 'fitness-strength', difficulty: 'legendary', description: 'Hold front lever for 30s cumulative', durationMinutes: 20, proof: 'photo', recurrence: 'once', equipment: ['pull-up-bar'], tags: ['bodyweight', 'advanced'], baseXP: 160 },
-  { id: 'q036', slug: 'planche-practice', title: 'Planche Practice 20 Minutes', category: 'fitness-strength', difficulty: 'legendary', description: 'Work on planche progressions', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['bodyweight', 'advanced'], baseXP: 160 },
-  { id: 'q037', slug: 'weighted-vest-workout', title: 'Weighted Vest Workout 30min', category: 'fitness-strength', difficulty: 'medium', description: 'Complete workout wearing 20lb vest', durationMinutes: 30, proof: 'timer', recurrence: 'weekly', equipment: ['weighted-vest'], tags: ['strength', 'endurance'], baseXP: 20 },
-  { id: 'q038', slug: 'atlas-stone-lift', title: 'Atlas Stone Lift 200lbs', category: 'fitness-strength', difficulty: 'elite', description: 'Lift and load 200lb atlas stone', durationMinutes: 15, proof: 'photo', recurrence: 'once', equipment: ['atlas-stone'], tags: ['strongman', 'power'], baseXP: 80, safety: 'Use proper lifting technique' },
-  { id: 'q039', slug: 'sled-push-400m', title: 'Heavy Sled Push 400m', category: 'fitness-strength', difficulty: 'hard', description: 'Push loaded sled for 400m', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: ['sled'], tags: ['legs', 'push'], baseXP: 40 },
-  { id: 'q040', slug: 'tire-flip-20', title: '20 Tire Flips', category: 'fitness-strength', difficulty: 'hard', description: 'Flip heavy tire 20 times', durationMinutes: 15, proof: 'counter', recurrence: 'weekly', equipment: ['tire'], tags: ['strongman', 'power'], baseXP: 40 },
-  { id: 'q041', slug: 'dead-hang-5min', title: '5-Minute Dead Hang', category: 'fitness-strength', difficulty: 'hard', description: 'Hang from bar for 5 minutes total', durationMinutes: 8, proof: 'timer', recurrence: 'daily', equipment: ['pull-up-bar'], tags: ['grip', 'isometric'], baseXP: 40 },
-  { id: 'q042', slug: 'dragon-flag-10', title: '10 Dragon Flags', category: 'fitness-strength', difficulty: 'elite', description: 'Perform 10 strict dragon flags', durationMinutes: 15, proof: 'photo', recurrence: 'weekly', equipment: [], tags: ['core', 'advanced'], baseXP: 80 },
-  { id: 'q043', slug: 'human-flag-hold', title: 'Human Flag 10s Hold', category: 'fitness-strength', difficulty: 'legendary', description: 'Hold human flag for 10 seconds', durationMinutes: 20, proof: 'photo', recurrence: 'once', equipment: [], tags: ['bodyweight', 'advanced'], baseXP: 160 },
-  { id: 'q044', slug: 'box-jump-40in', title: '40-Inch Box Jump', category: 'fitness-strength', difficulty: 'elite', description: 'Successfully jump onto 40-inch box', durationMinutes: 10, proof: 'photo', recurrence: 'once', equipment: ['box'], tags: ['power', 'jump'], baseXP: 80, safety: 'Land softly, step down carefully' },
-  { id: 'q045', slug: 'loaded-carry-medley', title: 'Loaded Carry Medley', category: 'fitness-strength', difficulty: 'hard', description: 'Complete farmer, overhead, and rack carries', durationMinutes: 25, proof: 'timer', recurrence: 'weekly', equipment: ['kettlebell', 'dumbbells'], tags: ['carry', 'strength'], baseXP: 40 },
+  { id: 'q001', slug: '100-air-squats', title: '100 Air Squats', category: 'fitness', difficulty: 'easy', description: 'Complete 100 bodyweight squats with good form', durationMinutes: 10, proof: 'counter', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'legs'], baseXP: 10 },
+  { id: 'q002', slug: 'push-pull-core', title: 'Push-Pull-Core Circuit', category: 'fitness', difficulty: 'easy', description: '3 rounds: 10 push-ups, 10 rows, 20 crunches', durationMinutes: 12, proof: 'counter', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'circuit'], baseXP: 10 },
+  { id: 'q003', slug: '30-pullups', title: '30 Pull-Ups Total', category: 'fitness', difficulty: 'hard', description: 'Complete 30 pull-ups in any number of sets', durationMinutes: 25, proof: 'counter', recurrence: 'daily', equipment: ['pull-up-bar'], tags: ['pull', 'back'], baseXP: 40, safety: 'Use proper grip and shoulder engagement' },
+  { id: 'q004', slug: 'one-arm-pushup', title: 'One-Arm Push-Up 5 Each Side', category: 'fitness', difficulty: 'elite', description: 'Perform 5 strict one-arm push-ups per side', durationMinutes: 20, proof: 'photo', recurrence: 'once', equipment: [], tags: ['bodyweight', 'advanced'], baseXP: 80, safety: 'Ensure proper form to avoid shoulder injury' },
+  { id: 'q005', slug: '2xbw-deadlift', title: '2x Bodyweight Deadlift', category: 'fitness', difficulty: 'legendary', description: 'Lift twice your bodyweight for 1 rep', durationMinutes: 25, proof: 'photo', recurrence: 'once', equipment: ['barbell'], tags: ['strength', 'powerlifting'], baseXP: 160, safety: 'Use proper form, consider a spotter' },
+  { id: 'q006', slug: '50-pushups', title: '50 Push-Ups', category: 'fitness', difficulty: 'easy', description: 'Complete 50 push-ups with good form', durationMinutes: 8, proof: 'counter', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'push'], baseXP: 10 },
+  { id: 'q007', slug: 'bench-press-bw', title: 'Bench Press Bodyweight 10 Reps', category: 'fitness', difficulty: 'medium', description: 'Bench press your bodyweight for 10 reps', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['barbell'], tags: ['chest', 'strength'], baseXP: 20 },
+  { id: 'q008', slug: 'weighted-pullup-5', title: '5 Weighted Pull-Ups (+25lbs)', category: 'fitness', difficulty: 'hard', description: 'Complete 5 pull-ups with 25lbs added', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['pull-up-bar', 'weight'], tags: ['pull', 'strength'], baseXP: 40 },
+  { id: 'q009', slug: 'pistol-squats-10', title: '10 Pistol Squats Each Leg', category: 'fitness', difficulty: 'hard', description: 'Perform 10 single-leg squats per leg', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'legs', 'balance'], baseXP: 40 },
+  { id: 'q010', slug: 'kb-swing-100', title: '100 Kettlebell Swings', category: 'fitness', difficulty: 'medium', description: 'Complete 100 KB swings with proper hip hinge', durationMinutes: 12, proof: 'counter', recurrence: 'daily', equipment: ['kettlebell'], tags: ['kb', 'power'], baseXP: 20 },
+  { id: 'q011', slug: 'turkish-getup-5', title: '5 Turkish Get-Ups Each Side', category: 'fitness', difficulty: 'hard', description: 'Perform 5 TGUs per side with moderate weight', durationMinutes: 20, proof: 'counter', recurrence: 'daily', equipment: ['kettlebell'], tags: ['kb', 'full-body'], baseXP: 40 },
+  { id: 'q012', slug: 'farmer-carry-heavy', title: 'Heavy Farmers Carry 100m', category: 'fitness', difficulty: 'medium', description: 'Carry heavy weight (BW total) for 100m', durationMinutes: 10, proof: 'timer', recurrence: 'daily', equipment: ['dumbbells'], tags: ['grip', 'core'], baseXP: 20 },
+  { id: 'q013', slug: 'front-squat-5x5', title: 'Front Squat 5x5', category: 'fitness', difficulty: 'hard', description: '5 sets of 5 front squats at 75% 1RM', durationMinutes: 30, proof: 'counter', recurrence: 'weekly', equipment: ['barbell'], tags: ['legs', 'strength'], baseXP: 40 },
+  { id: 'q014', slug: 'muscle-up-5', title: '5 Muscle-Ups', category: 'fitness', difficulty: 'elite', description: 'Complete 5 strict muscle-ups', durationMinutes: 20, proof: 'photo', recurrence: 'daily', equipment: ['pull-up-bar'], tags: ['bodyweight', 'advanced'], baseXP: 80, safety: 'Master pull-ups and dips first' },
+  { id: 'q015', slug: 'handstand-pushup-10', title: '10 Handstand Push-Ups', category: 'fitness', difficulty: 'elite', description: 'Perform 10 strict HSPU', durationMinutes: 15, proof: 'photo', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'push', 'advanced'], baseXP: 80 },
+  { id: 'q016', slug: 'squat-20-rep-max', title: 'Squat 20-Rep Max', category: 'fitness', difficulty: 'legendary', description: 'Complete 20 reps of back squat at challenging weight', durationMinutes: 30, proof: 'photo', recurrence: 'once', equipment: ['barbell'], tags: ['legs', 'mental'], baseXP: 160, safety: 'Use safety bars, have spotter' },
+  { id: 'q017', slug: 'burpee-100', title: '100 Burpees', category: 'fitness', difficulty: 'hard', description: 'Complete 100 burpees for time', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'cardio'], baseXP: 40 },
+  { id: 'q018', slug: 'db-press-50', title: 'Dumbbell Press 50 Total Reps', category: 'fitness', difficulty: 'medium', description: '50 total reps of DB press (any scheme)', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['dumbbells'], tags: ['push', 'chest'], baseXP: 20 },
+  { id: 'q019', slug: 'plank-5min', title: '5-Minute Plank Hold', category: 'fitness', difficulty: 'hard', description: 'Hold a plank position for 5 minutes total', durationMinutes: 8, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['core', 'isometric'], baseXP: 40 },
+  { id: 'q020', slug: 'lunge-walk-100', title: '100 Walking Lunges', category: 'fitness', difficulty: 'easy', description: 'Complete 100 walking lunges (50 each leg)', durationMinutes: 12, proof: 'counter', recurrence: 'daily', equipment: [], tags: ['bodyweight', 'legs'], baseXP: 10 },
+  { id: 'q021', slug: 'ring-dips-20', title: '20 Ring Dips', category: 'fitness', difficulty: 'hard', description: 'Perform 20 dips on gymnastic rings', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['rings'], tags: ['push', 'bodyweight'], baseXP: 40 },
+  { id: 'q022', slug: 'clean-and-jerk-complex', title: 'Clean & Jerk Complex 5x3', category: 'fitness', difficulty: 'elite', description: '5 sets of 3 clean and jerks', durationMinutes: 30, proof: 'counter', recurrence: 'weekly', equipment: ['barbell'], tags: ['olympic', 'power'], baseXP: 80, safety: 'Master technique with coach first' },
+  { id: 'q023', slug: 'snatch-practice', title: 'Snatch Practice 20 Minutes', category: 'fitness', difficulty: 'elite', description: 'Technical snatch practice', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: ['barbell'], tags: ['olympic', 'skill'], baseXP: 80, safety: 'Requires coaching and practice' },
+  { id: 'q024', slug: 'chin-ups-30', title: '30 Chin-Ups', category: 'fitness', difficulty: 'medium', description: 'Complete 30 chin-ups total', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['pull-up-bar'], tags: ['pull', 'back'], baseXP: 20 },
+  { id: 'q025', slug: 'goblet-squat-50', title: '50 Goblet Squats', category: 'fitness', difficulty: 'easy', description: 'Complete 50 goblet squats with KB or DB', durationMinutes: 12, proof: 'counter', recurrence: 'daily', equipment: ['kettlebell'], tags: ['legs', 'squat'], baseXP: 10 },
+  { id: 'q026', slug: 'dips-50', title: '50 Parallel Bar Dips', category: 'fitness', difficulty: 'medium', description: 'Complete 50 dips on parallel bars', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['dip-bars'], tags: ['push', 'triceps'], baseXP: 20 },
+  { id: 'q027', slug: 'overhead-press-bw', title: 'Overhead Press 0.75x BW for 5', category: 'fitness', difficulty: 'hard', description: 'Press 75% bodyweight overhead for 5 reps', durationMinutes: 15, proof: 'counter', recurrence: 'weekly', equipment: ['barbell'], tags: ['push', 'shoulders'], baseXP: 40 },
+  { id: 'q028', slug: 'row-machine-500', title: '500 Inverted Rows', category: 'fitness', difficulty: 'hard', description: 'Complete 500 inverted rows (any scheme)', durationMinutes: 40, proof: 'counter', recurrence: 'once', equipment: [], tags: ['pull', 'back'], baseXP: 40 },
+  { id: 'q029', slug: 'ab-circuit-20min', title: '20-Minute Ab Circuit', category: 'fitness', difficulty: 'medium', description: 'Complete varied ab exercises for 20 minutes', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['core', 'circuit'], baseXP: 20 },
+  { id: 'q030', slug: 'wall-sit-10min', title: '10-Minute Wall Sit Total', category: 'fitness', difficulty: 'hard', description: 'Accumulate 10 minutes of wall sit', durationMinutes: 15, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['legs', 'isometric'], baseXP: 40 },
+  { id: 'q031', slug: 'bear-crawl-500m', title: '500m Bear Crawl', category: 'fitness', difficulty: 'hard', description: 'Crawl 500m on all fours', durationMinutes: 25, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['bodyweight', 'conditioning'], baseXP: 40 },
+  { id: 'q032', slug: 'zercher-squat-work', title: 'Zercher Squat Session', category: 'fitness', difficulty: 'elite', description: 'Complete Zercher squat working sets', durationMinutes: 30, proof: 'counter', recurrence: 'weekly', equipment: ['barbell'], tags: ['legs', 'core', 'advanced'], baseXP: 80 },
+  { id: 'q033', slug: 'rope-climb-5', title: '5 Rope Climbs', category: 'fitness', difficulty: 'hard', description: 'Climb a 15ft rope 5 times', durationMinutes: 15, proof: 'counter', recurrence: 'weekly', equipment: ['rope'], tags: ['pull', 'grip'], baseXP: 40, safety: 'Use crash mat, practice technique' },
+  { id: 'q034', slug: 'sandbag-carry-mile', title: 'Sandbag Carry 1 Mile', category: 'fitness', difficulty: 'elite', description: 'Carry heavy sandbag for 1 mile', durationMinutes: 35, proof: 'timer', recurrence: 'weekly', equipment: ['sandbag'], tags: ['carry', 'endurance'], baseXP: 80 },
+  { id: 'q035', slug: 'front-lever-hold', title: 'Front Lever 30s Total', category: 'fitness', difficulty: 'legendary', description: 'Hold front lever for 30s cumulative', durationMinutes: 20, proof: 'photo', recurrence: 'once', equipment: ['pull-up-bar'], tags: ['bodyweight', 'advanced'], baseXP: 160 },
+  { id: 'q036', slug: 'planche-practice', title: 'Planche Practice 20 Minutes', category: 'fitness', difficulty: 'legendary', description: 'Work on planche progressions', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['bodyweight', 'advanced'], baseXP: 160 },
+  { id: 'q037', slug: 'weighted-vest-workout', title: 'Weighted Vest Workout 30min', category: 'fitness', difficulty: 'medium', description: 'Complete workout wearing 20lb vest', durationMinutes: 30, proof: 'timer', recurrence: 'weekly', equipment: ['weighted-vest'], tags: ['strength', 'endurance'], baseXP: 20 },
+  { id: 'q038', slug: 'atlas-stone-lift', title: 'Atlas Stone Lift 200lbs', category: 'fitness', difficulty: 'elite', description: 'Lift and load 200lb atlas stone', durationMinutes: 15, proof: 'photo', recurrence: 'once', equipment: ['atlas-stone'], tags: ['strongman', 'power'], baseXP: 80, safety: 'Use proper lifting technique' },
+  { id: 'q039', slug: 'sled-push-400m', title: 'Heavy Sled Push 400m', category: 'fitness', difficulty: 'hard', description: 'Push loaded sled for 400m', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: ['sled'], tags: ['legs', 'push'], baseXP: 40 },
+  { id: 'q040', slug: 'tire-flip-20', title: '20 Tire Flips', category: 'fitness', difficulty: 'hard', description: 'Flip heavy tire 20 times', durationMinutes: 15, proof: 'counter', recurrence: 'weekly', equipment: ['tire'], tags: ['strongman', 'power'], baseXP: 40 },
+  { id: 'q041', slug: 'dead-hang-5min', title: '5-Minute Dead Hang', category: 'fitness', difficulty: 'hard', description: 'Hang from bar for 5 minutes total', durationMinutes: 8, proof: 'timer', recurrence: 'daily', equipment: ['pull-up-bar'], tags: ['grip', 'isometric'], baseXP: 40 },
+  { id: 'q042', slug: 'dragon-flag-10', title: '10 Dragon Flags', category: 'fitness', difficulty: 'elite', description: 'Perform 10 strict dragon flags', durationMinutes: 15, proof: 'photo', recurrence: 'weekly', equipment: [], tags: ['core', 'advanced'], baseXP: 80 },
+  { id: 'q043', slug: 'human-flag-hold', title: 'Human Flag 10s Hold', category: 'fitness', difficulty: 'legendary', description: 'Hold human flag for 10 seconds', durationMinutes: 20, proof: 'photo', recurrence: 'once', equipment: [], tags: ['bodyweight', 'advanced'], baseXP: 160 },
+  { id: 'q044', slug: 'box-jump-40in', title: '40-Inch Box Jump', category: 'fitness', difficulty: 'elite', description: 'Successfully jump onto 40-inch box', durationMinutes: 10, proof: 'photo', recurrence: 'once', equipment: ['box'], tags: ['power', 'jump'], baseXP: 80, safety: 'Land softly, step down carefully' },
+  { id: 'q045', slug: 'loaded-carry-medley', title: 'Loaded Carry Medley', category: 'fitness', difficulty: 'hard', description: 'Complete farmer, overhead, and rack carries', durationMinutes: 25, proof: 'timer', recurrence: 'weekly', equipment: ['kettlebell', 'dumbbells'], tags: ['carry', 'strength'], baseXP: 40 },
 
   // CONDITIONING (38 quests)
-  { id: 'q046', slug: 'zone2-45min', title: 'Zone-2 Cardio 45 Minutes', category: 'conditioning', difficulty: 'easy', description: 'Maintain conversational pace for 45min', durationMinutes: 45, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['cardio', 'zone2'], baseXP: 10 },
-  { id: 'q047', slug: '10x100m-sprints', title: '10x100m Sprints', category: 'conditioning', difficulty: 'hard', description: 'Complete 10 sprints with 90s rest', durationMinutes: 25, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['sprint', 'speed'], baseXP: 40 },
-  { id: 'q048', slug: '5k-run', title: '5K Run', category: 'conditioning', difficulty: 'medium', description: 'Complete a 5K run', durationMinutes: 30, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['running', 'endurance'], baseXP: 20 },
-  { id: 'q049', slug: '10k-under-55', title: '10K Under 55 Minutes', category: 'conditioning', difficulty: 'elite', description: 'Run 10K in under 55 minutes', durationMinutes: 55, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['running', 'endurance'], baseXP: 80 },
-  { id: 'q050', slug: 'half-marathon', title: 'Half Marathon', category: 'conditioning', difficulty: 'legendary', description: 'Complete 13.1 mile run', durationMinutes: 150, proof: 'timer', recurrence: 'once', equipment: [], tags: ['running', 'endurance'], baseXP: 160 },
-  { id: 'q051', slug: 'full-marathon', title: 'Full Marathon 26.2 Miles', category: 'conditioning', difficulty: 'legendary', description: 'Complete a full marathon', durationMinutes: 300, proof: 'photo', recurrence: 'once', equipment: [], tags: ['running', 'endurance', 'epic'], baseXP: 160 },
-  { id: 'q052', slug: 'row-5k', title: 'Row 5,000 Meters', category: 'conditioning', difficulty: 'medium', description: 'Complete 5K on rowing machine', durationMinutes: 25, proof: 'timer', recurrence: 'daily', equipment: ['rower'], tags: ['rowing', 'cardio'], baseXP: 20 },
-  { id: 'q053', slug: 'row-10k', title: 'Row 10,000 Meters', category: 'conditioning', difficulty: 'hard', description: 'Complete 10K on rowing machine', durationMinutes: 45, proof: 'timer', recurrence: 'weekly', equipment: ['rower'], tags: ['rowing', 'endurance'], baseXP: 40 },
-  { id: 'q054', slug: 'assault-bike-30min', title: 'Assault Bike 30 Minutes', category: 'conditioning', difficulty: 'hard', description: 'Steady pace on assault bike for 30min', durationMinutes: 30, proof: 'timer', recurrence: 'weekly', equipment: ['assault-bike'], tags: ['cardio', 'bike'], baseXP: 40 },
-  { id: 'q055', slug: 'bike-20-miles', title: 'Bike 20 Miles', category: 'conditioning', difficulty: 'medium', description: 'Complete 20 mile bike ride', durationMinutes: 75, proof: 'timer', recurrence: 'weekly', equipment: ['bike'], tags: ['cycling', 'endurance'], baseXP: 20 },
-  { id: 'q056', slug: 'bike-50-miles', title: 'Bike 50 Miles', category: 'conditioning', difficulty: 'elite', description: 'Complete 50 mile bike ride', durationMinutes: 180, proof: 'timer', recurrence: 'once', equipment: ['bike'], tags: ['cycling', 'endurance'], baseXP: 80 },
-  { id: 'q057', slug: 'bike-century', title: 'Century Ride 100 Miles', category: 'conditioning', difficulty: 'legendary', description: 'Complete 100 mile bike ride', durationMinutes: 360, proof: 'photo', recurrence: 'once', equipment: ['bike'], tags: ['cycling', 'endurance', 'epic'], baseXP: 160 },
-  { id: 'q058', slug: 'swim-1000m', title: 'Swim 1000 Meters', category: 'conditioning', difficulty: 'medium', description: 'Swim 1K continuously', durationMinutes: 30, proof: 'timer', recurrence: 'weekly', equipment: ['pool'], tags: ['swimming', 'cardio'], baseXP: 20 },
-  { id: 'q059', slug: 'swim-mile', title: 'Swim 1 Mile', category: 'conditioning', difficulty: 'hard', description: 'Swim 1 mile (1600m) continuously', durationMinutes: 60, proof: 'timer', recurrence: 'weekly', equipment: ['pool'], tags: ['swimming', 'endurance'], baseXP: 40 },
-  { id: 'q060', slug: 'jump-rope-20min', title: 'Jump Rope 20 Minutes', category: 'conditioning', difficulty: 'medium', description: 'Jump rope for 20 minutes total', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: ['jump-rope'], tags: ['cardio', 'coordination'], baseXP: 20 },
-  { id: 'q061', slug: 'double-unders-200', title: '200 Double Unders', category: 'conditioning', difficulty: 'hard', description: 'Complete 200 double under jump ropes', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['jump-rope'], tags: ['cardio', 'skill'], baseXP: 40 },
-  { id: 'q062', slug: 'ruck-5-miles', title: 'Ruck March 5 Miles (35lbs)', category: 'conditioning', difficulty: 'hard', description: 'Walk/march 5 miles with 35lb pack', durationMinutes: 90, proof: 'timer', recurrence: 'weekly', equipment: ['backpack'], tags: ['rucking', 'endurance'], baseXP: 40 },
-  { id: 'q063', slug: 'ruck-10-miles', title: 'Ruck March 10 Miles (40lbs)', category: 'conditioning', difficulty: 'elite', description: 'Complete 10 mile ruck with 40lb pack', durationMinutes: 180, proof: 'timer', recurrence: 'once', equipment: ['backpack'], tags: ['rucking', 'endurance'], baseXP: 80 },
-  { id: 'q064', slug: 'hill-sprints-10', title: '10 Hill Sprints', category: 'conditioning', difficulty: 'hard', description: 'Sprint up steep hill 10 times', durationMinutes: 25, proof: 'counter', recurrence: 'weekly', equipment: [], tags: ['sprint', 'power'], baseXP: 40 },
-  { id: 'q065', slug: 'stair-climbs-20', title: '20 Stair Sprint Climbs', category: 'conditioning', difficulty: 'medium', description: 'Sprint up stairs 20 times', durationMinutes: 20, proof: 'counter', recurrence: 'weekly', equipment: [], tags: ['stairs', 'cardio'], baseXP: 20 },
-  { id: 'q066', slug: 'emom-burpees-20min', title: 'EMOM Burpees 20 Minutes', category: 'conditioning', difficulty: 'hard', description: '10 burpees every minute for 20 minutes', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['burpees', 'hiit'], baseXP: 40 },
-  { id: 'q067', slug: 'tabata-sprints-8', title: '8 Rounds Tabata Sprints', category: 'conditioning', difficulty: 'hard', description: '20s sprint, 10s rest for 8 rounds', durationMinutes: 10, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['sprint', 'hiit'], baseXP: 40 },
-  { id: 'q068', slug: 'crossfit-murph', title: 'Murph WOD', category: 'conditioning', difficulty: 'legendary', description: '1mi run, 100 pullups, 200 pushups, 300 squats, 1mi run', durationMinutes: 60, proof: 'photo', recurrence: 'once', equipment: [], tags: ['hero-wod', 'endurance'], baseXP: 160, safety: 'Scale as needed, stay hydrated' },
-  { id: 'q069', slug: 'crossfit-cindy', title: 'Cindy WOD 20 Minutes', category: 'conditioning', difficulty: 'medium', description: 'AMRAP: 5 pullups, 10 pushups, 15 squats', durationMinutes: 20, proof: 'counter', recurrence: 'weekly', equipment: [], tags: ['wod', 'amrap'], baseXP: 20 },
-  { id: 'q070', slug: 'crossfit-fran', title: 'Fran WOD', category: 'conditioning', difficulty: 'elite', description: '21-15-9: Thrusters (95lb) and pullups', durationMinutes: 15, proof: 'timer', recurrence: 'once', equipment: ['barbell'], tags: ['wod', 'benchmark'], baseXP: 80 },
-  { id: 'q071', slug: 'mile-run-under-7', title: 'Mile Under 7 Minutes', category: 'conditioning', difficulty: 'hard', description: 'Run 1 mile in under 7 minutes', durationMinutes: 10, proof: 'timer', recurrence: 'once', equipment: [], tags: ['running', 'speed'], baseXP: 40 },
-  { id: 'q072', slug: '400m-sprint-4', title: '4x400m Sprints', category: 'conditioning', difficulty: 'hard', description: 'Complete 4 rounds of 400m sprints', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['sprint', 'speed'], baseXP: 40 },
-  { id: 'q073', slug: 'sled-pull-300m', title: 'Sled Pull 300 Meters', category: 'conditioning', difficulty: 'medium', description: 'Pull loaded sled backwards for 300m', durationMinutes: 15, proof: 'timer', recurrence: 'weekly', equipment: ['sled'], tags: ['conditioning', 'pull'], baseXP: 20 },
-  { id: 'q074', slug: 'prowler-push-200m', title: 'Prowler Push 200m Heavy', category: 'conditioning', difficulty: 'hard', description: 'Push heavy prowler for 200m', durationMinutes: 15, proof: 'timer', recurrence: 'weekly', equipment: ['prowler'], tags: ['conditioning', 'push'], baseXP: 40 },
-  { id: 'q075', slug: 'ski-erg-5k', title: 'Ski Erg 5000 Meters', category: 'conditioning', difficulty: 'medium', description: 'Complete 5K on ski erg machine', durationMinutes: 25, proof: 'timer', recurrence: 'weekly', equipment: ['ski-erg'], tags: ['cardio', 'full-body'], baseXP: 20 },
-  { id: 'q076', slug: 'battle-ropes-20min', title: 'Battle Ropes 20 Minutes', category: 'conditioning', difficulty: 'hard', description: 'Interval training with battle ropes for 20min', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: ['battle-ropes'], tags: ['cardio', 'arms'], baseXP: 40 },
-  { id: 'q077', slug: 'boxing-rounds-10', title: '10 Boxing Rounds', category: 'conditioning', difficulty: 'hard', description: 'Complete 10x3min boxing rounds', durationMinutes: 45, proof: 'timer', recurrence: 'weekly', equipment: ['boxing-gloves'], tags: ['boxing', 'cardio'], baseXP: 40 },
-  { id: 'q078', slug: 'shadowboxing-20min', title: 'Shadowboxing 20 Minutes', category: 'conditioning', difficulty: 'medium', description: 'Continuous shadowboxing for 20 minutes', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['boxing', 'cardio'], baseXP: 20 },
-  { id: 'q079', slug: 'kickboxing-hiit', title: 'Kickboxing HIIT 30 Minutes', category: 'conditioning', difficulty: 'hard', description: 'High intensity kickboxing workout', durationMinutes: 30, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['kickboxing', 'hiit'], baseXP: 40 },
-  { id: 'q080', slug: 'walk-10k-steps', title: 'Walk 10,000 Steps', category: 'conditioning', difficulty: 'easy', description: 'Accumulate 10K steps throughout the day', durationMinutes: 90, proof: 'text', recurrence: 'daily', equipment: [], tags: ['walking', 'daily'], baseXP: 10 },
-  { id: 'q081', slug: 'walk-15k-steps', title: 'Walk 15,000 Steps', category: 'conditioning', difficulty: 'medium', description: 'Accumulate 15K steps throughout the day', durationMinutes: 120, proof: 'text', recurrence: 'daily', equipment: [], tags: ['walking', 'daily'], baseXP: 20 },
-  { id: 'q082', slug: 'incline-walk-30min', title: '30-Minute Incline Walk', category: 'conditioning', difficulty: 'easy', description: 'Walk on treadmill at 10%+ incline', durationMinutes: 30, proof: 'timer', recurrence: 'daily', equipment: ['treadmill'], tags: ['walking', 'incline'], baseXP: 10 },
-  { id: 'q083', slug: 'versaclimber-20min', title: 'VersaClimber 20 Minutes', category: 'conditioning', difficulty: 'hard', description: 'Climb continuously for 20 minutes', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: ['versaclimber'], tags: ['climbing', 'cardio'], baseXP: 40 },
+  { id: 'q046', slug: 'zone2-45min', title: 'Zone-2 Cardio 45 Minutes', category: 'fitness', difficulty: 'easy', description: 'Maintain conversational pace for 45min', durationMinutes: 45, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['cardio', 'zone2'], baseXP: 10 },
+  { id: 'q047', slug: '10x100m-sprints', title: '10x100m Sprints', category: 'fitness', difficulty: 'hard', description: 'Complete 10 sprints with 90s rest', durationMinutes: 25, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['sprint', 'speed'], baseXP: 40 },
+  { id: 'q048', slug: '5k-run', title: '5K Run', category: 'fitness', difficulty: 'medium', description: 'Complete a 5K run', durationMinutes: 30, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['running', 'endurance'], baseXP: 20 },
+  { id: 'q049', slug: '10k-under-55', title: '10K Under 55 Minutes', category: 'fitness', difficulty: 'elite', description: 'Run 10K in under 55 minutes', durationMinutes: 55, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['running', 'endurance'], baseXP: 80 },
+  { id: 'q050', slug: 'half-marathon', title: 'Half Marathon', category: 'fitness', difficulty: 'legendary', description: 'Complete 13.1 mile run', durationMinutes: 150, proof: 'timer', recurrence: 'once', equipment: [], tags: ['running', 'endurance'], baseXP: 160 },
+  { id: 'q051', slug: 'full-marathon', title: 'Full Marathon 26.2 Miles', category: 'fitness', difficulty: 'legendary', description: 'Complete a full marathon', durationMinutes: 300, proof: 'photo', recurrence: 'once', equipment: [], tags: ['running', 'endurance', 'epic'], baseXP: 160 },
+  { id: 'q052', slug: 'row-5k', title: 'Row 5,000 Meters', category: 'fitness', difficulty: 'medium', description: 'Complete 5K on rowing machine', durationMinutes: 25, proof: 'timer', recurrence: 'daily', equipment: ['rower'], tags: ['rowing', 'cardio'], baseXP: 20 },
+  { id: 'q053', slug: 'row-10k', title: 'Row 10,000 Meters', category: 'fitness', difficulty: 'hard', description: 'Complete 10K on rowing machine', durationMinutes: 45, proof: 'timer', recurrence: 'weekly', equipment: ['rower'], tags: ['rowing', 'endurance'], baseXP: 40 },
+  { id: 'q054', slug: 'assault-bike-30min', title: 'Assault Bike 30 Minutes', category: 'fitness', difficulty: 'hard', description: 'Steady pace on assault bike for 30min', durationMinutes: 30, proof: 'timer', recurrence: 'weekly', equipment: ['assault-bike'], tags: ['cardio', 'bike'], baseXP: 40 },
+  { id: 'q055', slug: 'bike-20-miles', title: 'Bike 20 Miles', category: 'fitness', difficulty: 'medium', description: 'Complete 20 mile bike ride', durationMinutes: 75, proof: 'timer', recurrence: 'weekly', equipment: ['bike'], tags: ['cycling', 'endurance'], baseXP: 20 },
+  { id: 'q056', slug: 'bike-50-miles', title: 'Bike 50 Miles', category: 'fitness', difficulty: 'elite', description: 'Complete 50 mile bike ride', durationMinutes: 180, proof: 'timer', recurrence: 'once', equipment: ['bike'], tags: ['cycling', 'endurance'], baseXP: 80 },
+  { id: 'q057', slug: 'bike-century', title: 'Century Ride 100 Miles', category: 'fitness', difficulty: 'legendary', description: 'Complete 100 mile bike ride', durationMinutes: 360, proof: 'photo', recurrence: 'once', equipment: ['bike'], tags: ['cycling', 'endurance', 'epic'], baseXP: 160 },
+  { id: 'q058', slug: 'swim-1000m', title: 'Swim 1000 Meters', category: 'fitness', difficulty: 'medium', description: 'Swim 1K continuously', durationMinutes: 30, proof: 'timer', recurrence: 'weekly', equipment: ['pool'], tags: ['swimming', 'cardio'], baseXP: 20 },
+  { id: 'q059', slug: 'swim-mile', title: 'Swim 1 Mile', category: 'fitness', difficulty: 'hard', description: 'Swim 1 mile (1600m) continuously', durationMinutes: 60, proof: 'timer', recurrence: 'weekly', equipment: ['pool'], tags: ['swimming', 'endurance'], baseXP: 40 },
+  { id: 'q060', slug: 'jump-rope-20min', title: 'Jump Rope 20 Minutes', category: 'fitness', difficulty: 'medium', description: 'Jump rope for 20 minutes total', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: ['jump-rope'], tags: ['cardio', 'coordination'], baseXP: 20 },
+  { id: 'q061', slug: 'double-unders-200', title: '200 Double Unders', category: 'fitness', difficulty: 'hard', description: 'Complete 200 double under jump ropes', durationMinutes: 15, proof: 'counter', recurrence: 'daily', equipment: ['jump-rope'], tags: ['cardio', 'skill'], baseXP: 40 },
+  { id: 'q062', slug: 'ruck-5-miles', title: 'Ruck March 5 Miles (35lbs)', category: 'fitness', difficulty: 'hard', description: 'Walk/march 5 miles with 35lb pack', durationMinutes: 90, proof: 'timer', recurrence: 'weekly', equipment: ['backpack'], tags: ['rucking', 'endurance'], baseXP: 40 },
+  { id: 'q063', slug: 'ruck-10-miles', title: 'Ruck March 10 Miles (40lbs)', category: 'fitness', difficulty: 'elite', description: 'Complete 10 mile ruck with 40lb pack', durationMinutes: 180, proof: 'timer', recurrence: 'once', equipment: ['backpack'], tags: ['rucking', 'endurance'], baseXP: 80 },
+  { id: 'q064', slug: 'hill-sprints-10', title: '10 Hill Sprints', category: 'fitness', difficulty: 'hard', description: 'Sprint up steep hill 10 times', durationMinutes: 25, proof: 'counter', recurrence: 'weekly', equipment: [], tags: ['sprint', 'power'], baseXP: 40 },
+  { id: 'q065', slug: 'stair-climbs-20', title: '20 Stair Sprint Climbs', category: 'fitness', difficulty: 'medium', description: 'Sprint up stairs 20 times', durationMinutes: 20, proof: 'counter', recurrence: 'weekly', equipment: [], tags: ['stairs', 'cardio'], baseXP: 20 },
+  { id: 'q066', slug: 'emom-burpees-20min', title: 'EMOM Burpees 20 Minutes', category: 'fitness', difficulty: 'hard', description: '10 burpees every minute for 20 minutes', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['burpees', 'hiit'], baseXP: 40 },
+  { id: 'q067', slug: 'tabata-sprints-8', title: '8 Rounds Tabata Sprints', category: 'fitness', difficulty: 'hard', description: '20s sprint, 10s rest for 8 rounds', durationMinutes: 10, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['sprint', 'hiit'], baseXP: 40 },
+  { id: 'q068', slug: 'crossfit-murph', title: 'Murph WOD', category: 'fitness', difficulty: 'legendary', description: '1mi run, 100 pullups, 200 pushups, 300 squats, 1mi run', durationMinutes: 60, proof: 'photo', recurrence: 'once', equipment: [], tags: ['hero-wod', 'endurance'], baseXP: 160, safety: 'Scale as needed, stay hydrated' },
+  { id: 'q069', slug: 'crossfit-cindy', title: 'Cindy WOD 20 Minutes', category: 'fitness', difficulty: 'medium', description: 'AMRAP: 5 pullups, 10 pushups, 15 squats', durationMinutes: 20, proof: 'counter', recurrence: 'weekly', equipment: [], tags: ['wod', 'amrap'], baseXP: 20 },
+  { id: 'q070', slug: 'crossfit-fran', title: 'Fran WOD', category: 'fitness', difficulty: 'elite', description: '21-15-9: Thrusters (95lb) and pullups', durationMinutes: 15, proof: 'timer', recurrence: 'once', equipment: ['barbell'], tags: ['wod', 'benchmark'], baseXP: 80 },
+  { id: 'q071', slug: 'mile-run-under-7', title: 'Mile Under 7 Minutes', category: 'fitness', difficulty: 'hard', description: 'Run 1 mile in under 7 minutes', durationMinutes: 10, proof: 'timer', recurrence: 'once', equipment: [], tags: ['running', 'speed'], baseXP: 40 },
+  { id: 'q072', slug: '400m-sprint-4', title: '4x400m Sprints', category: 'fitness', difficulty: 'hard', description: 'Complete 4 rounds of 400m sprints', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['sprint', 'speed'], baseXP: 40 },
+  { id: 'q073', slug: 'sled-pull-300m', title: 'Sled Pull 300 Meters', category: 'fitness', difficulty: 'medium', description: 'Pull loaded sled backwards for 300m', durationMinutes: 15, proof: 'timer', recurrence: 'weekly', equipment: ['sled'], tags: ['conditioning', 'pull'], baseXP: 20 },
+  { id: 'q074', slug: 'prowler-push-200m', title: 'Prowler Push 200m Heavy', category: 'fitness', difficulty: 'hard', description: 'Push heavy prowler for 200m', durationMinutes: 15, proof: 'timer', recurrence: 'weekly', equipment: ['prowler'], tags: ['conditioning', 'push'], baseXP: 40 },
+  { id: 'q075', slug: 'ski-erg-5k', title: 'Ski Erg 5000 Meters', category: 'fitness', difficulty: 'medium', description: 'Complete 5K on ski erg machine', durationMinutes: 25, proof: 'timer', recurrence: 'weekly', equipment: ['ski-erg'], tags: ['cardio', 'full-body'], baseXP: 20 },
+  { id: 'q076', slug: 'battle-ropes-20min', title: 'Battle Ropes 20 Minutes', category: 'fitness', difficulty: 'hard', description: 'Interval training with battle ropes for 20min', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: ['battle-ropes'], tags: ['cardio', 'arms'], baseXP: 40 },
+  { id: 'q077', slug: 'boxing-rounds-10', title: '10 Boxing Rounds', category: 'fitness', difficulty: 'hard', description: 'Complete 10x3min boxing rounds', durationMinutes: 45, proof: 'timer', recurrence: 'weekly', equipment: ['boxing-gloves'], tags: ['boxing', 'cardio'], baseXP: 40 },
+  { id: 'q078', slug: 'shadowboxing-20min', title: 'Shadowboxing 20 Minutes', category: 'fitness', difficulty: 'medium', description: 'Continuous shadowboxing for 20 minutes', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['boxing', 'cardio'], baseXP: 20 },
+  { id: 'q079', slug: 'kickboxing-hiit', title: 'Kickboxing HIIT 30 Minutes', category: 'fitness', difficulty: 'hard', description: 'High intensity kickboxing workout', durationMinutes: 30, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['kickboxing', 'hiit'], baseXP: 40 },
+  { id: 'q080', slug: 'walk-10k-steps', title: 'Walk 10,000 Steps', category: 'fitness', difficulty: 'easy', description: 'Accumulate 10K steps throughout the day', durationMinutes: 90, proof: 'text', recurrence: 'daily', equipment: [], tags: ['walking', 'daily'], baseXP: 10 },
+  { id: 'q081', slug: 'walk-15k-steps', title: 'Walk 15,000 Steps', category: 'fitness', difficulty: 'medium', description: 'Accumulate 15K steps throughout the day', durationMinutes: 120, proof: 'text', recurrence: 'daily', equipment: [], tags: ['walking', 'daily'], baseXP: 20 },
+  { id: 'q082', slug: 'incline-walk-30min', title: '30-Minute Incline Walk', category: 'fitness', difficulty: 'easy', description: 'Walk on treadmill at 10%+ incline', durationMinutes: 30, proof: 'timer', recurrence: 'daily', equipment: ['treadmill'], tags: ['walking', 'incline'], baseXP: 10 },
+  { id: 'q083', slug: 'versaclimber-20min', title: 'VersaClimber 20 Minutes', category: 'fitness', difficulty: 'hard', description: 'Climb continuously for 20 minutes', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: ['versaclimber'], tags: ['climbing', 'cardio'], baseXP: 40 },
 
   // MOBILITY & RECOVERY (22 quests)
-  { id: 'q084', slug: 'mobility-15min', title: '15-Minute Full-Body Mobility', category: 'mobility', difficulty: 'easy', description: 'Complete comprehensive mobility routine', durationMinutes: 15, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['mobility', 'flexibility'], baseXP: 10 },
-  { id: 'q085', slug: 'couch-stretch', title: 'Couch Stretch 4x60s Each Leg', category: 'mobility', difficulty: 'medium', description: 'Deep hip flexor stretch on each leg', durationMinutes: 10, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['hips', 'stretch'], baseXP: 20 },
-  { id: 'q086', slug: 'deep-squat-hold-5min', title: 'Deep Squat Hold 5 Minutes', category: 'mobility', difficulty: 'hard', description: 'Accumulate 5 minutes in deep squat', durationMinutes: 8, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['squat', 'mobility'], baseXP: 40 },
-  { id: 'q087', slug: 'yoga-flow-30min', title: 'Yoga Flow 30 Minutes', category: 'mobility', difficulty: 'medium', description: 'Complete a vinyasa yoga flow', durationMinutes: 30, proof: 'timer', recurrence: 'daily', equipment: ['yoga-mat'], tags: ['yoga', 'flexibility'], baseXP: 20 },
-  { id: 'q088', slug: 'yoga-flow-60min', title: 'Yoga Flow 60 Minutes', category: 'mobility', difficulty: 'hard', description: 'Extended yoga practice session', durationMinutes: 60, proof: 'timer', recurrence: 'weekly', equipment: ['yoga-mat'], tags: ['yoga', 'flexibility'], baseXP: 40 },
-  { id: 'q089', slug: 'foam-roll-20min', title: 'Foam Rolling 20 Minutes', category: 'mobility', difficulty: 'easy', description: 'Full body foam rolling session', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: ['foam-roller'], tags: ['recovery', 'myofascial'], baseXP: 10 },
-  { id: 'q090', slug: 'lacrosse-ball-feet', title: 'Foot Mobility with Lacrosse Ball', category: 'mobility', difficulty: 'easy', description: 'Roll feet on lacrosse ball 5min each', durationMinutes: 10, proof: 'timer', recurrence: 'daily', equipment: ['lacrosse-ball'], tags: ['feet', 'recovery'], baseXP: 10 },
-  { id: 'q091', slug: 'pigeon-pose-5min', title: 'Pigeon Pose 5 Minutes Each Side', category: 'mobility', difficulty: 'medium', description: 'Deep hip opener stretch', durationMinutes: 12, proof: 'timer', recurrence: 'daily', equipment: ['yoga-mat'], tags: ['hips', 'stretch'], baseXP: 20 },
-  { id: 'q092', slug: 'shoulder-mobility-routine', title: 'Shoulder Mobility 15 Minutes', category: 'mobility', difficulty: 'easy', description: 'Comprehensive shoulder mobility work', durationMinutes: 15, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['shoulders', 'mobility'], baseXP: 10 },
-  { id: 'q093', slug: 'thoracic-spine-mobility', title: 'Thoracic Spine Mobility 10 Minutes', category: 'mobility', difficulty: 'easy', description: 'Upper back mobility exercises', durationMinutes: 10, proof: 'timer', recurrence: 'daily', equipment: ['foam-roller'], tags: ['spine', 'mobility'], baseXP: 10 },
-  { id: 'q094', slug: 'hip-mobility-routine', title: 'Hip Mobility 20 Minutes', category: 'mobility', difficulty: 'medium', description: 'Comprehensive hip mobility work', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['hips', 'mobility'], baseXP: 20 },
-  { id: 'q095', slug: 'ankle-mobility-work', title: 'Ankle Mobility 10 Minutes', category: 'mobility', difficulty: 'easy', description: 'Ankle mobility and flexibility work', durationMinutes: 10, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['ankles', 'mobility'], baseXP: 10 },
-  { id: 'q096', slug: 'splits-practice', title: 'Splits Practice 15 Minutes', category: 'mobility', difficulty: 'hard', description: 'Work toward front and side splits', durationMinutes: 15, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['flexibility', 'splits'], baseXP: 40 },
-  { id: 'q097', slug: 'bridge-hold-2min', title: 'Bridge Hold 2 Minutes Total', category: 'mobility', difficulty: 'medium', description: 'Accumulate 2 minutes in bridge position', durationMinutes: 5, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['spine', 'mobility'], baseXP: 20 },
-  { id: 'q098', slug: 'pike-stretch-5min', title: 'Pike Stretch 5 Minutes', category: 'mobility', difficulty: 'medium', description: 'Seated forward fold hamstring stretch', durationMinutes: 5, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['hamstrings', 'flexibility'], baseXP: 20 },
-  { id: 'q099', slug: 'active-recovery-walk', title: 'Active Recovery Walk 45 Minutes', category: 'mobility', difficulty: 'easy', description: 'Easy pace recovery walk', durationMinutes: 45, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['recovery', 'walking'], baseXP: 10 },
-  { id: 'q100', slug: 'stretching-routine-30min', title: 'Full Body Stretching 30 Minutes', category: 'mobility', difficulty: 'medium', description: 'Comprehensive static stretching session', durationMinutes: 30, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['stretching', 'flexibility'], baseXP: 20 },
-  { id: 'q101', slug: 'yin-yoga-60min', title: 'Yin Yoga 60 Minutes', category: 'mobility', difficulty: 'medium', description: 'Deep passive stretching yoga practice', durationMinutes: 60, proof: 'timer', recurrence: 'weekly', equipment: ['yoga-mat'], tags: ['yoga', 'recovery'], baseXP: 20 },
-  { id: 'q102', slug: 'breath-work-wim-hof', title: 'Wim Hof Breathing 20 Minutes', category: 'mobility', difficulty: 'medium', description: 'Complete Wim Hof breathing protocol', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['breathing', 'recovery'], baseXP: 20 },
-  { id: 'q103', slug: 'sauna-session-30min', title: 'Sauna Session 30 Minutes', category: 'mobility', difficulty: 'easy', description: 'Heat exposure in sauna', durationMinutes: 30, proof: 'timer', recurrence: 'weekly', equipment: ['sauna'], tags: ['heat', 'recovery'], baseXP: 10, safety: 'Stay hydrated, listen to your body' },
-  { id: 'q104', slug: 'ice-bath-5min', title: 'Ice Bath 5 Minutes', category: 'mobility', difficulty: 'hard', description: 'Cold water immersion for 5 minutes', durationMinutes: 5, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['cold', 'recovery'], baseXP: 40, safety: 'Build up tolerance gradually' },
-  { id: 'q105', slug: 'contrast-therapy', title: 'Contrast Therapy Hot/Cold', category: 'mobility', difficulty: 'medium', description: 'Alternate hot and cold exposure', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['recovery', 'therapy'], baseXP: 20 },
+  { id: 'q084', slug: 'mobility-15min', title: '15-Minute Full-Body Mobility', category: 'body-wellness', difficulty: 'easy', description: 'Complete comprehensive mobility routine', durationMinutes: 15, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['mobility', 'flexibility'], baseXP: 10 },
+  { id: 'q085', slug: 'couch-stretch', title: 'Couch Stretch 4x60s Each Leg', category: 'body-wellness', difficulty: 'medium', description: 'Deep hip flexor stretch on each leg', durationMinutes: 10, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['hips', 'stretch'], baseXP: 20 },
+  { id: 'q086', slug: 'deep-squat-hold-5min', title: 'Deep Squat Hold 5 Minutes', category: 'body-wellness', difficulty: 'hard', description: 'Accumulate 5 minutes in deep squat', durationMinutes: 8, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['squat', 'mobility'], baseXP: 40 },
+  { id: 'q087', slug: 'yoga-flow-30min', title: 'Yoga Flow 30 Minutes', category: 'body-wellness', difficulty: 'medium', description: 'Complete a vinyasa yoga flow', durationMinutes: 30, proof: 'timer', recurrence: 'daily', equipment: ['yoga-mat'], tags: ['yoga', 'flexibility'], baseXP: 20 },
+  { id: 'q088', slug: 'yoga-flow-60min', title: 'Yoga Flow 60 Minutes', category: 'body-wellness', difficulty: 'hard', description: 'Extended yoga practice session', durationMinutes: 60, proof: 'timer', recurrence: 'weekly', equipment: ['yoga-mat'], tags: ['yoga', 'flexibility'], baseXP: 40 },
+  { id: 'q089', slug: 'foam-roll-20min', title: 'Foam Rolling 20 Minutes', category: 'body-wellness', difficulty: 'easy', description: 'Full body foam rolling session', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: ['foam-roller'], tags: ['recovery', 'myofascial'], baseXP: 10 },
+  { id: 'q090', slug: 'lacrosse-ball-feet', title: 'Foot Mobility with Lacrosse Ball', category: 'body-wellness', difficulty: 'easy', description: 'Roll feet on lacrosse ball 5min each', durationMinutes: 10, proof: 'timer', recurrence: 'daily', equipment: ['lacrosse-ball'], tags: ['feet', 'recovery'], baseXP: 10 },
+  { id: 'q091', slug: 'pigeon-pose-5min', title: 'Pigeon Pose 5 Minutes Each Side', category: 'body-wellness', difficulty: 'medium', description: 'Deep hip opener stretch', durationMinutes: 12, proof: 'timer', recurrence: 'daily', equipment: ['yoga-mat'], tags: ['hips', 'stretch'], baseXP: 20 },
+  { id: 'q092', slug: 'shoulder-mobility-routine', title: 'Shoulder Mobility 15 Minutes', category: 'body-wellness', difficulty: 'easy', description: 'Comprehensive shoulder mobility work', durationMinutes: 15, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['shoulders', 'mobility'], baseXP: 10 },
+  { id: 'q093', slug: 'thoracic-spine-mobility', title: 'Thoracic Spine Mobility 10 Minutes', category: 'body-wellness', difficulty: 'easy', description: 'Upper back mobility exercises', durationMinutes: 10, proof: 'timer', recurrence: 'daily', equipment: ['foam-roller'], tags: ['spine', 'mobility'], baseXP: 10 },
+  { id: 'q094', slug: 'hip-mobility-routine', title: 'Hip Mobility 20 Minutes', category: 'body-wellness', difficulty: 'medium', description: 'Comprehensive hip mobility work', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['hips', 'mobility'], baseXP: 20 },
+  { id: 'q095', slug: 'ankle-mobility-work', title: 'Ankle Mobility 10 Minutes', category: 'body-wellness', difficulty: 'easy', description: 'Ankle mobility and flexibility work', durationMinutes: 10, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['ankles', 'mobility'], baseXP: 10 },
+  { id: 'q096', slug: 'splits-practice', title: 'Splits Practice 15 Minutes', category: 'body-wellness', difficulty: 'hard', description: 'Work toward front and side splits', durationMinutes: 15, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['flexibility', 'splits'], baseXP: 40 },
+  { id: 'q097', slug: 'bridge-hold-2min', title: 'Bridge Hold 2 Minutes Total', category: 'body-wellness', difficulty: 'medium', description: 'Accumulate 2 minutes in bridge position', durationMinutes: 5, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['spine', 'mobility'], baseXP: 20 },
+  { id: 'q098', slug: 'pike-stretch-5min', title: 'Pike Stretch 5 Minutes', category: 'body-wellness', difficulty: 'medium', description: 'Seated forward fold hamstring stretch', durationMinutes: 5, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['hamstrings', 'flexibility'], baseXP: 20 },
+  { id: 'q099', slug: 'active-recovery-walk', title: 'Active Recovery Walk 45 Minutes', category: 'body-wellness', difficulty: 'easy', description: 'Easy pace recovery walk', durationMinutes: 45, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['recovery', 'walking'], baseXP: 10 },
+  { id: 'q100', slug: 'stretching-routine-30min', title: 'Full Body Stretching 30 Minutes', category: 'body-wellness', difficulty: 'medium', description: 'Comprehensive static stretching session', durationMinutes: 30, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['stretching', 'flexibility'], baseXP: 20 },
+  { id: 'q101', slug: 'yin-yoga-60min', title: 'Yin Yoga 60 Minutes', category: 'body-wellness', difficulty: 'medium', description: 'Deep passive stretching yoga practice', durationMinutes: 60, proof: 'timer', recurrence: 'weekly', equipment: ['yoga-mat'], tags: ['yoga', 'recovery'], baseXP: 20 },
+  { id: 'q102', slug: 'breath-work-wim-hof', title: 'Wim Hof Breathing 20 Minutes', category: 'body-wellness', difficulty: 'medium', description: 'Complete Wim Hof breathing protocol', durationMinutes: 20, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['breathing', 'recovery'], baseXP: 20 },
+  { id: 'q103', slug: 'sauna-session-30min', title: 'Sauna Session 30 Minutes', category: 'body-wellness', difficulty: 'easy', description: 'Heat exposure in sauna', durationMinutes: 30, proof: 'timer', recurrence: 'weekly', equipment: ['sauna'], tags: ['heat', 'recovery'], baseXP: 10, safety: 'Stay hydrated, listen to your body' },
+  { id: 'q104', slug: 'ice-bath-5min', title: 'Ice Bath 5 Minutes', category: 'body-wellness', difficulty: 'hard', description: 'Cold water immersion for 5 minutes', durationMinutes: 5, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['cold', 'recovery'], baseXP: 40, safety: 'Build up tolerance gradually' },
+  { id: 'q105', slug: 'contrast-therapy', title: 'Contrast Therapy Hot/Cold', category: 'body-wellness', difficulty: 'medium', description: 'Alternate hot and cold exposure', durationMinutes: 20, proof: 'timer', recurrence: 'weekly', equipment: [], tags: ['recovery', 'therapy'], baseXP: 20 },
 
   // More categories to follow in next part...
   // (Athletics & Skill, Body & Aesthetics, Intelligence, Discipline, Mental, Social & Leadership, Adventure & Outdoors, Finance & Career, Creativity)
@@ -162,34 +160,34 @@ export const questTemplatesExtended: QuestTemplate[] = [
   { id: 'q123', slug: 'skate-session-30min', title: 'Skateboard Session 30 Minutes', category: 'athletics-skill', difficulty: 'medium', description: 'Skateboarding practice and tricks', durationMinutes: 30, proof: 'timer', recurrence: 'weekly', equipment: ['skateboard'], tags: ['skateboarding', 'skill'], baseXP: 20, safety: 'Wear protective gear' },
 
   // BODY & AESTHETICS (28 quests)
-  { id: 'q124', slug: 'protein-target-hit', title: 'Hit Protein Target', category: 'body-aesthetics', difficulty: 'medium', description: 'Consume target protein (1g per lb bodyweight)', durationMinutes: 1, proof: 'text', recurrence: 'daily', equipment: [], tags: ['nutrition', 'protein'], baseXP: 20 },
-  { id: 'q125', slug: 'hydration-gallon', title: 'Drink 1 Gallon Water', category: 'body-aesthetics', difficulty: 'easy', description: 'Consume at least 1 gallon of water', durationMinutes: 1, proof: 'counter', recurrence: 'daily', equipment: [], tags: ['hydration', 'health'], baseXP: 10 },
-  { id: 'q126', slug: 'cold-shower-3min', title: 'Cold Shower 3 Minutes', category: 'body-aesthetics', difficulty: 'medium', description: 'Take 3-minute cold shower', durationMinutes: 3, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['cold', 'discipline'], baseXP: 20 },
-  { id: 'q127', slug: 'sleep-8-hours', title: 'Sleep 8 Hours', category: 'body-aesthetics', difficulty: 'easy', description: 'Get at least 8 hours of quality sleep', durationMinutes: 480, proof: 'text', recurrence: 'daily', equipment: [], tags: ['sleep', 'recovery'], baseXP: 10 },
-  { id: 'q128', slug: 'walk-12k-steps', title: 'Walk 12,000 Steps', category: 'body-aesthetics', difficulty: 'medium', description: 'Accumulate 12K steps throughout the day', durationMinutes: 100, proof: 'text', recurrence: 'daily', equipment: [], tags: ['walking', 'movement'], baseXP: 20 },
-  { id: 'q129', slug: 'meal-prep-sunday', title: 'Weekly Meal Prep', category: 'body-aesthetics', difficulty: 'medium', description: 'Prep meals for the week', durationMinutes: 120, proof: 'photo', recurrence: 'weekly', equipment: [], tags: ['nutrition', 'prep'], baseXP: 20 },
-  { id: 'q130', slug: 'track-calories', title: 'Track All Calories Today', category: 'body-aesthetics', difficulty: 'easy', description: 'Log all food and calories consumed', durationMinutes: 10, proof: 'text', recurrence: 'daily', equipment: [], tags: ['nutrition', 'tracking'], baseXP: 10 },
-  { id: 'q131', slug: 'no-alcohol-7-days', title: 'No Alcohol 7 Days', category: 'body-aesthetics', difficulty: 'medium', description: 'Go alcohol-free for a week', durationMinutes: 1, proof: 'check', recurrence: 'weekly', equipment: [], tags: ['discipline', 'health'], baseXP: 20 },
-  { id: 'q132', slug: 'no-alcohol-30-days', title: 'No Alcohol 30 Days', category: 'body-aesthetics', difficulty: 'hard', description: 'Complete 30-day alcohol-free challenge', durationMinutes: 1, proof: 'check', recurrence: 'once', equipment: [], tags: ['discipline', 'health'], baseXP: 40 },
-  { id: 'q133', slug: 'intermittent-fasting-16-8', title: '16:8 Intermittent Fasting', category: 'body-aesthetics', difficulty: 'medium', description: 'Fast for 16 hours, eat in 8-hour window', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['fasting', 'nutrition'], baseXP: 20 },
-  { id: 'q134', slug: 'no-processed-sugar', title: 'No Processed Sugar Today', category: 'body-aesthetics', difficulty: 'medium', description: 'Avoid all processed sugar', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['nutrition', 'discipline'], baseXP: 20 },
-  { id: 'q135', slug: 'eat-5-servings-veggies', title: 'Eat 5 Servings Vegetables', category: 'body-aesthetics', difficulty: 'easy', description: 'Consume at least 5 servings of vegetables', durationMinutes: 1, proof: 'text', recurrence: 'daily', equipment: [], tags: ['nutrition', 'health'], baseXP: 10 },
-  { id: 'q136', slug: 'morning-sunlight-10min', title: 'Morning Sunlight 10 Minutes', category: 'body-aesthetics', difficulty: 'easy', description: 'Get sunlight exposure within 1hr of waking', durationMinutes: 10, proof: 'check', recurrence: 'daily', equipment: [], tags: ['circadian', 'health'], baseXP: 10 },
-  { id: 'q137', slug: 'evening-screen-cutoff', title: 'No Screens 2 Hours Before Bed', category: 'body-aesthetics', difficulty: 'medium', description: 'Avoid screens 2 hours before bedtime', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['sleep', 'discipline'], baseXP: 20 },
-  { id: 'q138', slug: 'vitamins-supplements', title: 'Take Daily Vitamins/Supplements', category: 'body-aesthetics', difficulty: 'easy', description: 'Take planned vitamins and supplements', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['health', 'supplementation'], baseXP: 10 },
-  { id: 'q139', slug: 'skin-care-routine', title: 'Complete Skin Care Routine', category: 'body-aesthetics', difficulty: 'easy', description: 'Follow full morning/evening skin care', durationMinutes: 10, proof: 'check', recurrence: 'daily', equipment: [], tags: ['grooming', 'self-care'], baseXP: 10 },
-  { id: 'q140', slug: 'dental-floss', title: 'Floss Teeth', category: 'body-aesthetics', difficulty: 'easy', description: 'Floss all teeth thoroughly', durationMinutes: 3, proof: 'check', recurrence: 'daily', equipment: [], tags: ['dental', 'health'], baseXP: 10 },
-  { id: 'q141', slug: 'posture-check-ins', title: 'Hourly Posture Check-Ins', category: 'body-aesthetics', difficulty: 'easy', description: 'Check and correct posture every hour', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['posture', 'awareness'], baseXP: 10 },
-  { id: 'q142', slug: 'stand-desk-4-hours', title: 'Standing Desk 4 Hours', category: 'body-aesthetics', difficulty: 'medium', description: 'Work standing for at least 4 hours', durationMinutes: 240, proof: 'timer', recurrence: 'daily', equipment: ['standing-desk'], tags: ['posture', 'movement'], baseXP: 20 },
-  { id: 'q143', slug: 'body-weight-track', title: 'Track Body Weight', category: 'body-aesthetics', difficulty: 'easy', description: 'Weigh yourself and log the number', durationMinutes: 1, proof: 'text', recurrence: 'daily', equipment: ['scale'], tags: ['tracking', 'metrics'], baseXP: 10 },
-  { id: 'q144', slug: 'body-measurements', title: 'Take Body Measurements', category: 'body-aesthetics', difficulty: 'easy', description: 'Measure key body dimensions', durationMinutes: 10, proof: 'text', recurrence: 'weekly', equipment: ['measuring-tape'], tags: ['tracking', 'metrics'], baseXP: 10 },
-  { id: 'q145', slug: 'progress-photos', title: 'Take Progress Photos', category: 'body-aesthetics', difficulty: 'easy', description: 'Take front/side/back progress photos', durationMinutes: 5, proof: 'photo', recurrence: 'weekly', equipment: [], tags: ['tracking', 'progress'], baseXP: 10 },
-  { id: 'q146', slug: 'no-caffeine-after-2pm', title: 'No Caffeine After 2 PM', category: 'body-aesthetics', difficulty: 'medium', description: 'Avoid caffeine after 2 PM', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['sleep', 'discipline'], baseXP: 20 },
-  { id: 'q147', slug: 'eat-whole-foods-only', title: 'Whole Foods Only Today', category: 'body-aesthetics', difficulty: 'hard', description: 'Eat only unprocessed whole foods', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['nutrition', 'discipline'], baseXP: 40 },
-  { id: 'q148', slug: 'cook-healthy-meal', title: 'Cook Healthy Meal from Scratch', category: 'body-aesthetics', difficulty: 'easy', description: 'Prepare a nutritious home-cooked meal', durationMinutes: 45, proof: 'photo', recurrence: 'daily', equipment: [], tags: ['cooking', 'nutrition'], baseXP: 10 },
-  { id: 'q149', slug: 'no-fast-food-7-days', title: 'No Fast Food 7 Days', category: 'body-aesthetics', difficulty: 'medium', description: 'Avoid fast food for a week', durationMinutes: 1, proof: 'check', recurrence: 'weekly', equipment: [], tags: ['nutrition', 'discipline'], baseXP: 20 },
-  { id: 'q150', slug: 'electrolytes-daily', title: 'Consume Electrolytes', category: 'body-aesthetics', difficulty: 'easy', description: 'Get proper electrolyte intake', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['hydration', 'health'], baseXP: 10 },
-  { id: 'q151', slug: 'grooming-routine', title: 'Complete Grooming Routine', category: 'body-aesthetics', difficulty: 'easy', description: 'Full personal grooming session', durationMinutes: 20, proof: 'check', recurrence: 'weekly', equipment: [], tags: ['grooming', 'self-care'], baseXP: 10 },
+  { id: 'q124', slug: 'protein-target-hit', title: 'Hit Protein Target', category: 'body-wellness', difficulty: 'medium', description: 'Consume target protein (1g per lb bodyweight)', durationMinutes: 1, proof: 'text', recurrence: 'daily', equipment: [], tags: ['nutrition', 'protein'], baseXP: 20 },
+  { id: 'q125', slug: 'hydration-gallon', title: 'Drink 1 Gallon Water', category: 'body-wellness', difficulty: 'easy', description: 'Consume at least 1 gallon of water', durationMinutes: 1, proof: 'counter', recurrence: 'daily', equipment: [], tags: ['hydration', 'health'], baseXP: 10 },
+  { id: 'q126', slug: 'cold-shower-3min', title: 'Cold Shower 3 Minutes', category: 'body-wellness', difficulty: 'medium', description: 'Take 3-minute cold shower', durationMinutes: 3, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['cold', 'discipline'], baseXP: 20 },
+  { id: 'q127', slug: 'sleep-8-hours', title: 'Sleep 8 Hours', category: 'body-wellness', difficulty: 'easy', description: 'Get at least 8 hours of quality sleep', durationMinutes: 480, proof: 'text', recurrence: 'daily', equipment: [], tags: ['sleep', 'recovery'], baseXP: 10 },
+  { id: 'q128', slug: 'walk-12k-steps', title: 'Walk 12,000 Steps', category: 'body-wellness', difficulty: 'medium', description: 'Accumulate 12K steps throughout the day', durationMinutes: 100, proof: 'text', recurrence: 'daily', equipment: [], tags: ['walking', 'movement'], baseXP: 20 },
+  { id: 'q129', slug: 'meal-prep-sunday', title: 'Weekly Meal Prep', category: 'body-wellness', difficulty: 'medium', description: 'Prep meals for the week', durationMinutes: 120, proof: 'photo', recurrence: 'weekly', equipment: [], tags: ['nutrition', 'prep'], baseXP: 20 },
+  { id: 'q130', slug: 'track-calories', title: 'Track All Calories Today', category: 'body-wellness', difficulty: 'easy', description: 'Log all food and calories consumed', durationMinutes: 10, proof: 'text', recurrence: 'daily', equipment: [], tags: ['nutrition', 'tracking'], baseXP: 10 },
+  { id: 'q131', slug: 'no-alcohol-7-days', title: 'No Alcohol 7 Days', category: 'body-wellness', difficulty: 'medium', description: 'Go alcohol-free for a week', durationMinutes: 1, proof: 'check', recurrence: 'weekly', equipment: [], tags: ['discipline', 'health'], baseXP: 20 },
+  { id: 'q132', slug: 'no-alcohol-30-days', title: 'No Alcohol 30 Days', category: 'body-wellness', difficulty: 'hard', description: 'Complete 30-day alcohol-free challenge', durationMinutes: 1, proof: 'check', recurrence: 'once', equipment: [], tags: ['discipline', 'health'], baseXP: 40 },
+  { id: 'q133', slug: 'intermittent-fasting-16-8', title: '16:8 Intermittent Fasting', category: 'body-wellness', difficulty: 'medium', description: 'Fast for 16 hours, eat in 8-hour window', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['fasting', 'nutrition'], baseXP: 20 },
+  { id: 'q134', slug: 'no-processed-sugar', title: 'No Processed Sugar Today', category: 'body-wellness', difficulty: 'medium', description: 'Avoid all processed sugar', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['nutrition', 'discipline'], baseXP: 20 },
+  { id: 'q135', slug: 'eat-5-servings-veggies', title: 'Eat 5 Servings Vegetables', category: 'body-wellness', difficulty: 'easy', description: 'Consume at least 5 servings of vegetables', durationMinutes: 1, proof: 'text', recurrence: 'daily', equipment: [], tags: ['nutrition', 'health'], baseXP: 10 },
+  { id: 'q136', slug: 'morning-sunlight-10min', title: 'Morning Sunlight 10 Minutes', category: 'body-wellness', difficulty: 'easy', description: 'Get sunlight exposure within 1hr of waking', durationMinutes: 10, proof: 'check', recurrence: 'daily', equipment: [], tags: ['circadian', 'health'], baseXP: 10 },
+  { id: 'q137', slug: 'evening-screen-cutoff', title: 'No Screens 2 Hours Before Bed', category: 'body-wellness', difficulty: 'medium', description: 'Avoid screens 2 hours before bedtime', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['sleep', 'discipline'], baseXP: 20 },
+  { id: 'q138', slug: 'vitamins-supplements', title: 'Take Daily Vitamins/Supplements', category: 'body-wellness', difficulty: 'easy', description: 'Take planned vitamins and supplements', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['health', 'supplementation'], baseXP: 10 },
+  { id: 'q139', slug: 'skin-care-routine', title: 'Complete Skin Care Routine', category: 'body-wellness', difficulty: 'easy', description: 'Follow full morning/evening skin care', durationMinutes: 10, proof: 'check', recurrence: 'daily', equipment: [], tags: ['grooming', 'self-care'], baseXP: 10 },
+  { id: 'q140', slug: 'dental-floss', title: 'Floss Teeth', category: 'body-wellness', difficulty: 'easy', description: 'Floss all teeth thoroughly', durationMinutes: 3, proof: 'check', recurrence: 'daily', equipment: [], tags: ['dental', 'health'], baseXP: 10 },
+  { id: 'q141', slug: 'posture-check-ins', title: 'Hourly Posture Check-Ins', category: 'body-wellness', difficulty: 'easy', description: 'Check and correct posture every hour', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['posture', 'awareness'], baseXP: 10 },
+  { id: 'q142', slug: 'stand-desk-4-hours', title: 'Standing Desk 4 Hours', category: 'body-wellness', difficulty: 'medium', description: 'Work standing for at least 4 hours', durationMinutes: 240, proof: 'timer', recurrence: 'daily', equipment: ['standing-desk'], tags: ['posture', 'movement'], baseXP: 20 },
+  { id: 'q143', slug: 'body-weight-track', title: 'Track Body Weight', category: 'body-wellness', difficulty: 'easy', description: 'Weigh yourself and log the number', durationMinutes: 1, proof: 'text', recurrence: 'daily', equipment: ['scale'], tags: ['tracking', 'metrics'], baseXP: 10 },
+  { id: 'q144', slug: 'body-measurements', title: 'Take Body Measurements', category: 'body-wellness', difficulty: 'easy', description: 'Measure key body dimensions', durationMinutes: 10, proof: 'text', recurrence: 'weekly', equipment: ['measuring-tape'], tags: ['tracking', 'metrics'], baseXP: 10 },
+  { id: 'q145', slug: 'progress-photos', title: 'Take Progress Photos', category: 'body-wellness', difficulty: 'easy', description: 'Take front/side/back progress photos', durationMinutes: 5, proof: 'photo', recurrence: 'weekly', equipment: [], tags: ['tracking', 'progress'], baseXP: 10 },
+  { id: 'q146', slug: 'no-caffeine-after-2pm', title: 'No Caffeine After 2 PM', category: 'body-wellness', difficulty: 'medium', description: 'Avoid caffeine after 2 PM', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['sleep', 'discipline'], baseXP: 20 },
+  { id: 'q147', slug: 'eat-whole-foods-only', title: 'Whole Foods Only Today', category: 'body-wellness', difficulty: 'hard', description: 'Eat only unprocessed whole foods', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['nutrition', 'discipline'], baseXP: 40 },
+  { id: 'q148', slug: 'cook-healthy-meal', title: 'Cook Healthy Meal from Scratch', category: 'body-wellness', difficulty: 'easy', description: 'Prepare a nutritious home-cooked meal', durationMinutes: 45, proof: 'photo', recurrence: 'daily', equipment: [], tags: ['cooking', 'nutrition'], baseXP: 10 },
+  { id: 'q149', slug: 'no-fast-food-7-days', title: 'No Fast Food 7 Days', category: 'body-wellness', difficulty: 'medium', description: 'Avoid fast food for a week', durationMinutes: 1, proof: 'check', recurrence: 'weekly', equipment: [], tags: ['nutrition', 'discipline'], baseXP: 20 },
+  { id: 'q150', slug: 'electrolytes-daily', title: 'Consume Electrolytes', category: 'body-wellness', difficulty: 'easy', description: 'Get proper electrolyte intake', durationMinutes: 1, proof: 'check', recurrence: 'daily', equipment: [], tags: ['hydration', 'health'], baseXP: 10 },
+  { id: 'q151', slug: 'grooming-routine', title: 'Complete Grooming Routine', category: 'body-wellness', difficulty: 'easy', description: 'Full personal grooming session', durationMinutes: 20, proof: 'check', recurrence: 'weekly', equipment: [], tags: ['grooming', 'self-care'], baseXP: 10 },
 
   // Intelligence Quests (q152-q176: 25 quests)
   { id: 'q152', slug: 'deep-work-session', title: 'Deep Work Session', category: 'intelligence', difficulty: 'hard', description: 'Complete 90 minutes of focused deep work', durationMinutes: 90, proof: 'timer', recurrence: 'daily', equipment: [], tags: ['focus', 'productivity'], baseXP: 40 },
@@ -388,7 +386,7 @@ export const questPacks: QuestPack[] = [
     slug: '30-day-recomp',
     title: 'Recomp',
     description: 'Transform your body composition in 30 days with strength, conditioning, and nutrition',
-    category: 'fitness-strength',
+    category: 'fitness',
     durationDays: 30,
     difficulty: 'hard',
     quests: [
@@ -429,7 +427,14 @@ export const questPacks: QuestPack[] = [
     durationDays: 21,
     difficulty: 'medium',
     quests: [
-      // Will add intelligence quests below
+      { templateId: 'q152', day: 1 },  // Deep Work Session
+      { templateId: 'q153', day: 1 },  // Read 30 Minutes
+      { templateId: 'q154', day: 1 },  // Learn New Skill
+      { templateId: 'q155', day: 3 },  // Complete Course Lesson
+      { templateId: 'q158', day: 5 },  // Write Learning Summary
+      { templateId: 'q160', day: 7 },  // Language Practice
+      { templateId: 'q172', day: 1 },  // Review Flashcards
+      { templateId: 'q175', day: 1 },  // Brain Training App
     ],
     locked: false,
     icon: '🧠',
@@ -444,7 +449,14 @@ export const questPacks: QuestPack[] = [
     durationDays: 14,
     difficulty: 'medium',
     quests: [
-      // Will add social quests below
+      { templateId: 'q228', day: 1 },  // Reach Out to Old Friend
+      { templateId: 'q234', day: 1 },  // Practice Active Listening
+      { templateId: 'q238', day: 3 },  // Meet New Person
+      { templateId: 'q241', day: 1 },  // Give Genuine Compliments
+      { templateId: 'q243', day: 2 },  // Practice Empathy
+      { templateId: 'q246', day: 1 },  // Strong Eye Contact Practice
+      { templateId: 'q247', day: 7 },  // Write Thank You Note
+      { templateId: 'q251', day: 5 },  // Celebrate Someone's Win
     ],
     locked: false,
     icon: '👥',
@@ -455,7 +467,7 @@ export const questPacks: QuestPack[] = [
     slug: 'ruck-and-run-6wk',
     title: 'Ruck & Run',
     description: 'Build endurance through progressive running and rucking',
-    category: 'conditioning',
+    category: 'fitness',
     durationDays: 42,
     difficulty: 'hard',
     quests: [
@@ -473,7 +485,7 @@ export const questPacks: QuestPack[] = [
     slug: 'aesthetics-reset-30d',
     title: 'Aesthetics Reset',
     description: 'Optimize nutrition, sleep, and daily habits for peak aesthetics',
-    category: 'body-aesthetics',
+    category: 'body-wellness',
     durationDays: 30,
     difficulty: 'medium',
     quests: [
@@ -492,7 +504,7 @@ export const questPacks: QuestPack[] = [
     slug: 'calisthenics-skill-6wk',
     title: 'Calisthenics',
     description: 'Master advanced bodyweight skills and strength',
-    category: 'fitness-strength',
+    category: 'fitness',
     durationDays: 42,
     difficulty: 'elite',
     quests: [
@@ -511,7 +523,7 @@ export const questPacks: QuestPack[] = [
     slug: 'marathon-build-16wk',
     title: 'Marathon',
     description: 'Complete training program to run your first or fastest marathon',
-    category: 'conditioning',
+    category: 'fitness',
     durationDays: 112,
     difficulty: 'legendary',
     quests: [
@@ -524,6 +536,615 @@ export const questPacks: QuestPack[] = [
     locked: true,
     icon: '🏃',
     tags: ['marathon', 'running', 'endurance'],
+  },
+  {
+    id: 'pack-009',
+    slug: 'warrior-mindset-30d',
+    title: 'Warrior Mindset',
+    description: 'Build unbreakable mental toughness and discipline in 30 days',
+    category: 'discipline',
+    durationDays: 30,
+    difficulty: 'hard',
+    quests: [
+      { templateId: 'q177', day: 1 },  // Take Cold Shower
+      { templateId: 'q178', day: 1 },  // Wake Up at 5 AM
+      { templateId: 'q179', day: 1 },  // No Phone First Hour
+      { templateId: 'q180', day: 1 },  // Make Your Bed
+      { templateId: 'q181', day: 1 },  // No Snooze
+      { templateId: 'q190', day: 1 },  // Zero Complaints Today
+      { templateId: 'q199', day: 1 },  // Single-Task All Day
+      { templateId: 'q201', day: 1 },  // Take No Shortcuts
+    ],
+    locked: false,
+    icon: '⚔️',
+    tags: ['discipline', 'mental-toughness', 'willpower'],
+  },
+  {
+    id: 'pack-010',
+    slug: 'zen-master-21d',
+    title: 'Zen Master',
+    description: 'Achieve mental clarity, peace, and mindfulness through daily practice',
+    category: 'mental',
+    durationDays: 21,
+    difficulty: 'medium',
+    quests: [
+      { templateId: 'q202', day: 1 },  // Meditate 20 Minutes
+      { templateId: 'q203', day: 1 },  // Gratitude Journaling
+      { templateId: 'q204', day: 1 },  // Breathing Exercise
+      { templateId: 'q205', day: 7 },  // Mindful Nature Walk
+      { templateId: 'q212', day: 1 },  // Yoga Session
+      { templateId: 'q218', day: 1 },  // Mindful Eating Practice
+      { templateId: 'q225', day: 1 },  // 5-4-3-2-1 Grounding
+    ],
+    locked: false,
+    icon: '🧘',
+    tags: ['meditation', 'mindfulness', 'peace'],
+  },
+  {
+    id: 'pack-011',
+    slug: 'creative-renaissance-28d',
+    title: 'Creative Renaissance',
+    description: 'Unleash your creative potential across multiple art forms',
+    category: 'creativity',
+    durationDays: 28,
+    difficulty: 'medium',
+    quests: [
+      { templateId: 'q302', day: 1 },  // Drawing Practice
+      { templateId: 'q303', day: 1 },  // Creative Writing Session
+      { templateId: 'q304', day: 3 },  // Music Instrument Practice
+      { templateId: 'q305', day: 7 },  // Photography Project
+      { templateId: 'q312', day: 14 },  // Write Poetry
+      { templateId: 'q315', day: 10 },  // Experimental Cooking
+      { templateId: 'q316', day: 21 },  // DIY Craft Project
+    ],
+    locked: false,
+    icon: '🎨',
+    tags: ['creativity', 'art', 'expression'],
+  },
+  {
+    id: 'pack-012',
+    slug: 'outdoor-adventurer-42d',
+    title: 'Outdoor Adventurer',
+    description: 'Explore nature and build outdoor skills through adventure',
+    category: 'adventure-outdoors',
+    durationDays: 42,
+    difficulty: 'medium',
+    quests: [
+      { templateId: 'q252', day: 1 },  // Hike a Trail
+      { templateId: 'q253', day: 7 },  // Go Camping
+      { templateId: 'q257', day: 14 },  // Sunrise Hike
+      { templateId: 'q259', day: 3 },  // Trail Running Session
+      { templateId: 'q261', day: 21 },  // Stargazing
+      { templateId: 'q267', day: 28 },  // Wildlife Photography
+      { templateId: 'q276', day: 35 },  // Outdoor Yoga Session
+    ],
+    locked: false,
+    icon: '🏔️',
+    tags: ['outdoor', 'adventure', 'nature'],
+  },
+  {
+    id: 'pack-013',
+    slug: 'wealth-builder-60d',
+    title: 'Wealth Builder',
+    description: 'Master personal finance and build wealth systematically',
+    category: 'finance-career',
+    durationDays: 60,
+    difficulty: 'medium',
+    quests: [
+      { templateId: 'q277', day: 1 },  // Review Monthly Budget
+      { templateId: 'q278', day: 7 },  // Investment Research
+      { templateId: 'q280', day: 1 },  // Work on Side Hustle
+      { templateId: 'q281', day: 1 },  // Read Finance Book
+      { templateId: 'q283', day: 14 },  // Audit All Subscriptions
+      { templateId: 'q285', day: 7 },  // Emergency Fund Deposit
+      { templateId: 'q290', day: 21 },  // Passive Income Research
+      { templateId: 'q295', day: 28 },  // Set Up Automated Savings
+    ],
+    locked: false,
+    icon: '💰',
+    tags: ['finance', 'wealth', 'investing'],
+  },
+  {
+    id: 'pack-014',
+    slug: 'iron-body-12wk',
+    title: 'Iron Body',
+    description: 'Build maximum strength and muscle through progressive overload',
+    category: 'fitness',
+    durationDays: 84,
+    difficulty: 'hard',
+    quests: [
+      { templateId: 'q001', day: 1 },  // 100 Push-ups
+      { templateId: 'q002', day: 1 },  // 100 Squats
+      { templateId: 'q003', day: 2 },  // 100 Pull-ups
+      { templateId: 'q005', day: 3 },  // Gym Strength Session
+      { templateId: 'q009', day: 4 },  // Deadlift Workout
+      { templateId: 'q011', day: 5 },  // Bench Press Workout
+      { templateId: 'q013', day: 6 },  // Olympic Lift Session
+    ],
+    locked: false,
+    icon: '💪',
+    tags: ['strength', 'muscle', 'powerlifting'],
+  },
+  {
+    id: 'pack-015',
+    slug: 'leadership-accelerator-30d',
+    title: 'Leadership Accelerator',
+    description: 'Develop leadership skills and influence through deliberate practice',
+    category: 'social-leadership',
+    durationDays: 30,
+    difficulty: 'hard',
+    quests: [
+      { templateId: 'q227', day: 7 },  // Attend Networking Event
+      { templateId: 'q229', day: 14 },  // Public Speaking Practice
+      { templateId: 'q230', day: 1 },  // Mentor Someone
+      { templateId: 'q233', day: 21 },  // Have Difficult Conversation
+      { templateId: 'q235', day: 7 },  // Give Constructive Feedback
+      { templateId: 'q237', day: 14 },  // Lead Team Meeting
+      { templateId: 'q240', day: 3 },  // Delegate Effectively
+      { templateId: 'q248', day: 28 },  // Share Vulnerability
+    ],
+    locked: false,
+    icon: '👑',
+    tags: ['leadership', 'influence', 'communication'],
+  },
+  {
+    id: 'pack-016',
+    slug: 'metabolic-shred-8wk',
+    title: 'Metabolic Shred',
+    description: 'Maximize fat loss through HIIT, nutrition, and recovery optimization',
+    category: 'body-wellness',
+    durationDays: 56,
+    difficulty: 'hard',
+    quests: [
+      { templateId: 'q046', day: 1 },  // HIIT Workout
+      { templateId: 'q124', day: 1 },  // Hit Protein Target
+      { templateId: 'q125', day: 1 },  // Drink 1 Gallon Water
+      { templateId: 'q127', day: 1 },  // Sleep 8 Hours
+      { templateId: 'q128', day: 1 },  // Walk 12,000 Steps
+      { templateId: 'q133', day: 1 },  // 16:8 Intermittent Fasting
+      { templateId: 'q134', day: 1 },  // No Processed Sugar
+      { templateId: 'q147', day: 3 },  // Whole Foods Only Today
+    ],
+    locked: false,
+    icon: '🔥',
+    tags: ['fat-loss', 'metabolic', 'shredding'],
+  },
+  {
+    id: 'pack-017',
+    slug: 'skill-stacking-90d',
+    title: 'Skill Stacking',
+    description: 'Master multiple athletic skills to become a complete athlete',
+    category: 'athletics-skill',
+    durationDays: 90,
+    difficulty: 'elite',
+    quests: [
+      { templateId: 'q106', day: 1 },  // Handstand Practice
+      { templateId: 'q110', day: 3 },  // Agility Ladder Drills
+      { templateId: 'q111', day: 5 },  // Cone Drills
+      { templateId: 'q112', day: 7 },  // Sprint Mechanics Work
+      { templateId: 'q113', day: 9 },  // Plyometric Circuit
+      { templateId: 'q115', day: 14 },  // Slackline Balance
+      { templateId: 'q121', day: 21 },  // Coordination Drills
+      { templateId: 'q122', day: 1 },  // Balance Board
+    ],
+    locked: true,
+    icon: '🦾',
+    tags: ['skills', 'athletic', 'mastery'],
+  },
+  {
+    id: 'pack-018',
+    slug: 'peak-performance-365',
+    title: 'Peak Performance Year',
+    description: 'Year-long transformation: mind, body, wealth, and relationships',
+    category: 'discipline',
+    durationDays: 365,
+    difficulty: 'legendary',
+    quests: [
+      { templateId: 'q001', day: 1 },  // 100 Push-ups
+      { templateId: 'q152', day: 1 },  // Deep Work Session
+      { templateId: 'q202', day: 1 },  // Meditate 20 Minutes
+      { templateId: 'q177', day: 1 },  // Take Cold Shower
+      { templateId: 'q124', day: 1 },  // Hit Protein Target
+      { templateId: 'q280', day: 1 },  // Work on Side Hustle
+      { templateId: 'q234', day: 1 },  // Practice Active Listening
+      { templateId: 'q252', day: 7 },  // Hike a Trail
+    ],
+    locked: true,
+    icon: '⚡',
+    tags: ['transformation', 'mastery', 'elite'],
+  },
+  {
+    id: 'pack-019',
+    slug: 'sleep-recovery-master-21d',
+    title: 'Sleep Recovery Master',
+    description: 'Optimize sleep quality and recovery for peak performance',
+    category: 'body-wellness',
+    durationDays: 21,
+    difficulty: 'medium',
+    quests: [
+      { templateId: 'q127', day: 1 },  // Sleep 8 Hours
+      { templateId: 'q136', day: 1 },  // Morning Sunlight 10 Minutes
+      { templateId: 'q137', day: 1 },  // No Screens 2 Hours Before Bed
+      { templateId: 'q146', day: 1 },  // No Caffeine After 2 PM
+      { templateId: 'q186', day: 1 },  // Complete Evening Routine
+      { templateId: 'q194', day: 1 },  // Digital Sunset at 9 PM
+      { templateId: 'q226', day: 1 },  // Perfect Sleep Hygiene
+    ],
+    locked: false,
+    icon: '😴',
+    tags: ['sleep', 'recovery', 'health'],
+  },
+  {
+    id: 'pack-020',
+    slug: 'fighter-conditioning-8wk',
+    title: 'Fighter Conditioning',
+    description: 'Train like a combat athlete with striking, conditioning, and mental toughness',
+    category: 'athletics-skill',
+    durationDays: 56,
+    difficulty: 'hard',
+    quests: [
+      { templateId: 'q046', day: 1 },  // HIIT Workout
+      { templateId: 'q047', day: 2 },  // Tabata Protocol
+      { templateId: 'q073', day: 3 },  // Heavy Bag Work
+      { templateId: 'q117', day: 4 },  // Martial Arts Practice
+      { templateId: 'q113', day: 5 },  // Plyometric Circuit
+      { templateId: 'q177', day: 1 },  // Take Cold Shower
+      { templateId: 'q199', day: 1 },  // Single-Task All Day
+    ],
+    locked: false,
+    icon: '🥊',
+    tags: ['combat', 'conditioning', 'martial-arts'],
+  },
+  {
+    id: 'pack-021',
+    slug: 'nutrition-mastery-45d',
+    title: 'Nutrition Mastery',
+    description: 'Master meal planning, cooking, and nutritional excellence',
+    category: 'body-wellness',
+    durationDays: 45,
+    difficulty: 'medium',
+    quests: [
+      { templateId: 'q124', day: 1 },  // Hit Protein Target
+      { templateId: 'q125', day: 1 },  // Drink 1 Gallon Water
+      { templateId: 'q129', day: 7 },  // Weekly Meal Prep
+      { templateId: 'q130', day: 1 },  // Track All Calories Today
+      { templateId: 'q134', day: 1 },  // No Processed Sugar
+      { templateId: 'q135', day: 1 },  // Eat 5 Servings Vegetables
+      { templateId: 'q147', day: 3 },  // Whole Foods Only Today
+      { templateId: 'q148', day: 1 },  // Cook Healthy Meal from Scratch
+    ],
+    locked: false,
+    icon: '🥗',
+    tags: ['nutrition', 'cooking', 'health'],
+  },
+  {
+    id: 'pack-022',
+    slug: 'morning-ritual-30d',
+    title: 'Morning Ritual',
+    description: 'Build an unbeatable morning routine that sets up your entire day',
+    category: 'discipline',
+    durationDays: 30,
+    difficulty: 'hard',
+    quests: [
+      { templateId: 'q178', day: 1 },  // Wake Up at 5 AM
+      { templateId: 'q179', day: 1 },  // No Phone First Hour
+      { templateId: 'q180', day: 1 },  // Make Your Bed
+      { templateId: 'q181', day: 1 },  // No Snooze
+      { templateId: 'q136', day: 1 },  // Morning Sunlight 10 Minutes
+      { templateId: 'q182', day: 1 },  // Plan Your Day
+      { templateId: 'q206', day: 1 },  // Morning Affirmations
+      { templateId: 'q177', day: 1 },  // Take Cold Shower
+    ],
+    locked: false,
+    icon: '🌅',
+    tags: ['morning', 'routine', 'discipline'],
+  },
+  {
+    id: 'pack-023',
+    slug: 'bookworm-challenge-60d',
+    title: 'Bookworm Challenge',
+    description: 'Read 10+ books and build a sustainable reading habit',
+    category: 'intelligence',
+    durationDays: 60,
+    difficulty: 'easy',
+    quests: [
+      { templateId: 'q153', day: 1 },  // Read 30 Minutes
+      { templateId: 'q158', day: 1 },  // Write Learning Summary
+      { templateId: 'q162', day: 1 },  // Listen & Take Notes
+      { templateId: 'q165', day: 3 },  // Speed Reading Practice
+      { templateId: 'q167', day: 7 },  // Study Philosophy
+      { templateId: 'q176', day: 1 },  // Read Biography Chapter
+    ],
+    locked: false,
+    icon: '📚',
+    tags: ['reading', 'learning', 'knowledge'],
+  },
+  {
+    id: 'pack-024',
+    slug: 'flexibility-flow-42d',
+    title: 'Flexibility Flow',
+    description: 'Improve mobility, flexibility, and movement quality',
+    category: 'fitness',
+    durationDays: 42,
+    difficulty: 'easy',
+    quests: [
+      { templateId: 'q017', day: 1 },  // Yoga Session 60 Minutes
+      { templateId: 'q018', day: 1 },  // Full Body Stretch 30 Minutes
+      { templateId: 'q019', day: 1 },  // Mobility Work 20 Minutes
+      { templateId: 'q020', day: 3 },  // Foam Rolling Session
+      { templateId: 'q212', day: 1 },  // Yoga Session
+      { templateId: 'q106', day: 7 },  // Handstand Practice
+      { templateId: 'q276', day: 7 },  // Outdoor Yoga Session
+    ],
+    locked: false,
+    icon: '🧘‍♂️',
+    tags: ['flexibility', 'mobility', 'yoga'],
+  },
+  {
+    id: 'pack-025',
+    slug: 'digital-minimalist-30d',
+    title: 'Digital Minimalist',
+    description: 'Reclaim your attention and break free from digital distractions',
+    category: 'discipline',
+    durationDays: 30,
+    difficulty: 'hard',
+    quests: [
+      { templateId: 'q179', day: 1 },  // No Phone First Hour
+      { templateId: 'q183', day: 7 },  // No Social Media Day
+      { templateId: 'q187', day: 1 },  // No TV or Streaming
+      { templateId: 'q194', day: 1 },  // Digital Sunset at 9 PM
+      { templateId: 'q210', day: 1 },  // Evening Digital Detox
+      { templateId: 'q152', day: 1 },  // Deep Work Session
+      { templateId: 'q195', day: 1 },  // Complete 4 Pomodoros
+    ],
+    locked: false,
+    icon: '📵',
+    tags: ['digital-detox', 'focus', 'minimalism'],
+  },
+  {
+    id: 'pack-026',
+    slug: 'public-speaker-pro-21d',
+    title: 'Public Speaker Pro',
+    description: 'Master public speaking and confident communication',
+    category: 'social-leadership',
+    durationDays: 21,
+    difficulty: 'hard',
+    quests: [
+      { templateId: 'q229', day: 7 },  // Public Speaking Practice
+      { templateId: 'q173', day: 7 },  // Practice Debate Skills
+      { templateId: 'q163', day: 14 },  // Teach a Concept
+      { templateId: 'q246', day: 1 },  // Strong Eye Contact Practice
+      { templateId: 'q249', day: 1 },  // Confident Body Language
+      { templateId: 'q245', day: 3 },  // Practice Assertiveness
+      { templateId: 'q322', day: 14 },  // Storytelling Practice
+    ],
+    locked: false,
+    icon: '🎤',
+    tags: ['public-speaking', 'communication', 'confidence'],
+  },
+  {
+    id: 'pack-027',
+    slug: 'atomic-habits-90d',
+    title: 'Atomic Habits',
+    description: 'Build bulletproof habits and systems that compound over time',
+    category: 'discipline',
+    durationDays: 90,
+    difficulty: 'medium',
+    quests: [
+      { templateId: 'q180', day: 1 },  // Make Your Bed
+      { templateId: 'q182', day: 1 },  // Plan Your Day
+      { templateId: 'q185', day: 1 },  // Time Block Entire Day
+      { templateId: 'q186', day: 1 },  // Complete Evening Routine
+      { templateId: 'q191', day: 1 },  // Clean & Organize Workspace
+      { templateId: 'q192', day: 7 },  // Weekly Review Session
+      { templateId: 'q200', day: 1 },  // Dress Well Today
+    ],
+    locked: false,
+    icon: '⚙️',
+    tags: ['habits', 'systems', 'routine'],
+  },
+  {
+    id: 'pack-028',
+    slug: 'aesthetic-physique-16wk',
+    title: 'Aesthetic Physique',
+    description: 'Sculpt the ultimate physique with hypertrophy training and nutrition',
+    category: 'body-wellness',
+    durationDays: 112,
+    difficulty: 'hard',
+    quests: [
+      { templateId: 'q001', day: 1 },  // 100 Push-ups
+      { templateId: 'q005', day: 2 },  // Gym Strength Session
+      { templateId: 'q124', day: 1 },  // Hit Protein Target
+      { templateId: 'q127', day: 1 },  // Sleep 8 Hours
+      { templateId: 'q128', day: 1 },  // Walk 12,000 Steps
+      { templateId: 'q143', day: 1 },  // Track Body Weight
+      { templateId: 'q144', day: 7 },  // Take Body Measurements
+      { templateId: 'q145', day: 7 },  // Take Progress Photos
+    ],
+    locked: false,
+    icon: '💎',
+    tags: ['aesthetics', 'physique', 'bodybuilding'],
+  },
+  {
+    id: 'pack-029',
+    slug: 'wellness-basics-7d',
+    title: 'Wellness Basics',
+    description: 'Simple daily habits to feel better in just one week',
+    category: 'body-wellness',
+    durationDays: 7,
+    difficulty: 'easy',
+    quests: [
+      { templateId: 'q125', day: 1 },  // Drink 1 Gallon Water
+      { templateId: 'q127', day: 1 },  // Sleep 8 Hours
+      { templateId: 'q136', day: 1 },  // Morning Sunlight 10 Minutes
+      { templateId: 'q140', day: 1 },  // Floss Teeth
+      { templateId: 'q138', day: 1 },  // Take Daily Vitamins/Supplements
+    ],
+    locked: false,
+    icon: '🌿',
+    tags: ['wellness', 'basics', 'health'],
+  },
+  {
+    id: 'pack-030',
+    slug: 'gratitude-practice-14d',
+    title: 'Gratitude Practice',
+    description: 'Cultivate daily gratitude and positive mindset',
+    category: 'mental',
+    durationDays: 14,
+    difficulty: 'easy',
+    quests: [
+      { templateId: 'q203', day: 1 },  // Gratitude Journaling
+      { templateId: 'q206', day: 1 },  // Morning Affirmations
+      { templateId: 'q241', day: 1 },  // Give Genuine Compliments
+      { templateId: 'q251', day: 3 },  // Celebrate Someone's Win
+    ],
+    locked: false,
+    icon: '🙏',
+    tags: ['gratitude', 'positivity', 'mindfulness'],
+  },
+  {
+    id: 'pack-031',
+    slug: 'movement-basics-14d',
+    title: 'Movement Basics',
+    description: 'Get moving with simple daily exercises',
+    category: 'fitness',
+    durationDays: 14,
+    difficulty: 'easy',
+    quests: [
+      { templateId: 'q128', day: 1 },  // Walk 12,000 Steps
+      { templateId: 'q018', day: 1 },  // Full Body Stretch 30 Minutes
+      { templateId: 'q122', day: 1 },  // Balance Board 10 Minutes
+      { templateId: 'q020', day: 3 },  // Foam Rolling Session
+    ],
+    locked: false,
+    icon: '🚶',
+    tags: ['walking', 'stretching', 'movement'],
+  },
+  {
+    id: 'pack-032',
+    slug: 'creative-spark-7d',
+    title: 'Creative Spark',
+    description: 'Jumpstart your creativity in one week',
+    category: 'creativity',
+    durationDays: 7,
+    difficulty: 'easy',
+    quests: [
+      { templateId: 'q302', day: 1 },  // Drawing Practice
+      { templateId: 'q312', day: 3 },  // Write Poetry
+      { templateId: 'q305', day: 5 },  // Photography Project
+      { templateId: 'q321', day: 7 },  // Calligraphy Practice
+    ],
+    locked: false,
+    icon: '✨',
+    tags: ['creativity', 'art', 'beginner'],
+  },
+  {
+    id: 'pack-033',
+    slug: 'social-confidence-10d',
+    title: 'Social Confidence',
+    description: 'Build confidence in social situations',
+    category: 'social-leadership',
+    durationDays: 10,
+    difficulty: 'easy',
+    quests: [
+      { templateId: 'q241', day: 1 },  // Give Genuine Compliments
+      { templateId: 'q246', day: 1 },  // Strong Eye Contact Practice
+      { templateId: 'q249', day: 1 },  // Confident Body Language
+      { templateId: 'q234', day: 3 },  // Practice Active Listening
+    ],
+    locked: false,
+    icon: '😊',
+    tags: ['confidence', 'social', 'communication'],
+  },
+  {
+    id: 'pack-034',
+    slug: 'breathwork-basics-7d',
+    title: 'Breathwork Basics',
+    description: 'Learn fundamental breathing techniques for calm and focus',
+    category: 'mental',
+    durationDays: 7,
+    difficulty: 'easy',
+    quests: [
+      { templateId: 'q204', day: 1 },  // Breathing Exercise
+      { templateId: 'q225', day: 1 },  // 5-4-3-2-1 Grounding
+      { templateId: 'q213', day: 3 },  // Progressive Muscle Relaxation
+      { templateId: 'q209', day: 5 },  // Stress-Free Hour
+    ],
+    locked: false,
+    icon: '🌬️',
+    tags: ['breathing', 'relaxation', 'stress-relief'],
+  },
+  {
+    id: 'pack-035',
+    slug: 'financial-awareness-14d',
+    title: 'Financial Awareness',
+    description: 'Start tracking and understanding your money',
+    category: 'finance-career',
+    durationDays: 14,
+    difficulty: 'easy',
+    quests: [
+      { templateId: 'q197', day: 1 },  // Track All Expenses
+      { templateId: 'q277', day: 7 },  // Review Monthly Budget
+      { templateId: 'q291', day: 14 },  // Check Credit Score
+      { templateId: 'q281', day: 3 },  // Read Finance Book
+    ],
+    locked: false,
+    icon: '💵',
+    tags: ['finance', 'budgeting', 'basics'],
+  },
+  {
+    id: 'pack-036',
+    slug: 'outdoor-explorer-14d',
+    title: 'Outdoor Explorer',
+    description: 'Get outside and explore nature',
+    category: 'adventure-outdoors',
+    durationDays: 14,
+    difficulty: 'easy',
+    quests: [
+      { templateId: 'q205', day: 1 },  // Mindful Nature Walk
+      { templateId: 'q252', day: 7 },  // Hike a Trail
+      { templateId: 'q276', day: 10 },  // Outdoor Yoga Session
+      { templateId: 'q272', day: 14 },  // Beach Day Activity
+    ],
+    locked: false,
+    icon: '🌲',
+    tags: ['outdoor', 'nature', 'exploration'],
+  },
+  {
+    id: 'pack-037',
+    slug: 'learning-starter-10d',
+    title: 'Learning Starter',
+    description: 'Build a daily learning habit',
+    category: 'intelligence',
+    durationDays: 10,
+    difficulty: 'easy',
+    quests: [
+      { templateId: 'q153', day: 1 },  // Read 30 Minutes
+      { templateId: 'q162', day: 1 },  // Listen & Take Notes
+      { templateId: 'q175', day: 1 },  // Brain Training App
+      { templateId: 'q170', day: 5 },  // Watch Educational Documentary
+    ],
+    locked: false,
+    icon: '📖',
+    tags: ['learning', 'reading', 'knowledge'],
+  },
+  {
+    id: 'pack-038',
+    slug: 'organization-basics-7d',
+    title: 'Organization Basics',
+    description: 'Get your life organized in one week',
+    category: 'discipline',
+    durationDays: 7,
+    difficulty: 'easy',
+    quests: [
+      { templateId: 'q180', day: 1 },  // Make Your Bed
+      { templateId: 'q182', day: 1 },  // Plan Your Day
+      { templateId: 'q191', day: 1 },  // Clean & Organize Workspace
+      { templateId: 'q196', day: 3 },  // Declutter One Space
+    ],
+    locked: false,
+    icon: '📋',
+    tags: ['organization', 'tidiness', 'habits'],
   },
 ];
 

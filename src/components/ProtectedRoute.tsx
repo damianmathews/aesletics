@@ -4,10 +4,20 @@ import { useStore } from '../store/useStore';
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  const { onboardingComplete } = useStore();
+  const { onboardingComplete, _hasHydrated } = useStore();
   const location = useLocation();
 
-  if (loading) {
+  console.log('🛡️ PROTECTED ROUTE CHECK:', {
+    path: location.pathname,
+    loading,
+    hasHydrated: _hasHydrated,
+    hasUser: !!user,
+    onboardingComplete
+  });
+
+  // Wait for BOTH auth to load AND Zustand to rehydrate from localStorage
+  if (loading || !_hasHydrated) {
+    console.log('⏳ Showing loading - loading:', loading, 'hasHydrated:', _hasHydrated);
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-bg)' }}>
         <div className="text-center">
@@ -19,11 +29,13 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   }
 
   if (!user) {
+    console.log('❌ No user - redirecting to /auth');
     return <Navigate to="/auth" replace />;
   }
 
   // If user hasn't completed onboarding and not on onboarding page, redirect to onboarding
   if (!onboardingComplete && location.pathname !== '/onboarding') {
+    console.log('⚠️ ONBOARDING INCOMPLETE - redirecting to /onboarding');
     return <Navigate to="/onboarding" replace />;
   }
 

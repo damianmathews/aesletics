@@ -12,6 +12,7 @@ import type {
 } from '../types';
 import { calculateLevel, calculateStreak } from '../lib/xp';
 import { questTemplatesExtended } from '../data/seed';
+import { getLocalDateString, getLocalDateStringDaysAgo } from '../lib/dateUtils';
 
 interface QuestCompleteData {
   questTitle: string;
@@ -88,6 +89,12 @@ const initialSettings: Settings = {
   weekStartsOn: 0,
 };
 
+// Add hasHydrated to track when localStorage has been loaded
+interface StoreState extends AppState {
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
+}
+
 export const useStore = create<StoreState>()(
   persist(
     (set, get) => ({
@@ -107,6 +114,10 @@ export const useStore = create<StoreState>()(
       levelUpData: null,
       showDailyLoginModal: false,
       dailyLoginData: null,
+      _hasHydrated: false,
+      setHasHydrated: (state) => {
+        set({ _hasHydrated: state });
+      },
 
       initialize: () => {
         const state = get();
@@ -174,7 +185,13 @@ export const useStore = create<StoreState>()(
         });
       },
 
-      completeOnboarding: () => set({ onboardingComplete: true }),
+      completeOnboarding: () => {
+        console.log('🎯 completeOnboarding() called - setting onboardingComplete = true');
+        set({ onboardingComplete: true });
+        // Force immediate check
+        const state = get();
+        console.log('🎯 After set, onboardingComplete is:', state.onboardingComplete);
+      },
 
       saveOnboardingData: (data) => set({ onboardingData: data }),
 
@@ -298,14 +315,14 @@ export const useStore = create<StoreState>()(
 
       checkDailyLogin: () => {
         const state = get();
-        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        const today = getLocalDateString(); // YYYY-MM-DD in local timezone
 
         // If already logged in today, don't show modal
         if (state.profile.lastLoginDate === today) {
           return;
         }
 
-        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        const yesterday = getLocalDateStringDaysAgo(1);
         const lastLogin = state.profile.lastLoginDate;
 
         // Calculate new streak
@@ -322,9 +339,12 @@ export const useStore = create<StoreState>()(
           isNewStreak = true;
         }
 
-        // Calculate XP bonus based on day in 7-day cycle
-        const dayInCycle = ((newLoginStreak - 1) % 7) + 1;
-        const xpBonuses = [100, 150, 200, 300, 400, 600, 1000]; // Days 1-7
+        // Calculate XP bonus based on ACTUAL day of the week
+        // Get current day: 0 = Sunday, 1 = Monday, ... 6 = Saturday
+        const currentDayOfWeek = new Date().getDay();
+        // Convert to 1-7 where 1 = Monday, 7 = Sunday
+        const dayInCycle = currentDayOfWeek === 0 ? 7 : currentDayOfWeek;
+        const xpBonuses = [100, 150, 200, 300, 400, 600, 1000]; // Mon-Sun
         const xpBonus = xpBonuses[dayInCycle - 1];
 
         // Award streak freeze every 7 days
@@ -359,7 +379,7 @@ export const useStore = create<StoreState>()(
       getStats: (): UserStats => {
         const state = get();
         const now = new Date();
-        const today = now.toISOString().split('T')[0];
+        const today = getLocalDateString();
         const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
@@ -461,6 +481,26 @@ export const useStore = create<StoreState>()(
     }),
     {
       name: 'irlxp-storage',
+      // Don't persist hydration helpers
+      partialize: (state) => {
+        const { _hasHydrated, setHasHydrated, ...rest } = state;
+        return rest;
+      },
+      onRehydrateStorage: () => {
+        return (state, error) => {
+          if (error) {
+            console.error('✗ Failed to rehydrate from localStorage:', error);
+          } else {
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log('✓ REHYDRATED from localStorage');
+            console.log('  onboardingComplete:', state?.onboardingComplete);
+            console.log('  initialized:', state?.initialized);
+            console.log('  profile:', state?.profile);
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            state?.setHasHydrated(true);
+          }
+        };
+      },
     }
   )
 );

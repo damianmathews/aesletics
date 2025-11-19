@@ -90,7 +90,7 @@ export default function Leaderboard() {
       {/* Header */}
       <header className="glass sticky top-0 z-40 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/app" className="flex items-center gap-3">
             <img src="/logo.png" alt="IRLXP" className="h-12 w-auto" />
           </Link>
           <div className="flex items-center gap-3 md:gap-6">
@@ -118,8 +118,12 @@ export default function Leaderboard() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute right-0 mt-2 w-48 glass rounded-lg p-2 border"
-                  style={{ borderColor: 'var(--color-border)' }}
+                  className="absolute right-0 mt-2 w-48 rounded-lg p-2 border shadow-2xl"
+                  style={{
+                    borderColor: 'var(--color-accent)',
+                    backgroundColor: 'rgba(17, 17, 24, 0.98)',
+                    backdropFilter: 'blur(20px)'
+                  }}
                 >
                   <Link to="/app/settings" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Profile</Link>
                   <Link to="/app/history" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>History</Link>

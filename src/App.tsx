@@ -25,6 +25,7 @@ function App() {
     initialize,
     settings,
     profile,
+    onboardingComplete,
     showQuestCompleteModal,
     questCompleteData,
     showLevelUpModal,
@@ -39,11 +40,13 @@ function App() {
 
   useEffect(() => {
     initialize();
-    // Check for daily login bonus after initialization
+    // Check for daily login bonus after initialization (only if onboarding is complete)
     setTimeout(() => {
-      checkDailyLogin();
+      if (onboardingComplete) {
+        checkDailyLogin();
+      }
     }, 1000);
-  }, [initialize, checkDailyLogin]);
+  }, [initialize, checkDailyLogin, onboardingComplete]);
 
   // Apply theme
   useEffect(() => {

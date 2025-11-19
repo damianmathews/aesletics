@@ -121,20 +121,20 @@ export default function LevelUpModal({ isOpen, newLevel, totalXP, onClose }: Lev
           {/* Multiple radial gradient glows */}
           <motion.div
             initial={{ opacity: 0, scale: 0.3 }}
-            animate={{ opacity: 0.4, scale: 2.5 }}
+            animate={{ opacity: 0.25, scale: 2.5 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
             className="absolute inset-0"
             style={{
-              background: 'radial-gradient(circle at center, rgba(167, 139, 250, 0.4) 0%, transparent 60%)',
+              background: 'radial-gradient(circle at center, rgba(167, 139, 250, 0.3) 0%, transparent 60%)',
             }}
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 0.3, scale: 3 }}
+            animate={{ opacity: 0.2, scale: 3 }}
             transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
             className="absolute inset-0"
             style={{
-              background: 'radial-gradient(circle at center, rgba(6, 182, 212, 0.3) 0%, transparent 70%)',
+              background: 'radial-gradient(circle at center, rgba(6, 182, 212, 0.2) 0%, transparent 70%)',
             }}
           />
 
@@ -160,7 +160,7 @@ export default function LevelUpModal({ isOpen, newLevel, totalXP, onClose }: Lev
                 <motion.div
                   animate={{
                     scale: [1, 1.3, 1],
-                    opacity: [0.5, 0.2, 0.5],
+                    opacity: [0.4, 0.15, 0.4],
                   }}
                   transition={{
                     duration: 2,
@@ -168,7 +168,7 @@ export default function LevelUpModal({ isOpen, newLevel, totalXP, onClose }: Lev
                     ease: "easeInOut",
                   }}
                   className="absolute inset-0 rounded-full"
-                  style={{ background: 'var(--gradient-primary)', filter: 'blur(20px)' }}
+                  style={{ background: 'var(--gradient-primary)', filter: 'blur(10px)' }}
                 />
                 <Award size={64} color="white" strokeWidth={2} className="relative z-10" />
               </motion.div>
@@ -208,9 +208,9 @@ export default function LevelUpModal({ isOpen, newLevel, totalXP, onClose }: Lev
                 <motion.div
                   animate={{
                     textShadow: [
-                      '0 0 20px rgba(167, 139, 250, 0.8)',
-                      '0 0 40px rgba(167, 139, 250, 1)',
-                      '0 0 20px rgba(167, 139, 250, 0.8)',
+                      '0 0 10px rgba(167, 139, 250, 0.6)',
+                      '0 0 15px rgba(167, 139, 250, 0.8)',
+                      '0 0 10px rgba(167, 139, 250, 0.6)',
                     ],
                   }}
                   transition={{
@@ -218,8 +218,10 @@ export default function LevelUpModal({ isOpen, newLevel, totalXP, onClose }: Lev
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
-                  className="font-display text-9xl font-bold"
+                  className="font-display font-bold"
                   style={{
+                    fontSize: '200px',
+                    lineHeight: 1,
                     background: 'var(--gradient-primary)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',

@@ -34,8 +34,17 @@ export async function loadUserData(userId: string): Promise<UserData | null> {
 export async function saveUserData(userId: string, data: Partial<UserData>): Promise<void> {
   try {
     const userDocRef = doc(db, 'users', userId);
+
+    // Filter out undefined values - Firestore doesn't allow them
+    const cleanData: Record<string, any> = {};
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined) {
+        cleanData[key] = value;
+      }
+    });
+
     const dataToSave = {
-      ...data,
+      ...cleanData,
       lastSynced: new Date().toISOString(),
     };
 
@@ -47,8 +56,10 @@ export async function saveUserData(userId: string, data: Partial<UserData>): Pro
     } else {
       await setDoc(userDocRef, dataToSave);
     }
+
+    console.log('✅ Saved to Firestore successfully');
   } catch (error) {
-    console.error('Error saving user data:', error);
+    console.error('❌ Error saving user data:', error);
     throw error;
   }
 }
@@ -60,6 +71,9 @@ export async function syncToFirestore(userId: string, localData: {
   completions: Completion[];
   activePacks: string[];
   settings: Settings;
+  onboardingComplete?: boolean;
+  onboardingData?: OnboardingData | null;
+  showTutorial?: boolean;
 }): Promise<void> {
   await saveUserData(userId, localData);
 }

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { Mail, Lock, User } from 'lucide-react';
+import { getAuthErrorMessage } from '../lib/authErrors';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -11,7 +12,10 @@ export default function Auth() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, signup, loginWithGoogle } = useAuth();
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetSuccess, setResetSuccess] = useState('');
+  const { login, signup, loginWithGoogle, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,7 +31,7 @@ export default function Auth() {
       }
       navigate('/app');
     } catch (err: any) {
-      setError(err.message || 'Authentication failed');
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -40,7 +44,28 @@ export default function Auth() {
       await loginWithGoogle();
       navigate('/app');
     } catch (err: any) {
-      setError(err.message || 'Google login failed');
+      setError(getAuthErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setResetSuccess('');
+    setLoading(true);
+
+    try {
+      await resetPassword(resetEmail);
+      setResetSuccess('Password reset email sent! Check your inbox.');
+      setResetEmail('');
+      setTimeout(() => {
+        setShowForgotPassword(false);
+        setResetSuccess('');
+      }, 3000);
+    } catch (err: any) {
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -118,9 +143,21 @@ export default function Auth() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                PASSWORD
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-medium font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                  PASSWORD
+                </label>
+                {isLogin && (
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-xs font-mono transition-opacity hover:opacity-70"
+                    style={{ color: 'var(--color-accent)' }}
+                  >
+                    Forgot Password?
+                  </button>
+                )}
+              </div>
               <div className="relative">
                 <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-text-tertiary)' }} />
                 <input
@@ -189,6 +226,85 @@ export default function Auth() {
           Your data stays private and secure
         </p>
       </motion.div>
+
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-6"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+          onClick={() => setShowForgotPassword(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, y: 20 }}
+            animate={{ scale: 1, y: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md glass rounded-lg p-6 border"
+            style={{ borderColor: 'var(--color-accent)' }}
+          >
+            <h2 className="font-display text-2xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>
+              Reset Password
+            </h2>
+            <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+              Enter your email address and we'll send you a link to reset your password.
+            </p>
+
+            {resetSuccess && (
+              <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                <p className="text-sm" style={{ color: 'var(--color-success)' }}>{resetSuccess}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleForgotPassword}>
+              <div className="mb-4">
+                <label className="block text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                  EMAIL
+                </label>
+                <div className="relative">
+                  <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-text-tertiary)' }} />
+                  <input
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    required
+                    className="w-full pl-10 pr-4 py-3 rounded-lg glass border focus:outline-none focus:ring-2 transition-all"
+                    style={{
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text)',
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowForgotPassword(false);
+                    setResetEmail('');
+                    setError('');
+                    setResetSuccess('');
+                  }}
+                  className="flex-1 py-3 rounded-lg font-semibold transition-all hover:scale-105 glass border"
+                  style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 py-3 rounded-lg font-semibold transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'var(--gradient-primary)', color: 'white' }}
+                >
+                  {loading ? 'Sending...' : 'Send Reset Link'}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }

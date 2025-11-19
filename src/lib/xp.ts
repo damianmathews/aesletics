@@ -1,6 +1,7 @@
 // XP, Level, and Streak calculations
 
 import type { Difficulty, ProofType, Completion } from '../types';
+import { getLocalDateString } from './dateUtils';
 
 // Base XP by difficulty
 export const BASE_XP: Record<Difficulty, number> = {
@@ -94,9 +95,9 @@ export function calculateStreak(completions: Completion[]): {
   const lastCompletionDate = sorted[0].at;
   const now = new Date();
 
-  // Get unique completion days (YYYY-MM-DD format)
+  // Get unique completion days (YYYY-MM-DD format in local timezone)
   const uniqueDays = new Set(
-    sorted.map((c) => new Date(c.at).toISOString().split('T')[0])
+    sorted.map((c) => getLocalDateString(new Date(c.at)))
   );
   const days = Array.from(uniqueDays).sort().reverse();
 

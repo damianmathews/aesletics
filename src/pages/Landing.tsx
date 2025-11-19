@@ -1,9 +1,15 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { Zap, TrendingUp, Target, Flame, Palette, Lock } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { useStore } from '../store/useStore';
 
 export default function Landing() {
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
+  const { onboardingComplete, _hasHydrated } = useStore();
+
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -12,6 +18,17 @@ export default function Landing() {
 
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
+
+  // Auto-redirect logged-in users to the app (wait for rehydration)
+  useEffect(() => {
+    if (!loading && _hasHydrated && user) {
+      if (onboardingComplete) {
+        navigate('/app', { replace: true });
+      } else {
+        navigate('/onboarding', { replace: true });
+      }
+    }
+  }, [user, loading, onboardingComplete, _hasHydrated, navigate]);
 
   return (
     <div className="min-h-screen relative" style={{ backgroundColor: 'var(--color-bg)' }}>
