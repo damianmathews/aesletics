@@ -450,7 +450,7 @@ export default function QuestLibrary() {
       <PaywallModal
         isOpen={showPaywall}
         onClose={() => setShowPaywall(false)}
-        feature="Premium Features"
+        feature="Pro Features"
       />
     </div>
   );

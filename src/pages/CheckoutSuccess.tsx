@@ -152,7 +152,7 @@ export default function CheckoutSuccess() {
           <CheckCircle size={40} style={{ color: '#22c55e' }} />
         </motion.div>
         <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>
-          Welcome to IRLXP Premium!
+          Welcome to IRLXP Pro!
         </h2>
         <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
           Your 7-day free trial has started. Time to build the life you respect.

@@ -276,7 +276,7 @@ export default function Settings() {
                   <div className="space-y-2 pt-3 border-t" style={{ borderColor: 'rgba(167, 139, 250, 0.2)' }}>
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-mono" style={{ color: 'var(--color-text-secondary)' }}>PLAN</span>
-                      <span className="font-semibold" style={{ color: 'var(--color-text)' }}>IRLXP Premium</span>
+                      <span className="font-semibold" style={{ color: 'var(--color-text)' }}>IRLXP Pro</span>
                     </div>
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-mono" style={{ color: 'var(--color-text-secondary)' }}>PRICE</span>
@@ -322,7 +322,7 @@ export default function Settings() {
               <>
                 <div className="mb-4 p-4 rounded-lg border-2 border-dashed" style={{ borderColor: 'var(--color-accent)', backgroundColor: 'rgba(167, 139, 250, 0.05)' }}>
                   <p className="text-sm font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
-                    🚀 Unlock Premium Features
+                    🚀 Unlock Pro Features
                   </p>
                   <ul className="space-y-1.5 text-xs mb-3" style={{ color: 'var(--color-text-secondary)' }}>
                     <li>✓ Complete quests & earn XP</li>
@@ -432,7 +432,7 @@ export default function Settings() {
       <PaywallModal
         isOpen={showPaywall}
         onClose={() => setShowPaywall(false)}
-        feature="Premium Features"
+        feature="Pro Features"
       />
     </div>
   );

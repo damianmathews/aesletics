@@ -53,7 +53,7 @@ export default function PaywallBanner() {
       <PaywallModal
         isOpen={showPaywall}
         onClose={() => setShowPaywall(false)}
-        feature="Premium Features"
+        feature="Pro Features"
       />
     </>
   );
