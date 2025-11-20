@@ -1,9 +1,11 @@
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { questTemplatesExtended, categories } from '../data/seed';
 import { useStore } from '../store/useStore';
 import Toast from '../components/Toast';
+import PaywallBanner from '../components/PaywallBanner';
+import PaywallModal from '../components/PaywallModal';
 import { Menu, X, Dumbbell, Zap, Sparkles, Brain, Shield, Heart, Users, Mountain, Briefcase, Palette, Plus, Check, ChevronDown } from 'lucide-react';
 
 const getCategoryIcon = (categoryId: string) => {
@@ -24,16 +26,27 @@ const getCategoryIcon = (categoryId: string) => {
 
 export default function QuestLibrary() {
   const { profile, addUserQuest } = useStore();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'none' | 'xp-low' | 'xp-high' | 'difficulty-low' | 'difficulty-high'>('none');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState({ title: '', subtitle: '' });
   const [addedQuests, setAddedQuests] = useState<Set<string>>(new Set());
   const sortDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Check if user was blocked from accessing premium features
+  useEffect(() => {
+    if (searchParams.get('blocked') === 'true') {
+      setShowPaywall(true);
+      searchParams.delete('blocked');
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -236,6 +249,9 @@ export default function QuestLibrary() {
           <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>{questTemplatesExtended.length} quests • {categories.length} categories</p>
         </motion.div>
 
+        {/* Paywall Banner */}
+        <PaywallBanner />
+
         {/* Search */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mb-4">
           <input
@@ -429,6 +445,13 @@ export default function QuestLibrary() {
           onClose={() => setShowToast(false)}
         />
       )}
+
+      {/* Paywall Modal */}
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature="Premium Features"
+      />
     </div>
   );
 }

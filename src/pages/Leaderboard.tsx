@@ -1,89 +1,88 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Trophy, TrendingUp, Flame, Menu, X } from 'lucide-react';
+import { getTopPlayers } from '../lib/leaderboard';
+import { auth } from '../lib/firebase';
 
-// Generate realistic leaderboard data
-const generateLeaderboard = (userXP: number) => {
-  const usernames = [
-    'Beast_Mode', 'IronWill', 'Titan_Rising', 'PhoenixFire', 'Alpha_Wolf',
-    'NoExcuses', 'Relentless', 'Grind_Master', 'Steel_Mind', 'Unstoppable',
-    'Victory_Labs', 'Discipline', 'Hunter_X', 'Elite_Force', 'Pure_Grit',
-    'Savage_Life', 'Warrior_Path', 'Next_Level', 'Champion_Mind', 'Iron_Core',
-    'Peak_Human', 'Wolf_Pack', 'Titan_Mode', 'Beast_Life', 'Alpha_Grind'
-  ];
-
-  const players = [];
-
-  // Generate top 100 players
-  for (let i = 0; i < 100; i++) {
-    const rank = i + 1;
-    // Exponential decay from 50k to 5k for top 100
-    const baseXP = 50000 * Math.pow(0.95, i);
-    const xp = Math.floor(baseXP + (Math.random() * 500 - 250));
-
-    players.push({
-      rank,
-      username: i < usernames.length ? usernames[i] : `Player${rank}`,
-      xp,
-      level: Math.floor(Math.sqrt(xp / 50)) + 1,
-      streak: Math.floor(Math.random() * 60) + 1,
-      isUser: false
-    });
-  }
-
-  // Generate middle tier (101-2000)
-  for (let i = 100; i < 2000; i++) {
-    const rank = i + 1;
-    const baseXP = 5000 * Math.pow(0.998, i - 100);
-    const xp = Math.floor(baseXP + (Math.random() * 200 - 100));
-
-    players.push({
-      rank,
-      username: `Player${rank}`,
-      xp,
-      level: Math.floor(Math.sqrt(xp / 50)) + 1,
-      streak: Math.floor(Math.random() * 30) + 1,
-      isUser: false
-    });
-  }
-
-  // Insert user into leaderboard
-  const userRank = players.findIndex(p => p.xp < userXP);
-  const finalRank = userRank === -1 ? players.length + 1 : userRank + 1;
-
-  const userEntry = {
-    rank: finalRank,
-    username: 'YOU',
-    xp: userXP,
-    level: Math.floor(Math.sqrt(userXP / 50)) + 1,
-    streak: 7,
-    isUser: true
-  };
-
-  if (userRank === -1) {
-    players.push(userEntry);
-  } else {
-    players.splice(userRank, 0, userEntry);
-    // Update ranks after insertion
-    for (let i = userRank + 1; i < players.length; i++) {
-      players[i].rank = i + 1;
-    }
-  }
-
-  return players;
-};
+interface Player {
+  rank: number;
+  username: string;
+  xp: number;
+  level: number;
+  streak: number;
+  isUser: boolean;
+}
 
 export default function Leaderboard() {
   const { profile } = useStore();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [leaderboard, setLeaderboard] = useState<Player[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const leaderboard = useMemo(() => generateLeaderboard(profile.totalXP), [profile.totalXP]);
-  const userEntry = leaderboard.find(p => p.isUser)!;
-  const topPlayers = leaderboard.slice(0, 20);
-  const userContext = leaderboard.slice(Math.max(0, userEntry.rank - 3), Math.min(leaderboard.length, userEntry.rank + 2));
+  useEffect(() => {
+    async function fetchLeaderboard() {
+      setLoading(true);
+      try {
+        // Fetch top 50 players from Firestore
+        const topPlayersData = await getTopPlayers(50);
+
+        // Convert to Player format with ranks
+        const players: Player[] = topPlayersData.map((entry, index) => ({
+          rank: index + 1,
+          username: entry.displayName,
+          xp: entry.totalXP,
+          level: entry.level,
+          streak: 0, // We don't store streak in leaderboard yet
+          isUser: auth.currentUser?.uid === entry.userId,
+        }));
+
+        // Add current user if not in top 50
+        const userInList = players.some(p => p.isUser);
+        if (!userInList && auth.currentUser) {
+          // Calculate user's rank (they're somewhere after the top 50)
+          const userRank = players.findIndex(p => p.xp < profile.totalXP);
+          const rank = userRank === -1 ? players.length + 1 : userRank + 1;
+
+          const userPlayer: Player = {
+            rank,
+            username: profile.nickname,
+            xp: profile.totalXP,
+            level: profile.level,
+            streak: profile.currentStreak,
+            isUser: true,
+          };
+
+          // Insert user in correct position
+          if (userRank === -1) {
+            players.push(userPlayer);
+          } else {
+            players.splice(userRank, 0, userPlayer);
+            // Update ranks after insertion
+            for (let i = userRank + 1; i < players.length; i++) {
+              players[i].rank = i + 1;
+            }
+          }
+        }
+
+        setLeaderboard(players);
+      } catch (error) {
+        console.error('Failed to fetch leaderboard:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchLeaderboard();
+  }, [profile.totalXP, profile.level, profile.nickname, profile.currentStreak]);
+
+  const userEntry = leaderboard.find(p => p.isUser);
+  const topPlayers = leaderboard.slice(0, 50); // Show up to top 50
+  const userContext = userEntry
+    ? leaderboard.slice(Math.max(0, userEntry.rank - 3), Math.min(leaderboard.length, userEntry.rank + 2))
+    : [];
 
   return (
     <div className="min-h-screen bg-pattern-dots" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -203,53 +202,70 @@ export default function Leaderboard() {
         </motion.div>
 
         {/* Your Rank Card */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-lg p-4 border mb-5 relative" style={{ borderColor: 'var(--color-accent)', backgroundColor: 'rgba(167, 139, 250, 0.05)' }}>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>YOUR GLOBAL RANK</div>
-              <div className="text-3xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-accent)' }}>
-                #{userEntry.rank.toLocaleString()}
+        {loading ? (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-lg p-4 border mb-5 relative" style={{ borderColor: 'var(--color-accent)', backgroundColor: 'rgba(167, 139, 250, 0.05)' }}>
+            <div className="text-center py-8 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              Loading leaderboard...
+            </div>
+          </motion.div>
+        ) : userEntry ? (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-lg p-4 border mb-5 relative" style={{ borderColor: 'var(--color-accent)', backgroundColor: 'rgba(167, 139, 250, 0.05)' }}>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>YOUR GLOBAL RANK</div>
+                <div className="text-3xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-accent)' }}>
+                  #{userEntry.rank.toLocaleString()}
+                </div>
+                <div className="text-xs mt-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                  {leaderboard.length > 50 ? `in top ${leaderboard.length}` : 'globally'}
+                </div>
               </div>
-              <div className="text-xs mt-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                of {leaderboard.length.toLocaleString()} players
+              <div className="text-right">
+                <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>YOUR STATS</div>
+                <div className="flex items-center gap-3 font-mono text-xs">
+                  <span style={{ color: 'var(--color-text)' }}>{profile.totalXP.toLocaleString()} XP</span>
+                  <span style={{ color: 'var(--color-text)' }}>Lvl {userEntry.level}</span>
+                  <span className="flex items-center gap-1" style={{ color: 'var(--color-text)' }}>
+                    <Flame size={14} className="text-orange-500" /> {profile.currentStreak}
+                  </span>
+                </div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>YOUR STATS</div>
-              <div className="flex items-center gap-3 font-mono text-xs">
-                <span style={{ color: 'var(--color-text)' }}>{profile.totalXP.toLocaleString()} XP</span>
-                <span style={{ color: 'var(--color-text)' }}>Lvl {userEntry.level}</span>
-                <span className="flex items-center gap-1" style={{ color: 'var(--color-text)' }}>
-                  <Flame size={14} className="text-orange-500" /> {profile.currentStreak}
-                </span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        ) : null}
 
         {/* Top Players */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-lg border mb-5 overflow-hidden relative" style={{ borderColor: 'var(--color-border)' }}>
           <div className="p-3 border-b" style={{ borderColor: 'var(--color-border)' }}>
             <h2 className="font-display text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
               <Trophy size={18} style={{ color: 'var(--color-accent)' }} />
-              Top 20 Rankings
+              Top 50 Rankings
             </h2>
             <p className="text-xs mt-0.5 font-mono" style={{ color: 'var(--color-text-secondary)' }}>The best performers worldwide</p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b text-xs font-mono" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
-                  <th className="text-left py-1.5 px-3">RANK</th>
-                  <th className="text-left py-1.5 px-3">PLAYER</th>
-                  <th className="text-right py-1.5 px-3">XP</th>
-                  <th className="text-right py-1.5 px-3">LEVEL</th>
-                  <th className="text-right py-1.5 px-3">STREAK</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topPlayers.map((player, index) => (
+            {loading ? (
+              <div className="text-center py-12 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                Loading rankings...
+              </div>
+            ) : topPlayers.length === 0 ? (
+              <div className="text-center py-12 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                No players yet. Be the first!
+              </div>
+            ) : (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b text-xs font-mono" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
+                    <th className="text-left py-1.5 px-3">RANK</th>
+                    <th className="text-left py-1.5 px-3">PLAYER</th>
+                    <th className="text-right py-1.5 px-3">XP</th>
+                    <th className="text-right py-1.5 px-3">LEVEL</th>
+                    <th className="text-right py-1.5 px-3">STREAK</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {topPlayers.map((player, index) => (
                   <motion.tr
                     key={player.rank}
                     initial={{ opacity: 0, x: -20 }}
@@ -277,35 +293,37 @@ export default function Leaderboard() {
                       </span>
                     </td>
                   </motion.tr>
-                ))}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </motion.div>
 
         {/* Your Position Context */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-lg border overflow-hidden relative" style={{ borderColor: 'var(--color-border)' }}>
-          <div className="p-3 border-b" style={{ borderColor: 'var(--color-border)' }}>
-            <h2 className="font-display text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
-              <TrendingUp size={18} style={{ color: 'var(--color-accent)' }} />
-              Your Position
-            </h2>
-            <p className="text-xs mt-0.5 font-mono" style={{ color: 'var(--color-text-secondary)' }}>Players near your rank - climb higher to surpass them</p>
-          </div>
+        {!loading && userEntry && userContext.length > 0 && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-lg border overflow-hidden relative" style={{ borderColor: 'var(--color-border)' }}>
+            <div className="p-3 border-b" style={{ borderColor: 'var(--color-border)' }}>
+              <h2 className="font-display text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--color-text)' }}>
+                <TrendingUp size={18} style={{ color: 'var(--color-accent)' }} />
+                Your Position
+              </h2>
+              <p className="text-xs mt-0.5 font-mono" style={{ color: 'var(--color-text-secondary)' }}>Players near your rank - climb higher to surpass them</p>
+            </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b text-xs font-mono" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
-                  <th className="text-left py-1.5 px-3">RANK</th>
-                  <th className="text-left py-1.5 px-3">PLAYER</th>
-                  <th className="text-right py-1.5 px-3">XP</th>
-                  <th className="text-right py-1.5 px-3">LEVEL</th>
-                  <th className="text-right py-1.5 px-3">STREAK</th>
-                </tr>
-              </thead>
-              <tbody>
-                {userContext.map((player) => (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b text-xs font-mono" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
+                    <th className="text-left py-1.5 px-3">RANK</th>
+                    <th className="text-left py-1.5 px-3">PLAYER</th>
+                    <th className="text-right py-1.5 px-3">XP</th>
+                    <th className="text-right py-1.5 px-3">LEVEL</th>
+                    <th className="text-right py-1.5 px-3">STREAK</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {userContext.map((player) => (
                   <tr
                     key={player.rank}
                     className={`border-b transition-colors text-xs ${player.isUser ? 'bg-white/10' : 'hover:bg-white/5'}`}
@@ -334,11 +352,12 @@ export default function Leaderboard() {
                       </span>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        )}
 
         {/* Motivational CTA */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-5 text-center">

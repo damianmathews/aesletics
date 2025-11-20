@@ -13,6 +13,8 @@ import type {
 import { calculateLevel, calculateStreak } from '../lib/xp';
 import { questTemplatesExtended, questPacks } from '../data/seed';
 import { getLocalDateString, getLocalDateStringDaysAgo } from '../lib/dateUtils';
+import { syncToLeaderboard } from '../lib/leaderboard';
+import { auth } from '../lib/firebase';
 
 interface QuestCompleteData {
   questTitle: string;
@@ -273,6 +275,18 @@ export const useStore = create<StoreState>()(
             },
           };
         });
+
+        // Sync to leaderboard (fire and forget)
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          const updatedState = get();
+          syncToLeaderboard(
+            currentUser.uid,
+            updatedState.profile.nickname,
+            updatedState.profile.totalXP,
+            updatedState.profile.level
+          ).catch(err => console.error('Failed to sync to leaderboard:', err));
+        }
       },
 
       updateSettings: (settings) =>
@@ -433,6 +447,18 @@ export const useStore = create<StoreState>()(
             streakFreezes: (state.profile.streakFreezes || 0) + streakFreezesEarned,
           },
         }));
+
+        // Sync to leaderboard after daily login
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          const updatedState = get();
+          syncToLeaderboard(
+            currentUser.uid,
+            updatedState.profile.nickname,
+            updatedState.profile.totalXP,
+            updatedState.profile.level
+          ).catch(err => console.error('Failed to sync to leaderboard:', err));
+        }
 
         // Show daily login modal
         setTimeout(() => {

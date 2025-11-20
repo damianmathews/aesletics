@@ -2,16 +2,20 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
+import { useSubscription } from '../hooks/useSubscription';
 import { calculateXP } from '../lib/xp';
 import { Clock, Camera, AlertTriangle, Check, Flame, X, Award, TrendingUp, Menu } from 'lucide-react';
+import PaywallModal from '../components/PaywallModal';
 
 export default function QuestDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { profile, getQuestById, addCompletion } = useStore();
+  const { hasAccess } = useSubscription();
   const quest = getQuestById(id!);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [counterValue, setCounterValue] = useState(0);
@@ -32,6 +36,12 @@ export default function QuestDetail() {
   }
 
   const handleComplete = () => {
+    // Check if user has subscription access
+    if (!hasAccess) {
+      setShowPaywall(true);
+      return;
+    }
+
     const xp = calculateXP(quest.baseXP, quest.proof, profile.currentStreak);
 
     const completion = {
@@ -382,6 +392,13 @@ export default function QuestDetail() {
           )}
         </motion.div>
       </main>
+
+      {/* Paywall Modal */}
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature="Complete Quests"
+      />
     </div>
   );
 }

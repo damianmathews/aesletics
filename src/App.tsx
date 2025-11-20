@@ -19,6 +19,8 @@ import Settings from './pages/Settings';
 import History from './pages/History';
 import Leaderboard from './pages/Leaderboard';
 import QuestPacks from './pages/QuestPacks';
+import Admin from './pages/Admin';
+import CheckoutSuccess from './pages/CheckoutSuccess';
 
 function App() {
   const {
@@ -64,13 +66,15 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-          <Route path="/app" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/checkout/success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
+          <Route path="/app" element={<ProtectedRoute requiresSubscription={true}><Dashboard /></ProtectedRoute>} />
           <Route path="/app/quests" element={<ProtectedRoute><QuestLibrary /></ProtectedRoute>} />
           <Route path="/app/quests/:id" element={<ProtectedRoute><QuestDetail /></ProtectedRoute>} />
-          <Route path="/app/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
-          <Route path="/app/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
-          <Route path="/app/packs" element={<ProtectedRoute><QuestPacks /></ProtectedRoute>} />
+          <Route path="/app/history" element={<ProtectedRoute requiresSubscription={true}><History /></ProtectedRoute>} />
+          <Route path="/app/leaderboard" element={<ProtectedRoute requiresSubscription={true}><Leaderboard /></ProtectedRoute>} />
+          <Route path="/app/packs" element={<ProtectedRoute requiresSubscription={true}><QuestPacks /></ProtectedRoute>} />
           <Route path="/app/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/app/admin" element={<ProtectedRoute requiresSubscription={true}><Admin /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <TutorialOverlay />

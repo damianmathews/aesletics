@@ -1,10 +1,17 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useStore } from '../store/useStore';
+import { useSubscription } from '../hooks/useSubscription';
 
-export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requiresSubscription?: boolean;
+}
+
+export default function ProtectedRoute({ children, requiresSubscription = false }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
   const { onboardingComplete, _hasHydrated } = useStore();
+  const { hasAccess } = useSubscription();
   const location = useLocation();
 
   console.log('🛡️ PROTECTED ROUTE CHECK:', {
@@ -42,6 +49,13 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   // If user has completed onboarding and on onboarding page, redirect to app
   if (onboardingComplete && location.pathname === '/onboarding') {
     return <Navigate to="/app" replace />;
+  }
+
+  // Check subscription requirement
+  if (requiresSubscription && !hasAccess) {
+    // Redirect to quest library (free page) with a flag to show paywall
+    console.log('🔒 No subscription access - redirecting to /app/quests');
+    return <Navigate to="/app/quests?blocked=true" replace />;
   }
 
   return <>{children}</>;

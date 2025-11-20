@@ -3,15 +3,21 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useAuth } from '../contexts/AuthContext';
+import { useSubscription } from '../hooks/useSubscription';
 import { exportData, importData } from '../lib/storage';
-import { Menu, X, LogOut } from 'lucide-react';
+import { openCustomerPortal, getSubscriptionStatusText, getSubscriptionMessage } from '../lib/subscription';
+import { Menu, X, LogOut, Crown } from 'lucide-react';
+import PaywallModal from '../components/PaywallModal';
 
 export default function Settings() {
   const { profile, settings, updateSettings, updateProfile } = useStore();
   const { logout, user } = useAuth();
+  const { subscription, hasAccess, isTrialing } = useSubscription();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [managingSubscription, setManagingSubscription] = useState(false);
 
   const handleExport = () => {
     const data = exportData();
@@ -45,6 +51,23 @@ export default function Settings() {
       reader.readAsText(file);
     };
     input.click();
+  };
+
+  const handleManageSubscription = async () => {
+    if (!subscription?.stripeCustomerId) {
+      setShowPaywall(true);
+      return;
+    }
+
+    setManagingSubscription(true);
+    try {
+      await openCustomerPortal(subscription.stripeCustomerId);
+    } catch (error) {
+      console.error('Error opening customer portal:', error);
+      alert('Failed to open subscription management. Please try again.');
+    } finally {
+      setManagingSubscription(false);
+    }
   };
 
   return (
@@ -224,8 +247,113 @@ export default function Settings() {
             </div>
           </motion.div>
 
+          {/* Subscription Management */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-lg p-5 border" style={{ borderColor: hasAccess ? 'var(--color-accent)' : 'var(--color-border)' }}>
+            <div className="flex items-center gap-2 mb-4">
+              <Crown size={20} style={{ color: 'var(--color-accent)' }} />
+              <h2 className="font-display text-xl font-semibold" style={{ color: 'var(--color-text)' }}>Subscription</h2>
+            </div>
+
+            {hasAccess ? (
+              <>
+                {/* Status Badge */}
+                <div className="mb-4 p-4 rounded-lg" style={{ backgroundColor: 'rgba(167, 139, 250, 0.1)' }}>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-mono font-medium" style={{ color: 'var(--color-text-secondary)' }}>STATUS</span>
+                    <span className="font-bold text-sm px-3 py-1 rounded" style={{
+                      backgroundColor: isTrialing ? 'rgba(6, 182, 212, 0.15)' : 'rgba(34, 197, 94, 0.15)',
+                      color: isTrialing ? '#06b6d4' : '#22c55e'
+                    }}>
+                      {getSubscriptionStatusText(subscription)}
+                    </span>
+                  </div>
+
+                  <p className="text-sm mb-3" style={{ color: 'var(--color-text)' }}>
+                    {getSubscriptionMessage(subscription)}
+                  </p>
+
+                  {/* Subscription Details */}
+                  <div className="space-y-2 pt-3 border-t" style={{ borderColor: 'rgba(167, 139, 250, 0.2)' }}>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-mono" style={{ color: 'var(--color-text-secondary)' }}>PLAN</span>
+                      <span className="font-semibold" style={{ color: 'var(--color-text)' }}>IRLXP Premium</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-mono" style={{ color: 'var(--color-text-secondary)' }}>PRICE</span>
+                      <span className="font-semibold" style={{ color: 'var(--color-text)' }}>$4.99/month</span>
+                    </div>
+                    {subscription?.currentPeriodEnd && (
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                          {subscription.cancelAtPeriodEnd ? 'ACCESS UNTIL' : 'NEXT BILLING'}
+                        </span>
+                        <span className="font-semibold" style={{ color: 'var(--color-text)' }}>
+                          {new Date(subscription.currentPeriodEnd).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </span>
+                      </div>
+                    )}
+                    {subscription?.cancelAtPeriodEnd && (
+                      <div className="mt-2 pt-2 border-t" style={{ borderColor: 'rgba(167, 139, 250, 0.2)' }}>
+                        <p className="text-xs" style={{ color: '#ef4444' }}>
+                          ⚠️ Subscription will cancel at period end
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleManageSubscription}
+                  disabled={managingSubscription}
+                  className="w-full py-3 rounded-lg font-semibold text-sm transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'var(--gradient-primary)', color: 'white' }}
+                >
+                  {managingSubscription ? 'Opening Portal...' : 'Manage Subscription'}
+                </button>
+                <p className="text-xs mt-2 text-center font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                  Update payment • View invoices • Cancel subscription
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="mb-4 p-4 rounded-lg border-2 border-dashed" style={{ borderColor: 'var(--color-accent)', backgroundColor: 'rgba(167, 139, 250, 0.05)' }}>
+                  <p className="text-sm font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
+                    🚀 Unlock Premium Features
+                  </p>
+                  <ul className="space-y-1.5 text-xs mb-3" style={{ color: 'var(--color-text-secondary)' }}>
+                    <li>✓ Complete quests & earn XP</li>
+                    <li>✓ Track progress & build streaks</li>
+                    <li>✓ Climb the global leaderboard</li>
+                    <li>✓ Join quest packs & challenges</li>
+                    <li>✓ Full dashboard access</li>
+                  </ul>
+                  <div className="pt-3 border-t" style={{ borderColor: 'rgba(167, 139, 250, 0.2)' }}>
+                    <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                      <span className="font-bold" style={{ color: 'var(--color-accent)' }}>$4.99/month</span> after 7-day free trial
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setShowPaywall(true)}
+                  className="w-full py-3 rounded-lg font-semibold text-sm transition-all hover:scale-105"
+                  style={{ background: 'var(--gradient-primary)', color: 'white' }}
+                >
+                  Start 7-Day Free Trial →
+                </button>
+                <p className="text-xs mt-2 text-center font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                  No credit card required • Cancel anytime
+                </p>
+              </>
+            )}
+          </motion.div>
+
           {/* Data Management */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
             <h2 className="font-display text-xl font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Data Management</h2>
             <div className="space-y-2.5">
               <button
@@ -299,6 +427,13 @@ export default function Settings() {
           </motion.div>
         </div>
       </main>
+
+      {/* Paywall Modal */}
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature="Premium Features"
+      />
     </div>
   );
 }

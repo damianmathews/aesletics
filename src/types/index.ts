@@ -128,6 +128,15 @@ export interface QuestPack {
   tags: string[];
 }
 
+export interface Subscription {
+  status: 'active' | 'trialing' | 'canceled' | 'past_due' | 'unpaid' | null;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
+  currentPeriodEnd?: string; // ISO date
+  trialEnd?: string; // ISO date
+  cancelAtPeriodEnd?: boolean;
+}
+
 export interface UserProfile {
   nickname: string;
   avatar?: string;
@@ -142,6 +151,7 @@ export interface UserProfile {
   loginStreakDays: number; // consecutive daily logins
   longestLoginStreak: number;
   streakFreezes: number; // Number of freeze items earned
+  subscription?: Subscription;
 }
 
 export interface Settings {

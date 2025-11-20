@@ -206,7 +206,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (syncTimeoutRef.current) {
           clearTimeout(syncTimeoutRef.current);
         }
-        syncTimeoutRef.current = setTimeout(() => syncData(state), 2000);
+        syncTimeoutRef.current = setTimeout(() => syncData(state), 2000) as unknown as number;
       }
 
       prevStateRef.current = state;
