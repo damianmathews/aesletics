@@ -11,7 +11,7 @@ import type {
   OnboardingData,
 } from '../types';
 import { calculateLevel, calculateStreak } from '../lib/xp';
-import { questTemplatesExtended } from '../data/seed';
+import { questTemplatesExtended, questPacks } from '../data/seed';
 import { getLocalDateString, getLocalDateStringDaysAgo } from '../lib/dateUtils';
 
 interface QuestCompleteData {
@@ -285,15 +285,86 @@ export const useStore = create<StoreState>()(
           profile: { ...state.profile, ...profile },
         })),
 
-      activatePack: (packId) =>
-        set((state) => ({
-          activePacks: [...state.activePacks, packId],
-        })),
+      activatePack: (packId) => {
+        const pack = questPacks.find(p => p.id === packId);
+        if (!pack) return;
 
-      deactivatePack: (packId) =>
-        set((state) => ({
-          activePacks: state.activePacks.filter((id) => id !== packId),
-        })),
+        set((state) => {
+          // Add pack to active packs
+          const activePacks = [...state.activePacks, packId];
+
+          // Add all quests from the pack to userQuests (if not already added)
+          const newUserQuests = [...state.userQuests];
+
+          pack.quests.forEach(packQuest => {
+            const template = questTemplatesExtended.find(q => q.id === packQuest.templateId);
+            if (!template) return;
+
+            // Check if this quest template is already in userQuests
+            const alreadyExists = newUserQuests.some(uq => uq.templateId === template.id);
+            if (alreadyExists) return;
+
+            // Create new user quest
+            const newQuest: UserQuest = {
+              id: `uq-${Date.now()}-${Math.random()}`,
+              templateId: template.id,
+              custom: false,
+              title: template.title,
+              category: template.category,
+              difficulty: template.difficulty,
+              description: template.description,
+              durationMinutes: template.durationMinutes,
+              proof: template.proof,
+              baseXP: template.baseXP,
+              schedule: {
+                type: template.recurrence,
+                ...(template.recurrence === 'weekly' && { daysOfWeek: [0, 1, 2, 3, 4, 5, 6] }),
+              },
+              equipment: template.equipment,
+              tags: template.tags,
+              safety: template.safety,
+              active: true,
+              createdAt: new Date().toISOString(),
+            };
+
+            newUserQuests.push(newQuest);
+          });
+
+          return {
+            activePacks,
+            userQuests: newUserQuests,
+          };
+        });
+      },
+
+      deactivatePack: (packId) => {
+        const pack = questPacks.find(p => p.id === packId);
+        if (!pack) return;
+
+        set((state) => {
+          // Remove pack from active packs
+          const activePacks = state.activePacks.filter((id) => id !== packId);
+
+          // Remove quests from this pack (but only if they haven't been completed)
+          const packTemplateIds = pack.quests.map(pq => pq.templateId);
+          const userQuests = state.userQuests.filter(uq => {
+            // Keep the quest if:
+            // 1. It's not from this pack, OR
+            // 2. It has been completed at least once
+            if (!uq.templateId) return true; // Keep quests without templateId
+            const isFromThisPack = packTemplateIds.includes(uq.templateId);
+            if (!isFromThisPack) return true;
+
+            const hasCompletions = state.completions.some(c => c.userQuestId === uq.id);
+            return hasCompletions;
+          });
+
+          return {
+            activePacks,
+            userQuests,
+          };
+        });
+      },
 
       closeQuestCompleteModal: () =>
         set({
