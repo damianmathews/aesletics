@@ -87,7 +87,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
           firebaseUserId: userId,
         },
       },
-      success_url: `${process.env.URL || 'https://irlxp.app'}/checkout/success`,
+      success_url: `${process.env.URL || 'https://irlxp.app'}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.URL || 'https://irlxp.app'}/app/quests`,
       custom_text: {
         submit: {

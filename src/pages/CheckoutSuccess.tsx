@@ -1,23 +1,21 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle, Loader } from 'lucide-react';
 import { auth, db } from '../lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { useStore } from '../store/useStore';
 
 export default function CheckoutSuccess() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { updateProfile } = useStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     const loadSubscription = async () => {
-      console.log('🎉 Checkout success! Loading subscription data...');
-
-      // Wait a moment for webhook to process
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('🎉 Checkout success! Syncing subscription...');
 
       if (!auth.currentUser) {
         console.error('❌ No user found');
@@ -25,57 +23,61 @@ export default function CheckoutSuccess() {
         return;
       }
 
+      // Get session_id from URL
+      const sessionId = searchParams.get('session_id');
+      if (!sessionId) {
+        console.error('❌ No session_id in URL');
+        setError(true);
+        return;
+      }
+
+      console.log('📋 Session ID:', sessionId);
+
       try {
-        // Try to load subscription data from Firestore (webhook should have created it)
-        let attempts = 0;
-        const maxAttempts = 5;
+        // Call our sync function to get subscription data from Stripe
+        console.log('🔄 Calling sync-subscription...');
+        const response = await fetch('/.netlify/functions/sync-subscription', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId }),
+        });
 
-        while (attempts < maxAttempts) {
-          console.log(`🔄 Attempt ${attempts + 1}/${maxAttempts} to load subscription...`);
-
-          const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
-
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            console.log('📦 User data:', userData);
-
-            if (userData.subscription && (userData.subscription.status === 'trialing' || userData.subscription.status === 'active')) {
-              console.log('✅ Subscription found!', userData.subscription);
-
-              // Update profile with subscription
-              updateProfile({
-                subscription: userData.subscription,
-              });
-
-              setLoading(false);
-
-              // Redirect to dashboard after a moment
-              setTimeout(() => {
-                navigate('/app', { replace: true });
-              }, 2000);
-
-              return;
-            }
-          }
-
-          attempts++;
-          if (attempts < maxAttempts) {
-            // Wait before next attempt (exponential backoff)
-            await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
-          }
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('❌ Sync failed:', errorData);
+          throw new Error(errorData.error || 'Failed to sync subscription');
         }
 
-        // If we get here, we couldn't find the subscription
-        console.error('❌ Could not find subscription after', maxAttempts, 'attempts');
-        setError(true);
-      } catch (error) {
-        console.error('❌ Error loading subscription:', error);
+        const { subscription } = await response.json();
+        console.log('✅ Subscription synced:', subscription);
+
+        // Write to Firestore using user's credentials
+        console.log('📝 Writing to Firestore...');
+        await setDoc(
+          doc(db, 'users', auth.currentUser.uid),
+          { subscription },
+          { merge: true }
+        );
+
+        console.log('✅ Saved to Firestore!');
+
+        // Update local state
+        updateProfile({ subscription });
+
+        setLoading(false);
+
+        // Redirect to dashboard after a moment
+        setTimeout(() => {
+          navigate('/app', { replace: true });
+        }, 2000);
+      } catch (error: any) {
+        console.error('❌ Error syncing subscription:', error);
         setError(true);
       }
     };
 
     loadSubscription();
-  }, [navigate, updateProfile]);
+  }, [navigate, updateProfile, searchParams]);
 
   if (error) {
     return (
