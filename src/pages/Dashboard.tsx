@@ -3,8 +3,25 @@ import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { getLevelProgress } from '../lib/xp';
 import { useState, useEffect, useRef } from 'react';
-import { TrendingUp, TrendingDown, Target, Zap, Trophy, Calendar, Filter, Package, Menu, X, Flame, Shield } from 'lucide-react';
+import { TrendingUp, TrendingDown, Target, Zap, Trophy, Calendar, Filter, Package, Menu, X, Flame, Shield, Dumbbell, Sparkles, Brain, Heart, Users, Mountain, Briefcase, Palette } from 'lucide-react';
 import { questPacks, categories } from '../data/seed';
+
+// Category icon mapping
+const getCategoryIcon = (categoryId: string) => {
+  const iconMap: Record<string, React.ReactNode> = {
+    'fitness': <Dumbbell size={20} />,
+    'body-wellness': <Sparkles size={20} />,
+    'athletics-skill': <Zap size={20} />,
+    'intelligence': <Brain size={20} />,
+    'discipline': <Shield size={20} />,
+    'mental': <Heart size={20} />,
+    'social-leadership': <Users size={20} />,
+    'adventure-outdoors': <Mountain size={20} />,
+    'finance-career': <Briefcase size={20} />,
+    'creativity': <Palette size={20} />,
+  };
+  return iconMap[categoryId] || <Zap size={20} />;
+};
 
 export default function Dashboard() {
   const { profile, getStats, getTodaysQuests, activePacks } = useStore();
@@ -52,6 +69,15 @@ export default function Dashboard() {
     // For now we'll keep the same quests, but in a real app you'd filter by createdAt/completedAt
     return true;
   });
+
+  // Split quests into pack quests and regular quests
+  const packQuests = todaysQuests.filter(quest =>
+    activePacks.some(packId =>
+      questPacks.find(p => p.id === packId)?.quests
+        .some(pq => pq.templateId === quest.templateId)
+    )
+  );
+  const regularQuests = todaysQuests.filter(quest => !packQuests.includes(quest));
 
   // Calculate weekly change
   const lastWeekXP = stats.last14DaysXP.slice(0, 7).reduce((a, b) => a + b, 0);
@@ -448,39 +474,82 @@ export default function Dashboard() {
                   <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>{activePacks.length} program{activePacks.length > 1 ? 's' : ''} in progress</p>
                 </div>
               </div>
-              <div className="grid md:grid-cols-2 gap-4">
-                {activePacks.map((packId, index) => {
-                  const pack = questPacks.find(p => p.id === packId);
-                  if (!pack) return null;
+              {activePacks.map((packId, index) => {
+                const pack = questPacks.find(p => p.id === packId);
+                if (!pack) return null;
 
-                  return (
-                    <motion.div
-                      key={packId}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 * index }}
-                    >
-                      <Link to="/app/packs" className="block glass rounded-lg p-3 border hover:scale-[1.02] transition-all" style={{ borderColor: 'var(--color-accent)' }}>
-                        <div className="flex items-start gap-3">
-                          <div className="text-2xl">{pack.icon}</div>
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-sm mb-1" style={{ color: 'var(--color-text)' }}>{pack.title}</h3>
-                            <div className="flex items-center gap-2 text-xs font-mono mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-                              <span className="px-1.5 py-0.5 rounded capitalize text-xs" style={{ backgroundColor: 'var(--color-border)' }}>{pack.difficulty}</span>
-                              <span>•</span>
-                              <span>{pack.durationDays}d</span>
-                            </div>
-                            {/* Simple progress bar */}
-                            <div className="w-full h-1.5 rounded-full" style={{ backgroundColor: 'var(--color-border)' }}>
-                              <div className="h-full rounded-full" style={{ background: 'var(--gradient-primary)', width: '35%' }} />
-                            </div>
-                          </div>
+                // Get quests for this specific pack
+                const thisPackQuests = packQuests.filter(quest =>
+                  pack.quests.some(pq => pq.templateId === quest.templateId)
+                );
+
+                return (
+                  <div key={packId} className={index > 0 ? 'mt-4 pt-4 border-t' : ''} style={{ borderColor: 'var(--color-border)' }}>
+                    {/* Pack Header */}
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="text-2xl">{pack.icon}</div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold text-lg" style={{ color: 'var(--color-text)' }}>{pack.title}</h3>
+                          <Link to="/app/packs" className="text-xs font-mono transition-opacity hover:opacity-70" style={{ color: 'var(--color-accent)' }}>
+                            View Pack →
+                          </Link>
                         </div>
-                      </Link>
-                    </motion.div>
-                  );
-                })}
-              </div>
+                        <div className="flex items-center gap-2 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                          <span className="px-1.5 py-0.5 rounded capitalize text-xs" style={{ backgroundColor: 'var(--color-border)' }}>{pack.difficulty}</span>
+                          <span>•</span>
+                          <span>{pack.durationDays}d program</span>
+                          <span>•</span>
+                          <span>{thisPackQuests.length} quests</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Pack Quests Grid */}
+                    {thisPackQuests.length > 0 ? (
+                      <div className="grid md:grid-cols-2 gap-3">
+                        {thisPackQuests.map((quest, qIndex) => (
+                          <motion.div
+                            key={quest.id}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.1 * qIndex }}
+                          >
+                            <Link
+                              to={`/app/quests/${quest.id}`}
+                              className="block glass rounded-lg p-3 border hover:scale-[1.02] transition-all relative"
+                              style={{ borderColor: 'var(--color-accent)', backgroundColor: 'rgba(167, 139, 250, 0.05)' }}
+                            >
+                              {/* Small pack badge */}
+                              <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-semibold" style={{ backgroundColor: 'rgba(167, 139, 250, 0.3)', color: 'white' }}>
+                                <Package size={8} />
+                              </div>
+
+                              <div className="flex items-start justify-between" style={{ marginTop: '20px' }}>
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-sm mb-1.5" style={{ color: 'var(--color-text)' }}>{quest.title}</h4>
+                                  <div className="flex items-center gap-2 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                                    <span className="px-1.5 py-0.5 rounded text-xs capitalize" style={{ backgroundColor: 'var(--color-border)' }}>{quest.difficulty}</span>
+                                    <span>{quest.durationMinutes}min</span>
+                                    <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
+                                  </div>
+                                </div>
+                                <div style={{ color: 'var(--color-accent)' }}>
+                                  {getCategoryIcon(quest.category)}
+                                </div>
+                              </div>
+                            </Link>
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-center py-4" style={{ color: 'var(--color-text-secondary)' }}>
+                        No quests from this pack available today
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         )}
@@ -495,7 +564,7 @@ export default function Dashboard() {
             </Link>
           </div>
 
-          {todaysQuests.length === 0 ? (
+          {regularQuests.length === 0 ? (
             <div className="glass rounded-lg p-8 border text-center" style={{ borderColor: 'var(--color-border)' }}>
               <Trophy size={32} className="mx-auto mb-3" style={{ color: 'var(--color-accent)' }} />
               <p className="text-base mb-2" style={{ color: 'var(--color-text)' }}>No quests today</p>
@@ -506,45 +575,29 @@ export default function Dashboard() {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-3" data-tutorial="quest-cards">
-              {todaysQuests.map((quest, index) => {
-                // Check if quest belongs to any active pack
-                const questPack = questPacks.find(pack =>
-                  activePacks.includes(pack.id) &&
-                  pack.quests.some(pq => pq.templateId === quest.templateId)
-                );
-                const isPackQuest = !!questPack;
-
-                return (
-                  <motion.div key={quest.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * index }}>
-                    <Link
-                      to={`/app/quests/${quest.id}`}
-                      className="block glass rounded-lg p-4 border hover:scale-[1.02] transition-all relative"
-                      style={{
-                        borderColor: isPackQuest ? 'var(--color-accent)' : 'var(--color-border)',
-                        ...(isPackQuest && { backgroundColor: 'rgba(167, 139, 250, 0.03)' })
-                      }}
-                    >
-                      {isPackQuest && (
-                        <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold" style={{ backgroundColor: 'rgba(167, 139, 250, 0.2)', color: 'var(--color-accent)' }}>
-                          <Package size={12} />
-                          <span>{questPack!.title}</span>
+              {regularQuests.map((quest, index) => (
+                <motion.div key={quest.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * index }}>
+                  <Link
+                    to={`/app/quests/${quest.id}`}
+                    className="block glass rounded-lg p-4 border hover:scale-[1.02] transition-all relative"
+                    style={{ borderColor: 'var(--color-border)' }}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-base mb-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
+                        <div className="flex items-center gap-2.5 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                          <span className="px-1.5 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'var(--color-border)' }}>{quest.difficulty}</span>
+                          <span>{quest.durationMinutes}min</span>
+                          <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
                         </div>
-                      )}
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1" style={{ paddingRight: isPackQuest ? '80px' : '0' }}>
-                          <h3 className="font-semibold text-base mb-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
-                          <div className="flex items-center gap-2.5 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                            <span className="px-1.5 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'var(--color-border)' }}>{quest.difficulty}</span>
-                            <span>{quest.durationMinutes}min</span>
-                            <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
-                          </div>
-                        </div>
-                        <Zap size={20} style={{ color: 'var(--color-accent)' }} />
                       </div>
-                    </Link>
-                  </motion.div>
-                );
-              })}
+                      <div style={{ color: 'var(--color-accent)' }}>
+                        {getCategoryIcon(quest.category)}
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
             </div>
           )}
         </motion.div>
