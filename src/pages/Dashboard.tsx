@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
-import { getLevelProgress } from '../lib/xp';
 import { useState, useEffect, useRef } from 'react';
-import { TrendingUp, TrendingDown, Target, Zap, Trophy, Calendar, Filter, Package, Menu, X, Flame, Shield, Dumbbell, Sparkles, Brain, Heart, Users, Mountain, Briefcase, Palette } from 'lucide-react';
+import { Zap, Trophy, Calendar, Filter, Package, Menu, X, Shield, Dumbbell, Sparkles, Brain, Heart, Users, Mountain, Briefcase, Palette } from 'lucide-react';
 import { questPacks, categories } from '../data/seed';
 
 // Category icon mapping
@@ -36,7 +35,6 @@ export default function Dashboard() {
   const { profile, getStats, getTodaysQuests, activePacks, completions } = useStore();
   const stats = getStats();
   const allTodaysQuests = getTodaysQuests();
-  const levelProgress = getLevelProgress(profile.totalXP);
 
   // Check if user has completed a quest today for daily win messaging
   const today = new Date().toISOString().split('T')[0];
@@ -86,18 +84,16 @@ export default function Dashboard() {
     return true;
   });
 
-  // Split quests into pack quests and regular quests
-  const packQuests = todaysQuests.filter(quest =>
-    activePacks.some(packId =>
-      questPacks.find(p => p.id === packId)?.quests
-        .some(pq => pq.templateId === quest.templateId)
-    )
+  // Find "Next Quest" - easiest, shortest quest that hasn't been completed today
+  const todayCompletedQuestIds = new Set(
+    completions
+      .filter(c => c.at.split('T')[0] === today)
+      .map(c => c.userQuestId)
   );
-  const regularQuests = todaysQuests.filter(quest => !packQuests.includes(quest));
+  const incompleteQuests = todaysQuests.filter(quest => !todayCompletedQuestIds.has(quest.id));
 
-  // Find "Next Quest" - easiest, shortest quest (Make it Easy principle)
   const difficultyOrder = { easy: 1, medium: 2, hard: 3, elite: 4, legendary: 5 };
-  const nextQuest = [...todaysQuests].sort((a, b) => {
+  const nextQuest = [...incompleteQuests].sort((a, b) => {
     // Sort by difficulty first (easiest first)
     const diffA = difficultyOrder[a.difficulty];
     const diffB = difficultyOrder[b.difficulty];
@@ -108,10 +104,18 @@ export default function Dashboard() {
     return b.baseXP - a.baseXP;
   })[0];
 
-  // Calculate weekly change
-  const lastWeekXP = stats.last14DaysXP.slice(0, 7).reduce((a, b) => a + b, 0);
-  const thisWeekXP = stats.last14DaysXP.slice(7, 14).reduce((a, b) => a + b, 0);
-  const weeklyChange = lastWeekXP > 0 ? ((thisWeekXP - lastWeekXP) / lastWeekXP) * 100 : 0;
+  // Split quests into pack quests and regular quests
+  // Filter out the Next Quest from both lists to avoid duplication
+  const packQuests = todaysQuests.filter(quest =>
+    quest.id !== nextQuest?.id &&
+    activePacks.some(packId =>
+      questPacks.find(p => p.id === packId)?.quests
+        .some(pq => pq.templateId === quest.templateId)
+    )
+  );
+  const regularQuests = todaysQuests.filter(quest =>
+    quest.id !== nextQuest?.id && !packQuests.includes(quest)
+  );
 
   return (
     <div className="min-h-screen bg-pattern-dots" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -373,165 +377,49 @@ export default function Dashboard() {
 
         {/* Compact Single Row - 4 Cards */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-3">
-          <div className="flex gap-3 overflow-x-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {/* Card 1: Level & XP */}
-            <div className="glass rounded-lg p-3 border flex-shrink-0" style={{ borderColor: 'var(--color-border)', minWidth: '220px' }} data-tutorial="xp-display">
-              <p className="text-xs font-mono font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>LEVEL & XP</p>
-
-              <div className="flex items-center gap-3 mb-3">
-                {/* 80x80 Level Badge */}
-                <div
-                  className="flex flex-col items-center justify-center rounded-lg flex-shrink-0"
-                  style={{ background: 'var(--gradient-primary)', width: '80px', height: '80px' }}
-                >
-                  <div className="text-xs font-mono font-bold text-white opacity-70 mb-0.5">LEVEL</div>
-                  <div className="text-3xl font-bold text-white tabular-nums">{profile.level}</div>
-                </div>
-
-                {/* Info with better hierarchy */}
-                <div className="flex-1">
-                  <div className="mb-2">
-                    <div className="text-lg font-bold tabular-nums leading-none" style={{ color: 'var(--color-text)' }}>
-                      {profile.totalXP.toLocaleString()}
-                    </div>
-                    <div className="text-xs font-mono mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
-                      Total XP
-                    </div>
-                  </div>
-                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded" style={{ backgroundColor: 'rgba(167, 139, 250, 0.15)' }}>
-                    <span className="text-xs font-mono font-bold" style={{ color: 'var(--color-accent)' }}>
-                      {Math.round(levelProgress.progress * 100)}%
-                    </span>
-                    <span className="text-xs font-mono" style={{ color: 'var(--color-accent)' }}>
-                      to Lv.{profile.level + 1}
-                    </span>
-                  </div>
-                </div>
+            <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }} data-tutorial="xp-display">
+              <p className="text-xs font-mono font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>LEVEL & XP</p>
+              <div className="text-3xl font-bold tabular-nums mb-1" style={{ color: 'var(--color-text)' }}>
+                Level {profile.level}
               </div>
-
-              {/* Progress Bar */}
-              <div className="relative h-2.5 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
-                <div
-                  className="h-full rounded-full transition-all duration-500 ease-out"
-                  style={{
-                    width: `${levelProgress.progress * 100}%`,
-                    background: 'var(--gradient-primary)'
-                  }}
-                />
-              </div>
-              <p className="text-xs font-mono mt-1.5 text-center" style={{ color: 'var(--color-text-tertiary)' }}>
-                {levelProgress.xpToNextLevel.toLocaleString()} XP needed
+              <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                {profile.totalXP.toLocaleString()} XP total
               </p>
             </div>
 
             {/* Card 2: Streak */}
-            <div className="glass rounded-lg p-3 border flex-shrink-0 flex flex-col" style={{ borderColor: 'var(--color-border)', minWidth: '200px' }}>
-              <p className="text-xs font-mono font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>STREAK</p>
-
-              <div className="flex items-center gap-3 flex-1">
-                <motion.div
-                  animate={{
-                    scale: [1, 1.05, 1],
-                    filter: `drop-shadow(0 0 12px rgba(167, 139, 250, 0.6))`,
-                  }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <Flame
-                    size={40}
-                    style={{ color: 'var(--color-accent)' }}
-                    fill="currentColor"
-                  />
-                </motion.div>
-
-                <div className="flex-1">
-                  <div className="text-3xl font-bold tabular-nums leading-none" style={{ color: 'var(--color-accent)' }}>
-                    {profile.currentStreak}
-                  </div>
-                  <div className="text-xs font-mono mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
-                    {profile.currentStreak === 1 ? 'DAY' : 'DAYS'}
-                  </div>
-                  <div className="flex items-center gap-1.5 mt-2">
-                    <span className="text-xs font-mono" style={{ color: 'var(--color-text-tertiary)' }}>BEST:</span>
-                    <span className="text-xs font-bold font-mono tabular-nums" style={{ color: 'var(--color-text)' }}>
-                      {profile.longestStreak}
-                    </span>
-                  </div>
-                </div>
+            <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
+              <p className="text-xs font-mono font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>STREAK</p>
+              <div className="text-3xl font-bold tabular-nums mb-1" style={{ color: 'var(--color-accent)' }}>
+                {profile.currentStreak} {profile.currentStreak === 1 ? 'day' : 'days'}
               </div>
-
-              {profile.streakFreezes > 0 && (
-                <div className="flex items-center gap-2 mt-2 px-2 py-1.5 rounded-lg" style={{ backgroundColor: 'rgba(6, 182, 212, 0.15)' }}>
-                  <Shield size={16} style={{ color: '#06B6D4' }} />
-                  <span className="text-xs font-mono font-bold" style={{ color: '#06B6D4' }}>
-                    {profile.streakFreezes} FREEZES
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Card 3: Weekly Performance */}
-            <div className="glass rounded-lg p-3 border flex-shrink-0 flex flex-col" style={{ borderColor: 'var(--color-border)', minWidth: '200px' }}>
-              <p className="text-xs font-mono font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>WEEKLY XP</p>
-
-              <div className="flex items-center gap-2 mb-2">
-                <div>
-                  <div className="text-3xl font-bold tabular-nums leading-none" style={{ color: 'var(--color-accent)' }}>
-                    {stats.xpThisWeek.toLocaleString()}
-                  </div>
-                  <p className="text-xs font-mono mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>This Week</p>
-                </div>
-                <div className="flex items-center gap-1 text-xs font-mono px-1.5 py-0.5 rounded" style={{
-                  color: weeklyChange >= 0 ? 'var(--color-success)' : 'var(--color-error)',
-                  backgroundColor: weeklyChange >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'
-                }}>
-                  {weeklyChange >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                  {Math.abs(weeklyChange).toFixed(0)}%
-                </div>
-              </div>
-
-              <div className="flex items-end gap-1 h-12 flex-1">
-                {stats.last14DaysXP.slice(7, 14).map((xp, i) => {
-                  const maxXP = Math.max(...stats.last14DaysXP);
-                  const height = maxXP > 0 ? (xp / maxXP) * 100 : 0;
-                  return (
-                    <div key={i} className="flex-1 rounded-t transition-all hover:opacity-70" style={{
-                      height: `${height}%`,
-                      background: 'var(--gradient-primary)',
-                      minHeight: '4px'
-                    }} />
-                  );
-                })}
-              </div>
-
-              <p className="text-xs font-mono mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
-                {stats.completedThisWeek} quests
+              <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                Best: {profile.longestStreak}
               </p>
             </div>
 
-            {/* Card 4: Today's Progress */}
-            <div className="glass rounded-lg p-3 border flex-shrink-0 flex flex-col" style={{ borderColor: 'var(--color-border)', minWidth: '180px' }}>
-              <p className="text-xs font-mono font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>TODAY</p>
-
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <div className="text-3xl font-bold tabular-nums leading-none" style={{ color: 'var(--color-accent)' }}>
-                    {stats.completedToday}
-                  </div>
-                  <p className="text-xs font-mono mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>Quests</p>
-                </div>
-                <Target size={28} style={{ color: 'var(--color-accent)', opacity: 0.3 }} />
+            {/* Card 3: Weekly XP */}
+            <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
+              <p className="text-xs font-mono font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>WEEKLY XP</p>
+              <div className="text-3xl font-bold tabular-nums mb-1" style={{ color: 'var(--color-text)' }}>
+                {stats.xpThisWeek.toLocaleString()}
               </div>
+              <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                {stats.completedThisWeek} quests this week
+              </p>
+            </div>
 
-              <div className="space-y-1.5 flex-1">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>XP</span>
-                  <span className="text-sm font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{stats.xpToday}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>Month</span>
-                  <span className="text-sm font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{stats.completedThisMonth}</span>
-                </div>
+            {/* Card 4: Today */}
+            <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
+              <p className="text-xs font-mono font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>TODAY</p>
+              <div className="text-3xl font-bold tabular-nums mb-1" style={{ color: 'var(--color-accent)' }}>
+                {stats.completedToday} {stats.completedToday === 1 ? 'quest' : 'quests'}
               </div>
+              <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                {stats.xpToday} XP
+              </p>
             </div>
           </div>
         </motion.div>
