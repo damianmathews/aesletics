@@ -1,9 +1,23 @@
 import type { Subscription } from '../types';
 
 /**
+ * Check if paywall is bypassed for testing
+ */
+function isPaywallBypassed(): boolean {
+  return import.meta.env.VITE_BYPASS_PAYWALL === 'true';
+}
+
+/**
  * Check if user has an active subscription (including trial)
+ * Also returns true if paywall is bypassed for testing
  */
 export function isSubscriptionActive(subscription?: Subscription): boolean {
+  // Check bypass flag first for easy testing
+  if (isPaywallBypassed()) {
+    console.log('🚧 Paywall bypassed for testing');
+    return true;
+  }
+
   if (!subscription) return false;
   return subscription.status === 'active' || subscription.status === 'trialing';
 }
