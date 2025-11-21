@@ -13,6 +13,7 @@ export const categories: Category[] = [
   { id: 'adventure-outdoors', slug: 'adventure-outdoors', name: 'Adventure & Outdoors', icon: '🏔️', description: 'Outdoor challenges and exploration' },
   { id: 'finance-career', slug: 'finance-career', name: 'Finance & Career', icon: '💼', description: 'Professional and financial growth' },
   { id: 'creativity', slug: 'creativity', name: 'Creativity', icon: '🎨', description: 'Creative expression and projects' },
+  { id: 'avoidance-detox', slug: 'avoidance-detox', name: 'Avoidance / Detox', icon: '🚫', description: 'Breaking bad habits and digital detox' },
 ];
 
 // Quest Templates (200+ quests)

@@ -424,12 +424,11 @@ export const useStore = create<StoreState>()(
           isNewStreak = true;
         }
 
-        // Calculate XP bonus based on ACTUAL day of the week
-        // Get current day: 0 = Sunday, 1 = Monday, ... 6 = Saturday
-        const currentDayOfWeek = new Date().getDay();
-        // Convert to 1-7 where 1 = Monday, 7 = Sunday
-        const dayInCycle = currentDayOfWeek === 0 ? 7 : currentDayOfWeek;
-        const xpBonuses = [100, 150, 200, 300, 400, 600, 1000]; // Mon-Sun
+        // Calculate day in the login streak cycle (1-7)
+        // Day 1 = 1st login, 8th login, 15th login, etc.
+        // Day 7 = 7th login, 14th login, 21st login, etc.
+        const dayInCycle = ((newLoginStreak - 1) % 7) + 1;
+        const xpBonuses = [100, 150, 200, 300, 400, 600, 1000]; // Day 1-7
         const xpBonus = xpBonuses[dayInCycle - 1];
 
         // Award streak freeze every 7 days

@@ -5,6 +5,14 @@ import { useState } from 'react';
 import { questPacks, questTemplatesExtended } from '../data/seed';
 import { Flame, Package, Target, Trophy, Zap, Brain, Users, Backpack, Sparkles, Activity, TrendingUp, List, Lock, ChevronDown, ChevronUp, Menu, X } from 'lucide-react';
 
+// Quick duration tag for "Make it Easy" - highlights low-friction quests
+const getQuickDurationTag = (durationMinutes: number): string | null => {
+  if (durationMinutes <= 1) return '<1 min';
+  if (durationMinutes <= 2) return '<2 min';
+  if (durationMinutes <= 5) return '<5 min';
+  return null;
+};
+
 export default function QuestPacks() {
   const { profile, activePacks, activatePack, deactivatePack } = useStore();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -318,6 +326,11 @@ export default function QuestPacks() {
                                       >
                                         {questTemplate.difficulty}
                                       </span>
+                                      {getQuickDurationTag(questTemplate.durationMinutes) && (
+                                        <span className="px-1 py-0.5 rounded text-xs font-mono font-bold" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-success)' }}>
+                                          {getQuickDurationTag(questTemplate.durationMinutes)}
+                                        </span>
+                                      )}
                                       <span className="text-xs font-mono tabular-nums font-bold" style={{ color: 'var(--color-accent)' }}>
                                         {questTemplate.baseXP}xp
                                       </span>

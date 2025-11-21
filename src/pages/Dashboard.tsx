@@ -19,15 +19,31 @@ const getCategoryIcon = (categoryId: string) => {
     'adventure-outdoors': <Mountain size={20} />,
     'finance-career': <Briefcase size={20} />,
     'creativity': <Palette size={20} />,
+    'avoidance-detox': <X size={20} />,
   };
   return iconMap[categoryId] || <Zap size={20} />;
 };
 
+// Quick duration tag for "Make it Easy" - highlights low-friction quests
+const getQuickDurationTag = (durationMinutes: number): string | null => {
+  if (durationMinutes <= 1) return '<1 min';
+  if (durationMinutes <= 2) return '<2 min';
+  if (durationMinutes <= 5) return '<5 min';
+  return null;
+};
+
 export default function Dashboard() {
-  const { profile, getStats, getTodaysQuests, activePacks } = useStore();
+  const { profile, getStats, getTodaysQuests, activePacks, completions } = useStore();
   const stats = getStats();
   const allTodaysQuests = getTodaysQuests();
   const levelProgress = getLevelProgress(profile.totalXP);
+
+  // Check if user has completed a quest today for daily win messaging
+  const today = new Date().toISOString().split('T')[0];
+  const hasCompletedToday = completions.some(c => c.at.split('T')[0] === today);
+  const dailyWinMessage = hasCompletedToday
+    ? "Daily win secured — everything else is bonus."
+    : "Daily win not yet secured — complete any quest to protect your streak.";
 
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -78,6 +94,19 @@ export default function Dashboard() {
     )
   );
   const regularQuests = todaysQuests.filter(quest => !packQuests.includes(quest));
+
+  // Find "Next Quest" - easiest, shortest quest (Make it Easy principle)
+  const difficultyOrder = { easy: 1, medium: 2, hard: 3, elite: 4, legendary: 5 };
+  const nextQuest = [...todaysQuests].sort((a, b) => {
+    // Sort by difficulty first (easiest first)
+    const diffA = difficultyOrder[a.difficulty];
+    const diffB = difficultyOrder[b.difficulty];
+    if (diffA !== diffB) return diffA - diffB;
+    // Then by duration (shortest first)
+    if (a.durationMinutes !== b.durationMinutes) return a.durationMinutes - b.durationMinutes;
+    // Finally by XP (highest as tiebreaker)
+    return b.baseXP - a.baseXP;
+  })[0];
 
   // Calculate weekly change
   const lastWeekXP = stats.last14DaysXP.slice(0, 7).reduce((a, b) => a + b, 0);
@@ -194,9 +223,12 @@ export default function Dashboard() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-2">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="font-display text-2xl font-bold" style={{ color: 'var(--color-text)' }}>
-                Welcome back
+              <h1 className="font-display text-2xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>
+                Welcome back, {profile.nickname.split(' ')[0]}
               </h1>
+              <p className="text-xs font-mono" style={{ color: hasCompletedToday ? 'var(--color-success)' : 'var(--color-text-secondary)' }}>
+                {dailyWinMessage}
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <div className="relative" ref={dateFilterRef}>
@@ -297,6 +329,47 @@ export default function Dashboard() {
             </div>
           </div>
         </motion.div>
+
+        {/* Next Quest Tile - Full width on mobile, first in row on desktop */}
+        {nextQuest ? (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-3">
+            <Link
+              to={`/app/quests/${nextQuest.id}`}
+              className="block glass rounded-lg p-4 border-2 hover:scale-[1.01] transition-all"
+              style={{ borderColor: 'var(--color-accent)', background: 'rgba(167, 139, 250, 0.05)' }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-mono font-medium mb-2" style={{ color: 'var(--color-accent)' }}>NEXT QUEST</p>
+                  <h3 className="font-semibold text-lg mb-2" style={{ color: 'var(--color-text)' }}>{nextQuest.title}</h3>
+                  <div className="flex items-center gap-2.5 text-sm font-mono mb-3" style={{ color: 'var(--color-text-secondary)' }}>
+                    <span className="px-2 py-1 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'var(--color-accent)', color: 'white' }}>{nextQuest.difficulty}</span>
+                    <span>{nextQuest.durationMinutes}min</span>
+                    <span style={{ color: 'var(--color-accent)' }} className="font-bold">{nextQuest.baseXP} XP</span>
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all hover:scale-105" style={{ background: 'var(--gradient-primary)', color: 'white' }}>
+                    <Zap size={16} fill="currentColor" />
+                    Start Quest
+                  </div>
+                </div>
+                <div style={{ color: 'var(--color-accent)' }}>
+                  {getCategoryIcon(nextQuest.category)}
+                </div>
+              </div>
+            </Link>
+          </motion.div>
+        ) : (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-3">
+            <div className="glass rounded-lg p-4 border text-center" style={{ borderColor: 'var(--color-border)' }}>
+              <Trophy size={28} className="mx-auto mb-2" style={{ color: 'var(--color-accent)' }} />
+              <p className="text-sm font-semibold mb-1" style={{ color: 'var(--color-text)' }}>You're caught up for today! 🎉</p>
+              <p className="text-xs mb-3" style={{ color: 'var(--color-text-secondary)' }}>All quests complete or no quests added yet</p>
+              <Link to="/app/quests" className="inline-block px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:scale-105" style={{ background: 'var(--gradient-primary)', color: 'white' }}>
+                Browse Quests
+              </Link>
+            </div>
+          </motion.div>
+        )}
 
         {/* Compact Single Row - 4 Cards */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-3">
@@ -530,6 +603,11 @@ export default function Dashboard() {
                                   <h4 className="font-semibold text-sm mb-1.5" style={{ color: 'var(--color-text)' }}>{quest.title}</h4>
                                   <div className="flex items-center gap-2 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
                                     <span className="px-1.5 py-0.5 rounded text-xs capitalize" style={{ backgroundColor: 'var(--color-border)' }}>{quest.difficulty}</span>
+                                    {getQuickDurationTag(quest.durationMinutes) && (
+                                      <span className="px-1.5 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-success)' }}>
+                                        {getQuickDurationTag(quest.durationMinutes)}
+                                      </span>
+                                    )}
                                     <span>{quest.durationMinutes}min</span>
                                     <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
                                   </div>
@@ -587,6 +665,11 @@ export default function Dashboard() {
                         <h3 className="font-semibold text-base mb-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
                         <div className="flex items-center gap-2.5 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
                           <span className="px-1.5 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'var(--color-border)' }}>{quest.difficulty}</span>
+                          {getQuickDurationTag(quest.durationMinutes) && (
+                            <span className="px-1.5 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-success)' }}>
+                              {getQuickDurationTag(quest.durationMinutes)}
+                            </span>
+                          )}
                           <span>{quest.durationMinutes}min</span>
                           <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
                         </div>

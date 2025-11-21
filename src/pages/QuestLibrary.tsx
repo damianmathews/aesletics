@@ -20,8 +20,17 @@ const getCategoryIcon = (categoryId: string) => {
     'adventure-outdoors': <Mountain size={14} />,
     'finance-career': <Briefcase size={14} />,
     'creativity': <Palette size={14} />,
+    'avoidance-detox': <X size={14} />,
   };
   return iconMap[categoryId] || null;
+};
+
+// Quick duration tag for "Make it Easy" - highlights low-friction quests
+const getQuickDurationTag = (durationMinutes: number): string | null => {
+  if (durationMinutes <= 1) return '<1 min';
+  if (durationMinutes <= 2) return '<2 min';
+  if (durationMinutes <= 5) return '<5 min';
+  return null;
 };
 
 export default function QuestLibrary() {
@@ -329,7 +338,7 @@ export default function QuestLibrary() {
         {/* Category Filters */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="mb-5">
           <p className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>FILTER BY CATEGORY</p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto pb-2">
             <button
               onClick={() => setSelectedCategory(null)}
               className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 flex items-center gap-1.5 ${!selectedCategory ? 'shadow-lg' : ''}`}
@@ -381,6 +390,14 @@ export default function QuestLibrary() {
               </p>
 
               <div className="flex items-center gap-2 text-xs font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
+                {getQuickDurationTag(quest.durationMinutes) && (
+                  <>
+                    <span className="px-1.5 py-0.5 rounded font-bold" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-success)' }}>
+                      {getQuickDurationTag(quest.durationMinutes)}
+                    </span>
+                    <span>•</span>
+                  </>
+                )}
                 <span>{quest.durationMinutes}m</span>
                 <span>•</span>
                 <span className="uppercase">{quest.proof}</span>

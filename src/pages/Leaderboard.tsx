@@ -210,7 +210,7 @@ export default function Leaderboard() {
           </motion.div>
         ) : userEntry ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass rounded-lg p-4 border mb-5 relative" style={{ borderColor: 'var(--color-accent)', backgroundColor: 'rgba(167, 139, 250, 0.05)' }}>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <div className="text-xs font-medium mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>YOUR GLOBAL RANK</div>
                 <div className="text-3xl font-bold tabular-nums font-mono" style={{ color: 'var(--color-accent)' }}>
@@ -220,7 +220,7 @@ export default function Leaderboard() {
                   {leaderboard.length > 50 ? `in top ${leaderboard.length}` : 'globally'}
                 </div>
               </div>
-              <div className="text-right">
+              <div className="sm:text-right">
                 <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>YOUR STATS</div>
                 <div className="flex items-center gap-3 font-mono text-xs">
                   <span style={{ color: 'var(--color-text)' }}>{profile.totalXP.toLocaleString()} XP</span>

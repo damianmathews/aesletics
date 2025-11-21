@@ -12,13 +12,13 @@ interface DailyLoginModalProps {
 }
 
 const weeklyRewards = [
-  { day: 1, xp: 100, label: 'MON' },
-  { day: 2, xp: 150, label: 'TUE' },
-  { day: 3, xp: 200, label: 'WED' },
-  { day: 4, xp: 300, label: 'THU' },
-  { day: 5, xp: 400, label: 'FRI' },
-  { day: 6, xp: 600, label: 'SAT' },
-  { day: 7, xp: 1000, label: 'SUN' },
+  { day: 1, xp: 100, label: 'Day 1' },
+  { day: 2, xp: 150, label: 'Day 2' },
+  { day: 3, xp: 200, label: 'Day 3' },
+  { day: 4, xp: 300, label: 'Day 4' },
+  { day: 5, xp: 400, label: 'Day 5' },
+  { day: 6, xp: 600, label: 'Day 6' },
+  { day: 7, xp: 1000, label: 'Day 7' },
 ];
 
 export default function DailyLoginModal({
