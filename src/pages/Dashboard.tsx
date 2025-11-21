@@ -46,6 +46,10 @@ export default function Dashboard() {
   const [selectedDateRange, setSelectedDateRange] = useState<'today' | 'week' | 'month' | 'all'>('today');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  // Mobile UI toggles
+  const [showStats, setShowStats] = useState(false);
+  const [showAllQuests, setShowAllQuests] = useState(false);
+
   const dateFilterRef = useRef<HTMLDivElement>(null);
   const categoryFilterRef = useRef<HTMLDivElement>(null);
 
@@ -368,8 +372,24 @@ export default function Dashboard() {
           </motion.div>
         )}
 
+        {/* Stats Toggle Button (Mobile Only) */}
+        <div className="md:hidden mb-3">
+          <button
+            onClick={() => setShowStats(!showStats)}
+            className="w-full py-2 px-4 rounded-lg text-xs font-mono font-medium transition-all hover:scale-[1.01]"
+            style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', color: 'var(--color-text-secondary)' }}
+          >
+            {showStats ? 'Hide stats' : 'View stats'}
+          </button>
+        </div>
+
         {/* Compact Single Row - 4 Cards */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-3">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className={`mb-3 ${showStats ? 'block' : 'hidden'} md:block`}
+        >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {/* Card 1: Level & XP */}
             <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }} data-tutorial="xp-display">
@@ -533,36 +553,84 @@ export default function Dashboard() {
               </Link>
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 gap-3" data-tutorial="quest-cards">
-              {regularQuests.map((quest, index) => (
-                <motion.div key={quest.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * index }}>
-                  <Link
-                    to={`/app/quests/${quest.id}`}
-                    className="block glass rounded-lg p-4 border hover:scale-[1.02] transition-all relative"
-                    style={{ borderColor: 'var(--color-border)' }}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-base mb-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
-                        <div className="flex items-center gap-2.5 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                          <span className="px-1.5 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'var(--color-border)' }}>{quest.difficulty}</span>
-                          {getQuickDurationTag(quest.durationMinutes) && (
-                            <span className="px-1.5 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-success)' }}>
-                              {getQuickDurationTag(quest.durationMinutes)}
-                            </span>
-                          )}
-                          <span>{quest.durationMinutes}min</span>
-                          <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
+            <>
+              {/* Mobile: Conditional rendering based on toggle */}
+              <div className="md:hidden grid gap-3" data-tutorial="quest-cards">
+                {(showAllQuests ? regularQuests : regularQuests.slice(0, 3)).map((quest, index) => (
+                  <motion.div key={quest.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * index }}>
+                    <Link
+                      to={`/app/quests/${quest.id}`}
+                      className="block glass rounded-lg p-4 border hover:scale-[1.02] transition-all relative"
+                      style={{ borderColor: 'var(--color-border)' }}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-base mb-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
+                          <div className="flex items-center gap-2.5 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                            <span className="px-1.5 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'var(--color-border)' }}>{quest.difficulty}</span>
+                            {getQuickDurationTag(quest.durationMinutes) && (
+                              <span className="px-1.5 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-success)' }}>
+                                {getQuickDurationTag(quest.durationMinutes)}
+                              </span>
+                            )}
+                            <span>{quest.durationMinutes}min</span>
+                            <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
+                          </div>
+                        </div>
+                        <div style={{ color: 'var(--color-accent)' }}>
+                          {getCategoryIcon(quest.category)}
                         </div>
                       </div>
-                      <div style={{ color: 'var(--color-accent)' }}>
-                        {getCategoryIcon(quest.category)}
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Desktop: Always show all quests */}
+              <div className="hidden md:grid md:grid-cols-2 gap-3" data-tutorial="quest-cards">
+                {regularQuests.map((quest, index) => (
+                  <motion.div key={quest.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * index }}>
+                    <Link
+                      to={`/app/quests/${quest.id}`}
+                      className="block glass rounded-lg p-4 border hover:scale-[1.02] transition-all relative"
+                      style={{ borderColor: 'var(--color-border)' }}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-base mb-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
+                          <div className="flex items-center gap-2.5 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                            <span className="px-1.5 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'var(--color-border)' }}>{quest.difficulty}</span>
+                            {getQuickDurationTag(quest.durationMinutes) && (
+                              <span className="px-1.5 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-success)' }}>
+                                {getQuickDurationTag(quest.durationMinutes)}
+                              </span>
+                            )}
+                            <span>{quest.durationMinutes}min</span>
+                            <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
+                          </div>
+                        </div>
+                        <div style={{ color: 'var(--color-accent)' }}>
+                          {getCategoryIcon(quest.category)}
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Show More/Less Button (Mobile Only, when more than 3 quests) */}
+              {regularQuests.length > 3 && (
+                <div className="md:hidden mt-3">
+                  <button
+                    onClick={() => setShowAllQuests(!showAllQuests)}
+                    className="w-full py-2 px-4 rounded-lg text-xs font-mono font-medium transition-all hover:scale-[1.01]"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', color: 'var(--color-text-secondary)' }}
+                  >
+                    {showAllQuests ? 'Show less' : `View all ${regularQuests.length} quests`}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </motion.div>
       </main>
