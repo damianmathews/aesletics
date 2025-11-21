@@ -36,12 +36,8 @@ export default function Dashboard() {
   const stats = getStats();
   const allTodaysQuests = getTodaysQuests();
 
-  // Check if user has completed a quest today for daily win messaging
+  // Check today's date for quest filtering
   const today = new Date().toISOString().split('T')[0];
-  const hasCompletedToday = completions.some(c => c.at.split('T')[0] === today);
-  const dailyWinMessage = hasCompletedToday
-    ? "Daily win secured — everything else is bonus."
-    : "Daily win not yet secured — complete any quest to protect your streak.";
 
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -227,12 +223,9 @@ export default function Dashboard() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-2">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="font-display text-2xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>
+              <h1 className="font-display text-2xl font-bold" style={{ color: 'var(--color-text)' }}>
                 Welcome back, {profile.nickname.split(' ')[0]}
               </h1>
-              <p className="text-xs font-mono" style={{ color: hasCompletedToday ? 'var(--color-success)' : 'var(--color-text-secondary)' }}>
-                {dailyWinMessage}
-              </p>
             </div>
             <div className="flex items-center gap-2">
               <div className="relative" ref={dateFilterRef}>
