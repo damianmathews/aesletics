@@ -19,7 +19,9 @@ export default function ProtectedRoute({ children, requiresSubscription = false 
     loading,
     hasHydrated: _hasHydrated,
     hasUser: !!user,
-    onboardingComplete
+    onboardingComplete,
+    requiresSubscription,
+    hasAccess
   });
 
   // Wait for BOTH auth to load AND Zustand to rehydrate from localStorage
