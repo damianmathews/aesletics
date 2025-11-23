@@ -9,7 +9,7 @@ import { categories } from '../data/seed';
 import {
   Dumbbell, Zap, Sparkles, Brain, Shield, Heart,
   Users, Mountain, Briefcase, Palette, ChevronLeft, ChevronRight,
-  Weight, BookOpen, Smile, Pizza, TrendingUp, Lightbulb
+  Weight, BookOpen, Smile, Pizza, TrendingUp, Lightbulb, Ban, Star
 } from 'lucide-react';
 import type { OnboardingData } from '../types';
 
@@ -25,6 +25,8 @@ const getCategoryIcon = (categoryId: string, size = 24) => {
     'adventure-outdoors': <Mountain size={size} />,
     'finance-career': <Briefcase size={size} />,
     'creativity': <Palette size={size} />,
+    'avoidance-detox': <Ban size={size} />,
+    'spirituality': <Star size={size} />,
   };
   return iconMap[categoryId] || null;
 };

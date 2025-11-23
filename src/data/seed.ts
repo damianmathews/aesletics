@@ -14,6 +14,7 @@ export const categories: Category[] = [
   { id: 'finance-career', slug: 'finance-career', name: 'Finance & Career', icon: '💼', description: 'Professional and financial growth' },
   { id: 'creativity', slug: 'creativity', name: 'Creativity', icon: '🎨', description: 'Creative expression and projects' },
   { id: 'avoidance-detox', slug: 'avoidance-detox', name: 'Avoidance / Detox', icon: '🚫', description: 'Breaking bad habits and digital detox' },
+  { id: 'spirituality', slug: 'spirituality', name: 'Spirituality', icon: '🙏', description: 'Purpose, meaning, and inner growth' },
 ];
 
 // Quest Templates (200+ quests)
