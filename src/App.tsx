@@ -19,7 +19,6 @@ import Settings from './pages/Settings';
 import History from './pages/History';
 import Leaderboard from './pages/Leaderboard';
 import QuestPacks from './pages/QuestPacks';
-import Admin from './pages/Admin';
 import CheckoutSuccess from './pages/CheckoutSuccess';
 
 function App() {
@@ -74,7 +73,6 @@ function App() {
           <Route path="/app/leaderboard" element={<ProtectedRoute requiresSubscription={true}><Leaderboard /></ProtectedRoute>} />
           <Route path="/app/packs" element={<ProtectedRoute requiresSubscription={true}><QuestPacks /></ProtectedRoute>} />
           <Route path="/app/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-          <Route path="/app/admin" element={<ProtectedRoute requiresSubscription={true}><Admin /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <TutorialOverlay />
