@@ -67,7 +67,7 @@ function App() {
           <Route path="/auth" element={<Auth />} />
           <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
           <Route path="/checkout/success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
-          <Route path="/app" element={<ProtectedRoute requiresSubscription={true}><Dashboard /></ProtectedRoute>} />
+          <Route path="/app" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/app/quests" element={<ProtectedRoute><QuestLibrary /></ProtectedRoute>} />
           <Route path="/app/quests/:id" element={<ProtectedRoute><QuestDetail /></ProtectedRoute>} />
           <Route path="/app/history" element={<ProtectedRoute requiresSubscription={true}><History /></ProtectedRoute>} />

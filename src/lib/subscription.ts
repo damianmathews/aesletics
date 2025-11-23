@@ -1,9 +1,21 @@
 import type { Subscription } from '../types';
 
 /**
+ * ⚠️ BETA TESTING: Temporarily disable paywall for all users
+ * Set to false to re-enable paywall
+ */
+const BETA_MODE_DISABLE_PAYWALL = true;
+
+/**
  * Check if paywall is bypassed for testing
  */
 function isPaywallBypassed(): boolean {
+  // Beta mode override - disables paywall for everyone
+  if (BETA_MODE_DISABLE_PAYWALL) {
+    return true;
+  }
+
+  // Local dev bypass via .env.local
   return import.meta.env.VITE_BYPASS_PAYWALL === 'true';
 }
 
