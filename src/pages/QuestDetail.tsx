@@ -6,6 +6,7 @@ import { useSubscription } from '../hooks/useSubscription';
 import { calculateXP } from '../lib/xp';
 import { Clock, Camera, AlertTriangle, Check, Flame, X, Award, TrendingUp, Menu } from 'lucide-react';
 import PaywallModal from '../components/PaywallModal';
+import QuestConfirmDialog from '../components/QuestConfirmDialog';
 
 export default function QuestDetail() {
   const { id } = useParams<{ id: string }>();
@@ -16,9 +17,9 @@ export default function QuestDetail() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const [timerSeconds, setTimerSeconds] = useState(0);
-  const [counterValue, setCounterValue] = useState(0);
   const [textValue, setTextValue] = useState('');
   const [isTimerRunning, setIsTimerRunning] = useState(false);
 
@@ -42,6 +43,11 @@ export default function QuestDetail() {
       return;
     }
 
+    // Show confirmation dialog
+    setShowConfirmDialog(true);
+  };
+
+  const confirmCompletion = () => {
     const xp = calculateXP(quest.baseXP, quest.proof, profile.currentStreak);
 
     const completion = {
@@ -54,13 +60,13 @@ export default function QuestDetail() {
       proof: {
         type: quest.proof,
         ...(quest.proof === 'timer' && { timerSeconds }),
-        ...(quest.proof === 'counter' && { counterValue }),
         ...(quest.proof === 'text' && { text: textValue }),
       },
       streakBonus: profile.currentStreak >= 7,
     };
 
     addCompletion(completion);
+    setShowConfirmDialog(false);
     navigate('/app');
   };
 
@@ -190,8 +196,14 @@ export default function QuestDetail() {
       )}
 
       {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-6 py-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass rounded-lg p-5 border relative" style={{ borderColor: 'var(--color-border)' }}>
+      <main className="max-w-3xl mx-auto px-6 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: 'spring', damping: 25 }}
+          className="glass rounded-xl p-6 md:p-8 border relative shadow-2xl"
+          style={{ borderColor: 'var(--color-accent)', borderWidth: '1px' }}
+        >
           {/* Close Button */}
           <button
             onClick={() => navigate('/app/quests')}
@@ -222,23 +234,23 @@ export default function QuestDetail() {
             </p>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className="glass rounded p-2 border" style={{ borderColor: 'var(--color-border)' }}>
-                <div className="text-xs font-mono mb-1" style={{ color: 'var(--color-text-tertiary)' }}>DURATION</div>
-                <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
-                  <Clock size={14} /> {quest.durationMinutes}min
+            <div className="grid grid-cols-3 gap-4 mb-5">
+              <div className="glass rounded-lg p-3 border transition-all hover:border-purple-500/50" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="text-xs font-mono mb-2" style={{ color: 'var(--color-text-tertiary)' }}>DURATION</div>
+                <div className="flex items-center gap-1.5 text-base font-semibold" style={{ color: 'var(--color-text)' }}>
+                  <Clock size={16} /> {quest.durationMinutes}min
                 </div>
               </div>
-              <div className="glass rounded p-2 border" style={{ borderColor: 'var(--color-border)' }}>
-                <div className="text-xs font-mono mb-1" style={{ color: 'var(--color-text-tertiary)' }}>PROOF TYPE</div>
-                <div className="flex items-center gap-1 text-sm font-semibold capitalize" style={{ color: 'var(--color-text)' }}>
-                  <Camera size={14} /> {quest.proof}
+              <div className="glass rounded-lg p-3 border transition-all hover:border-purple-500/50" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="text-xs font-mono mb-2" style={{ color: 'var(--color-text-tertiary)' }}>PROOF TYPE</div>
+                <div className="flex items-center gap-1.5 text-base font-semibold capitalize" style={{ color: 'var(--color-text)' }}>
+                  <Camera size={16} /> {quest.proof}
                 </div>
               </div>
-              <div className="glass rounded p-2 border" style={{ borderColor: 'var(--color-border)' }}>
-                <div className="text-xs font-mono mb-1" style={{ color: 'var(--color-text-tertiary)' }}>BONUS</div>
-                <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: profile.currentStreak >= 7 ? 'var(--color-success)' : 'var(--color-text)' }}>
-                  <TrendingUp size={14} /> {profile.currentStreak >= 7 ? 'Active' : 'None'}
+              <div className="glass rounded-lg p-3 border transition-all hover:border-purple-500/50" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="text-xs font-mono mb-2" style={{ color: 'var(--color-text-tertiary)' }}>BONUS</div>
+                <div className="flex items-center gap-1.5 text-base font-semibold" style={{ color: profile.currentStreak >= 7 ? 'var(--color-success)' : 'var(--color-text)' }}>
+                  <TrendingUp size={16} /> {profile.currentStreak >= 7 ? 'Active' : 'None'}
                 </div>
               </div>
             </div>
@@ -292,25 +304,28 @@ export default function QuestDetail() {
             <h2 className="font-display text-xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Complete Quest</h2>
 
             {quest.proof === 'check' && (
-              <div className="text-center py-8">
-                <p className="text-base mb-3" style={{ color: 'var(--color-text-secondary)' }}>
-                  Mark as complete when you finish this quest.
-                </p>
-                <div className="mb-3">
-                  <Check size={48} style={{ color: 'var(--color-accent)' }} className="mx-auto" />
+              <div className="text-center py-10">
+                <div className="mb-4">
+                  <Check size={64} style={{ color: 'var(--color-accent)' }} className="mx-auto" />
                 </div>
+                <p className="text-lg mb-2" style={{ color: 'var(--color-text)' }}>
+                  Complete when you finish this quest
+                </p>
+                <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+                  {quest.description}
+                </p>
               </div>
             )}
 
             {quest.proof === 'timer' && (
-              <div className="text-center py-8">
-                <div className="text-6xl font-bold tabular-nums mb-6" style={{ color: 'var(--color-text)' }}>
+              <div className="text-center py-10">
+                <div className="text-7xl font-bold tabular-nums mb-8" style={{ color: 'var(--color-text)' }}>
                   {formatTime(timerSeconds)}
                 </div>
                 {!isTimerRunning ? (
                   <button
                     onClick={startTimer}
-                    className="px-6 py-3 rounded font-semibold text-base transition-all hover:scale-105"
+                    className="px-8 py-4 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg"
                     style={{ backgroundColor: 'var(--color-success)', color: 'white' }}
                   >
                     ▶ Start Timer
@@ -318,7 +333,7 @@ export default function QuestDetail() {
                 ) : (
                   <button
                     onClick={stopTimer}
-                    className="px-6 py-3 rounded font-semibold text-base transition-all hover:scale-105"
+                    className="px-8 py-4 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg"
                     style={{ backgroundColor: 'var(--color-error)', color: 'white' }}
                   >
                     ⏸ Stop Timer
@@ -328,47 +343,40 @@ export default function QuestDetail() {
             )}
 
             {quest.proof === 'counter' && (
-              <div className="text-center py-8">
-                <div className="text-6xl font-bold tabular-nums mb-6" style={{ color: 'var(--color-text)' }}>{counterValue}</div>
-                <div className="flex items-center justify-center gap-4">
-                  <button
-                    onClick={() => setCounterValue(Math.max(0, counterValue - 1))}
-                    className="w-14 h-14 rounded-full font-bold text-xl transition-all hover:scale-110"
-                    style={{ backgroundColor: 'var(--color-border)', color: 'var(--color-text)' }}
-                  >
-                    −
-                  </button>
-                  <button
-                    onClick={() => setCounterValue(counterValue + 1)}
-                    className="w-14 h-14 rounded-full font-bold text-xl transition-all hover:scale-110"
-                    style={{ background: 'var(--gradient-primary)', color: 'white' }}
-                  >
-                    +
-                  </button>
+              <div className="text-center py-10">
+                <div className="mb-4">
+                  <Check size={64} style={{ color: 'var(--color-accent)' }} className="mx-auto" />
                 </div>
+                <p className="text-lg mb-2" style={{ color: 'var(--color-text)' }}>
+                  Complete when you finish this quest
+                </p>
+                <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+                  {quest.description}
+                </p>
               </div>
             )}
 
             {quest.proof === 'text' && (
-              <div className="py-3">
+              <div className="py-4">
                 <textarea
                   value={textValue}
                   onChange={(e) => setTextValue(e.target.value)}
-                  placeholder="Enter your notes, reflections, or description of completion..."
-                  className="w-full p-3 rounded glass border focus:outline-none focus:ring-2 min-h-[120px] text-sm"
+                  placeholder="Share your notes, reflections, or description of completion..."
+                  className="w-full p-4 rounded-lg glass border focus:outline-none focus:ring-2 focus:ring-purple-500/50 min-h-[140px] text-base transition-all"
                   style={{
                     borderColor: 'var(--color-border)',
                     color: 'var(--color-text)',
+                    lineHeight: '1.6',
                   }}
                 />
               </div>
             )}
 
             {quest.proof === 'photo' && (
-              <div className="text-center py-8" style={{ color: 'var(--color-text-secondary)' }}>
-                <Camera size={48} className="mx-auto mb-3" style={{ color: 'var(--color-accent)' }} />
-                <p className="text-base mb-2">Photo proof feature coming soon</p>
-                <p className="text-sm">For now, you can complete without photo</p>
+              <div className="text-center py-10">
+                <Camera size={64} className="mx-auto mb-4" style={{ color: 'var(--color-accent)' }} />
+                <p className="text-lg mb-2" style={{ color: 'var(--color-text)' }}>Photo proof coming soon</p>
+                <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>For now, you can complete without photo</p>
               </div>
             )}
           </motion.div>
@@ -379,10 +387,12 @@ export default function QuestDetail() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             onClick={handleComplete}
-            className="w-full py-4 rounded font-display font-bold text-lg transition-all hover:scale-105 hover:shadow-2xl"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full py-5 rounded-lg font-display font-bold text-xl transition-all shadow-lg hover:shadow-2xl"
             style={{ background: 'var(--gradient-primary)', color: 'white' }}
           >
-            Complete Quest +{quest.baseXP} XP
+            Complete Quest · +{quest.baseXP} XP
           </motion.button>
 
           {profile.currentStreak >= 7 && (
@@ -398,6 +408,15 @@ export default function QuestDetail() {
         isOpen={showPaywall}
         onClose={() => setShowPaywall(false)}
         feature="Complete Quests"
+      />
+
+      {/* Confirmation Dialog */}
+      <QuestConfirmDialog
+        isOpen={showConfirmDialog}
+        questTitle={quest.title}
+        xpAmount={quest.baseXP}
+        onConfirm={confirmCompletion}
+        onCancel={() => setShowConfirmDialog(false)}
       />
     </div>
   );
