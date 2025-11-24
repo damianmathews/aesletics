@@ -37,7 +37,7 @@ const tutorialSteps: TutorialStep[] = [
   },
   {
     title: 'Quest Details',
-    description: 'When you\'re ready to complete a quest, tap on it to view full details. You can submit proof (photo, timer, counter, or text) and earn XP instantly.',
+    description: 'When you\'re ready to complete a quest, tap on it to view full details. You can submit proof (check, photo, timer, or text) and earn XP instantly.',
     position: 'center',
     navigateTo: '/app/quests',
     buttonText: 'Got it',

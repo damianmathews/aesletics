@@ -75,6 +75,31 @@ export default function QuestDetail() {
       return;
     }
 
+    // If it's a template, auto-add it to user quests first
+    if (isTemplate) {
+      const userQuest = {
+        id: `uq-${Date.now()}-${Math.random()}`,
+        templateId: questData.id,
+        custom: false,
+        title: questData.title,
+        category: questData.category,
+        difficulty: questData.difficulty,
+        description: questData.description,
+        durationMinutes: questData.durationMinutes,
+        proof: questData.proof,
+        baseXP: questData.baseXP,
+        schedule: {
+          type: questData.recurrence,
+        },
+        equipment: questData.equipment || [],
+        tags: questData.tags || [],
+        safety: questData.safety,
+        active: true,
+        createdAt: new Date().toISOString(),
+      };
+      addUserQuest(userQuest);
+    }
+
     // Show confirmation dialog
     setShowConfirmDialog(true);
   };
@@ -99,38 +124,6 @@ export default function QuestDetail() {
 
     addCompletion(completion);
     setShowConfirmDialog(false);
-    navigate('/app');
-  };
-
-  const handleAddQuest = () => {
-    if (!hasAccess) {
-      setShowPaywall(true);
-      return;
-    }
-
-    // Add template to user's quests
-    const userQuest = {
-      id: `uq-${Date.now()}-${Math.random()}`,
-      templateId: questData.id,
-      custom: false,
-      title: questData.title,
-      category: questData.category,
-      difficulty: questData.difficulty,
-      description: questData.description,
-      durationMinutes: questData.durationMinutes,
-      proof: questData.proof,
-      baseXP: questData.baseXP,
-      schedule: {
-        type: questData.recurrence,
-      },
-      equipment: questData.equipment || [],
-      tags: questData.tags || [],
-      safety: questData.safety,
-      active: true,
-      createdAt: new Date().toISOString(),
-    };
-
-    addUserQuest(userQuest);
     navigate('/app');
   };
 
@@ -167,14 +160,14 @@ export default function QuestDetail() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={handleClose}
-        className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+        className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
         style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
       />
 
       {/* Modal Content */}
-      <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="fixed inset-0 z-50 overflow-y-auto pointer-events-none">
         <div className="min-h-full flex items-center justify-center p-4 md:p-6">
-          <main className="w-full max-w-2xl mx-auto" onClick={(e) => e.stopPropagation()}>
+          <main className="w-full max-w-lg mx-auto pointer-events-auto" onClick={(e) => e.stopPropagation()}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -320,20 +313,6 @@ export default function QuestDetail() {
               </div>
             )}
 
-            {questData.proof === 'counter' && (
-              <div className="text-center py-10">
-                <div className="mb-4">
-                  <Check size={64} style={{ color: 'var(--color-accent)' }} className="mx-auto" />
-                </div>
-                <p className="text-lg mb-2" style={{ color: 'var(--color-text)' }}>
-                  Complete when you finish this quest
-                </p>
-                <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
-                  {questData.description}
-                </p>
-              </div>
-            )}
-
             {questData.proof === 'text' && (
               <div className="py-4">
                 <textarea
@@ -359,18 +338,18 @@ export default function QuestDetail() {
             )}
           </motion.div>
 
-          {/* Complete or Add Button */}
+          {/* Complete Button */}
           <motion.button
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            onClick={isTemplate ? handleAddQuest : handleComplete}
+            onClick={handleComplete}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="w-full py-5 rounded-lg font-display font-bold text-xl transition-all shadow-lg hover:shadow-2xl"
             style={{ background: 'var(--gradient-primary)', color: 'white' }}
           >
-            {isTemplate ? `Add to My Quests · ${questData.baseXP} XP` : `Complete Quest · +${questData.baseXP} XP`}
+            Complete Quest · +{questData.baseXP} XP
           </motion.button>
 
           {profile.currentStreak >= 7 && (

@@ -1,7 +1,7 @@
 // Core type definitions for IRLXP
 
 export type Difficulty = 'easy' | 'medium' | 'hard' | 'elite' | 'legendary';
-export type ProofType = 'check' | 'photo' | 'timer' | 'counter' | 'text';
+export type ProofType = 'check' | 'photo' | 'timer' | 'text';
 export type RecurrenceType = 'once' | 'daily' | 'weekly' | 'monthly' | 'program';
 export type Units = 'metric' | 'imperial';
 export type Theme = 'light' | 'dark' | 'system';
@@ -73,7 +73,6 @@ export interface CompletionProof {
   text?: string;
   photoId?: string;
   timerSeconds?: number;
-  counterValue?: number;
 }
 
 export interface Completion {

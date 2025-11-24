@@ -16,7 +16,6 @@ export const BASE_XP: Record<Difficulty, number> = {
 export const PROOF_MULTIPLIERS: Record<ProofType, number> = {
   check: 1.0,
   text: 1.0,
-  counter: 1.05,
   timer: 1.1,
   photo: 1.1,
 };
