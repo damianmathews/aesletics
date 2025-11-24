@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useState, useEffect, useRef } from 'react';
-import { Zap, Trophy, Calendar, Filter, Package, Menu, X, Shield, Dumbbell, Sparkles, Brain, Heart, Users, Mountain, Briefcase, Palette, Check, ChevronDown } from 'lucide-react';
-import { questPacks, categories } from '../data/seed';
+import { Zap, Trophy, Calendar, Filter, Package, Menu, X, Shield, Dumbbell, Sparkles, Brain, Heart, Users, Mountain, Briefcase, Palette, Check, ChevronDown, Star, Ban } from 'lucide-react';
+import { questPacks, categories, questTemplates } from '../data/seed';
+import { getRecommendedQuests } from '../lib/recommendations';
 
 // Category icon mapping
 const getCategoryIcon = (categoryId: string) => {
@@ -18,7 +19,8 @@ const getCategoryIcon = (categoryId: string) => {
     'adventure-outdoors': <Mountain size={20} />,
     'finance-career': <Briefcase size={20} />,
     'creativity': <Palette size={20} />,
-    'avoidance-detox': <X size={20} />,
+    'avoidance-detox': <Ban size={20} />,
+    'spirituality': <Star size={20} />,
   };
   return iconMap[categoryId] || <Zap size={20} />;
 };
@@ -32,7 +34,7 @@ const getQuickDurationTag = (durationMinutes: number): string | null => {
 };
 
 export default function Dashboard() {
-  const { profile, getStats, getTodaysQuests, activePacks, completions } = useStore();
+  const { profile, getStats, getTodaysQuests, activePacks, completions, onboardingData } = useStore();
   const stats = getStats();
   const allTodaysQuests = getTodaysQuests();
 
@@ -105,6 +107,15 @@ export default function Dashboard() {
     return b.baseXP - a.baseXP;
   })[0];
 
+  // Get recommended quests for the user
+  const recommendedQuests = getRecommendedQuests(
+    questTemplates,
+    completions,
+    profile,
+    onboardingData || undefined,
+    6 // Show 6 recommendations
+  );
+
   // Get completed quests today
   const completedTodayData = todaysQuests
     .filter(quest => todayCompletedQuestIds.has(quest.id))
@@ -174,7 +185,7 @@ export default function Dashboard() {
                   }}
                 >
                   <Link to="/app/settings" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Profile</Link>
-                  <Link to="/app/history" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>History</Link>
+                  <Link to="/app/stats" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Stats</Link>
                   <Link to="/app/settings" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Settings</Link>
                 </motion.div>
               )}
@@ -268,7 +279,7 @@ export default function Dashboard() {
                     className="absolute right-0 mt-2 w-48 glass rounded-lg p-2 border z-10"
                     style={{ borderColor: 'var(--color-border)' }}
                   >
-                    <Link to="/app/history" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text)' }}>View History</Link>
+                    <Link to="/app/stats" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm" style={{ color: 'var(--color-text)' }}>View Stats</Link>
                     <button
                       onClick={() => { setSelectedDateRange('today'); setShowDateFilter(false); }}
                       className="w-full text-left px-4 py-2 rounded hover:bg-white/5 transition-colors text-sm font-mono"
@@ -384,6 +395,63 @@ export default function Dashboard() {
               <Link to="/app/quests" className="inline-block px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:scale-105" style={{ background: 'var(--gradient-primary)', color: 'white' }}>
                 Browse Quests
               </Link>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Recommended for You Section */}
+        {recommendedQuests.length > 0 && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="mb-3">
+            <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={20} style={{ color: 'var(--color-accent)' }} />
+                  <h2 className="font-display text-lg font-semibold" style={{ color: 'var(--color-text)' }}>
+                    Recommended for You
+                  </h2>
+                </div>
+                <Link to="/app/quests" className="text-xs font-mono transition-opacity hover:opacity-70" style={{ color: 'var(--color-accent)' }}>
+                  Browse All →
+                </Link>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-3">
+                {recommendedQuests.slice(0, 6).map((quest, index) => (
+                  <motion.div
+                    key={quest.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05 * index }}
+                  >
+                    <Link
+                      to={`/app/quests/${quest.id}`}
+                      className="block glass rounded-lg p-3 border hover:scale-[1.02] transition-all"
+                      style={{ borderColor: 'var(--color-border)' }}
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-semibold text-sm line-clamp-2 flex-1 pr-2" style={{ color: 'var(--color-text)' }}>
+                          {quest.title}
+                        </h4>
+                        <div style={{ color: 'var(--color-accent)' }}>
+                          {getCategoryIcon(quest.category)}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                        <span className="px-1.5 py-0.5 rounded text-xs capitalize" style={{ backgroundColor: 'var(--color-border)' }}>
+                          {quest.difficulty}
+                        </span>
+                        {getQuickDurationTag(quest.durationMinutes) && (
+                          <span className="px-1.5 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-success)' }}>
+                            {getQuickDurationTag(quest.durationMinutes)}
+                          </span>
+                        )}
+                        <span>{quest.durationMinutes}min</span>
+                        <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </motion.div>
         )}

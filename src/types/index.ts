@@ -2,7 +2,7 @@
 
 export type Difficulty = 'easy' | 'medium' | 'hard' | 'elite' | 'legendary';
 export type ProofType = 'check' | 'photo' | 'timer' | 'counter' | 'text';
-export type RecurrenceType = 'once' | 'daily' | 'weekly' | 'program';
+export type RecurrenceType = 'once' | 'daily' | 'weekly' | 'monthly' | 'program';
 export type Units = 'metric' | 'imperial';
 export type Theme = 'light' | 'dark' | 'system';
 
@@ -164,9 +164,7 @@ export interface Settings {
 
 export interface OnboardingData {
   selectedCategories: string[];
-  experienceLevel: 'beginner' | 'intermediate' | 'advanced';
-  timeCommitment: '15-30' | '30-60' | '60+';
-  questPreferences: string[];
+  experienceLevels?: Record<string, string>; // category -> 'beginner' | 'intermediate' | 'advanced'
 }
 
 export interface AppState {
@@ -222,3 +220,8 @@ export interface LeaderboardEntry {
   streak: number;
   isYou: boolean;
 }
+
+// Type aliases for convenience
+export type Quest = QuestTemplate;
+export type QuestCompletion = Completion;
+export type Profile = UserProfile;
