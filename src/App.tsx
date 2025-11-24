@@ -5,6 +5,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import TutorialOverlay from './components/TutorialOverlay';
 import QuestCompleteModal from './components/QuestCompleteModal';
+import FirstQuestCompleteModal from './components/FirstQuestCompleteModal';
 import LevelUpModal from './components/LevelUpModal';
 import DailyLoginModal from './components/DailyLoginModal';
 
@@ -26,6 +27,7 @@ function App() {
     initialize,
     settings,
     profile,
+    completions,
     onboardingComplete,
     showQuestCompleteModal,
     questCompleteData,
@@ -77,7 +79,16 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <TutorialOverlay />
-        {showQuestCompleteModal && questCompleteData && (
+        {showQuestCompleteModal && questCompleteData && completions.length === 1 && (
+          <FirstQuestCompleteModal
+            isOpen={showQuestCompleteModal}
+            questTitle={questCompleteData.questTitle}
+            xpEarned={questCompleteData.xpEarned}
+            currentLevel={profile.level}
+            onClose={closeQuestCompleteModal}
+          />
+        )}
+        {showQuestCompleteModal && questCompleteData && completions.length > 1 && (
           <QuestCompleteModal
             isOpen={showQuestCompleteModal}
             questTitle={questCompleteData.questTitle}

@@ -34,7 +34,7 @@ const getQuickDurationTag = (durationMinutes: number): string | null => {
 };
 
 export default function Dashboard() {
-  const { profile, getTodaysQuests, activePacks, completions, onboardingData } = useStore();
+  const { profile, getTodaysQuests, activePacks, completions, onboardingData, userQuests } = useStore();
   const allTodaysQuests = getTodaysQuests();
 
   // Check today's date for quest filtering
@@ -46,6 +46,8 @@ export default function Dashboard() {
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const [selectedDateRange, setSelectedDateRange] = useState<'today' | 'week' | 'month' | 'all'>('today');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [questFilter, setQuestFilter] = useState<'all' | 'daily' | 'weekly' | 'monthly' | 'once'>('all');
+  const [showValueProp, setShowValueProp] = useState(!localStorage.getItem('valuePropDismissed'));
 
   // Mobile UI toggles
   const [showAllQuests, setShowAllQuests] = useState(false);
@@ -113,6 +115,12 @@ export default function Dashboard() {
     onboardingData || undefined,
     6 // Show 6 recommendations
   );
+
+  // Filter active user quests
+  const activeQuests = userQuests.filter(q => q.active);
+  const filteredQuests = questFilter === 'all'
+    ? activeQuests
+    : activeQuests.filter(q => q.schedule?.type === questFilter);
 
   // Get completed quests today
   const completedTodayData = todaysQuests
@@ -364,6 +372,105 @@ export default function Dashboard() {
             </div>
           </div>
         </motion.div>
+
+        {/* Value Prop Banner */}
+        {showValueProp && completions.length < 10 && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-3 relative">
+            <div className="glass rounded-lg p-4 border-2" style={{ borderColor: 'var(--color-accent)', background: 'linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(6, 182, 212, 0.1))' }}>
+              <button
+                onClick={() => {
+                  setShowValueProp(false);
+                  localStorage.setItem('valuePropDismissed', 'true');
+                }}
+                className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                <X size={14} />
+              </button>
+              <div className="flex items-start gap-3">
+                <Zap size={24} style={{ color: 'var(--color-accent)' }} className="flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="font-display font-bold text-lg mb-1" style={{ color: 'var(--color-text)' }}>
+                    Level Up Your Real Life
+                  </h3>
+                  <p className="text-sm mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+                    IRLXP turns your life into a game. Complete quests → Earn XP → Level Up → Get Stronger 💪
+                  </p>
+                  <div className="flex items-center gap-2 text-xs font-mono" style={{ color: 'var(--color-accent)' }}>
+                    <span>Level {profile.level}</span>
+                    <span>•</span>
+                    <span>{profile.totalXP.toLocaleString()} XP</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* My Quests Section */}
+        {activeQuests.length > 0 && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.03 }} className="mb-3">
+            <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="font-display text-lg font-semibold" style={{ color: 'var(--color-text)' }}>My Quests ({activeQuests.length})</h2>
+                <div className="flex gap-1">
+                  {(['all', 'daily', 'weekly', 'monthly', 'once'] as const).map(filter => (
+                    <button
+                      key={filter}
+                      onClick={() => setQuestFilter(filter)}
+                      className="px-2 py-1 rounded text-xs font-mono transition-all hover:scale-105"
+                      style={{
+                        background: questFilter === filter ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.05)',
+                        color: questFilter === filter ? 'white' : 'var(--color-text-secondary)',
+                      }}
+                    >
+                      {filter.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="grid md:grid-cols-3 gap-3">
+                {filteredQuests.slice(0, 6).map((quest, index) => (
+                  <motion.div
+                    key={quest.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05 * index }}
+                  >
+                    <Link
+                      to={`/app/quests/${quest.id}`}
+                      className="block glass rounded-lg p-3 border hover:scale-[1.02] transition-all"
+                      style={{ borderColor: 'var(--color-border)' }}
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="font-semibold text-sm line-clamp-2 flex-1 pr-2" style={{ color: 'var(--color-text)' }}>
+                          {quest.title}
+                        </h4>
+                        <div style={{ color: 'var(--color-accent)' }}>
+                          {getCategoryIcon(quest.category)}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                        <span className="px-1.5 py-0.5 rounded text-xs capitalize" style={{ backgroundColor: 'var(--color-border)' }}>
+                          {quest.difficulty}
+                        </span>
+                        <span>{quest.durationMinutes}min</span>
+                        <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+              {filteredQuests.length > 6 && (
+                <div className="mt-3 text-center">
+                  <Link to="/app/quests" className="text-xs font-mono transition-opacity hover:opacity-70" style={{ color: 'var(--color-accent)' }}>
+                    View All {filteredQuests.length} Quests →
+                  </Link>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
 
         {/* Next Quest Tile - Full width on mobile, first in row on desktop */}
         {nextQuest ? (
