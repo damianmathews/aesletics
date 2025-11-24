@@ -163,6 +163,7 @@ export default function Dashboard() {
             </button>
             <Link to="/app" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text)' }}>Dashboard</Link>
             <Link to="/app/quests" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Quests</Link>
+            <Link to="/app/stats" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Stats</Link>
             <Link to="/app/leaderboard" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Leaderboard</Link>
             <Link to="/app/packs" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Packs</Link>
             <div className="relative">
@@ -219,6 +220,14 @@ export default function Dashboard() {
               style={{ color: 'var(--color-text)' }}
             >
               Quests
+            </Link>
+            <Link
+              to="/app/stats"
+              onClick={() => setShowMobileMenu(false)}
+              className="text-lg font-medium py-3 px-4 rounded-lg hover:bg-white/5 transition-colors"
+              style={{ color: 'var(--color-text)' }}
+            >
+              Stats
             </Link>
             <Link
               to="/app/leaderboard"

@@ -281,7 +281,7 @@ export default function Stats() {
                       className="h-full transition-all hover:opacity-80"
                       style={{
                         width: `${(day.xp / maxXP) * 100}%`,
-                        background: 'var(--gradient-primary)',
+                        backgroundColor: 'var(--color-accent)',
                       }}
                     />
                   </div>
@@ -317,7 +317,7 @@ export default function Stats() {
                       className="h-full transition-all hover:opacity-80"
                       style={{
                         width: `${(category.xp / maxCategoryXP) * 100}%`,
-                        background: 'var(--gradient-primary)',
+                        backgroundColor: 'var(--color-accent)',
                       }}
                     />
                   </div>
