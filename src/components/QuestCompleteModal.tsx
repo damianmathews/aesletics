@@ -97,7 +97,6 @@ export default function QuestCompleteModal({ isOpen, questTitle, xpEarned, strea
               exit={{ scale: 0.8, opacity: 0, y: -20 }}
               transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }} // Bounce easing
               className="relative z-10 text-center px-8 max-w-lg"
-              onClick={(e) => e.stopPropagation()}
             >
               {/* Check icon */}
               <motion.div
