@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useState, useEffect, useRef } from 'react';
-import { Zap, Trophy, Calendar, Filter, Package, Menu, X, Shield, Dumbbell, Sparkles, Brain, Heart, Users, Mountain, Briefcase, Palette } from 'lucide-react';
+import { Zap, Trophy, Calendar, Filter, Package, Menu, X, Shield, Dumbbell, Sparkles, Brain, Heart, Users, Mountain, Briefcase, Palette, Check, ChevronDown } from 'lucide-react';
 import { questPacks, categories } from '../data/seed';
 
 // Category icon mapping
@@ -49,6 +49,7 @@ export default function Dashboard() {
   // Mobile UI toggles
   const [showStats, setShowStats] = useState(false);
   const [showAllQuests, setShowAllQuests] = useState(false);
+  const [showCompletedToday, setShowCompletedToday] = useState(true);
 
   const dateFilterRef = useRef<HTMLDivElement>(null);
   const categoryFilterRef = useRef<HTMLDivElement>(null);
@@ -103,6 +104,21 @@ export default function Dashboard() {
     // Finally by XP (highest as tiebreaker)
     return b.baseXP - a.baseXP;
   })[0];
+
+  // Get completed quests today
+  const completedTodayData = todaysQuests
+    .filter(quest => todayCompletedQuestIds.has(quest.id))
+    .map(quest => {
+      const completion = completions.find(
+        c => c.userQuestId === quest.id && c.at.split('T')[0] === today
+      );
+      return {
+        ...quest,
+        completedAt: completion?.at,
+        xpEarned: completion?.xp || quest.baseXP,
+      };
+    })
+    .sort((a, b) => new Date(b.completedAt || 0).getTime() - new Date(a.completedAt || 0).getTime()); // Most recent first
 
   // Split quests into pack quests and regular quests
   // Filter out the Next Quest from both lists to avoid duplication
@@ -368,6 +384,76 @@ export default function Dashboard() {
               <Link to="/app/quests" className="inline-block px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:scale-105" style={{ background: 'var(--gradient-primary)', color: 'white' }}>
                 Browse Quests
               </Link>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Completed Today Section */}
+        {completedTodayData.length > 0 && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-3">
+            <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
+              <button
+                onClick={() => setShowCompletedToday(!showCompletedToday)}
+                className="w-full flex items-center justify-between mb-3 cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--color-success)' }}>
+                    <Check size={16} color="white" strokeWidth={3} />
+                  </div>
+                  <h2 className="font-display text-lg font-semibold" style={{ color: 'var(--color-text)' }}>
+                    Completed Today ({completedTodayData.length})
+                  </h2>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-mono font-bold" style={{ color: 'var(--color-success)' }}>
+                    +{completedTodayData.reduce((sum, q) => sum + q.xpEarned, 0)} XP
+                  </span>
+                  <motion.div
+                    animate={{ rotate: showCompletedToday ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronDown size={20} style={{ color: 'var(--color-text-secondary)' }} />
+                  </motion.div>
+                </div>
+              </button>
+
+              {showCompletedToday && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-2"
+                >
+                  {completedTodayData.map((quest, index) => (
+                    <motion.div
+                      key={quest.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.05 * index }}
+                      className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-white/5"
+                      style={{ backgroundColor: 'rgba(16, 185, 129, 0.05)' }}
+                    >
+                      <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color-success)' }}>
+                        <Check size={14} color="white" strokeWidth={3} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate" style={{ color: 'var(--color-text)' }}>
+                          {quest.title}
+                        </p>
+                        <div className="flex items-center gap-2 text-xs font-mono mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
+                          <span className="capitalize">{quest.difficulty}</span>
+                          <span>•</span>
+                          <span>{quest.durationMinutes}min</span>
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0 text-sm font-mono font-bold" style={{ color: 'var(--color-success)' }}>
+                        +{quest.xpEarned} XP
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
             </div>
           </motion.div>
         )}
