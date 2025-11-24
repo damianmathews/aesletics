@@ -37,6 +37,8 @@ export default function Stats() {
 
   const xpOverTime = generateXPOverTime();
   const maxXP = Math.max(...xpOverTime.map(d => d.xp), 1);
+  // Use a reasonable fixed scale for bar chart (500 XP or highest value + 20%)
+  const chartScale = Math.max(500, Math.ceil(maxXP * 1.2 / 100) * 100);
 
   // Category breakdown
   const categoryData: Record<string, { xp: number; count: number }> = {};
@@ -56,8 +58,6 @@ export default function Stats() {
       count: data.count,
     }))
     .sort((a, b) => b.xp - a.xp);
-
-  const maxCategoryXP = Math.max(...categoryBreakdown.map(c => c.xp), 1);
 
   // Generate calendar heatmap data (last 12 weeks)
   const generateHeatmapData = () => {
@@ -259,9 +259,14 @@ export default function Stats() {
         <div className="grid md:grid-cols-2 gap-4 mb-6">
           {/* XP Over Time Chart */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
-            <div className="flex items-center gap-2 mb-4">
-              <TrendingUp size={20} style={{ color: 'var(--color-accent)' }} />
-              <h2 className="font-display text-xl font-semibold" style={{ color: 'var(--color-text)' }}>XP Last 14 Days</h2>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <TrendingUp size={20} style={{ color: 'var(--color-accent)' }} />
+                <h2 className="font-display text-xl font-semibold" style={{ color: 'var(--color-text)' }}>XP Last 14 Days</h2>
+              </div>
+              <div className="text-xs font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
+                Scale: 0 - {chartScale}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -276,14 +281,18 @@ export default function Stats() {
                   <div className="text-xs font-mono w-16 text-right" style={{ color: 'var(--color-text-secondary)' }}>
                     {day.label.split(' ')[0]} {day.label.split(' ')[1]}
                   </div>
-                  <div className="flex-1 h-6 rounded overflow-hidden" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
+                  <div className="flex-1 h-6 rounded overflow-hidden relative" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
                     <div
-                      className="h-full transition-all hover:opacity-80"
+                      className="h-full transition-all hover:opacity-80 flex items-center justify-end pr-2"
                       style={{
-                        width: `${(day.xp / maxXP) * 100}%`,
+                        width: `${Math.min((day.xp / chartScale) * 100, 100)}%`,
                         backgroundColor: 'var(--color-accent)',
                       }}
-                    />
+                    >
+                      {day.xp > 0 && (
+                        <span className="text-[10px] font-bold text-white">{Math.round((day.xp / chartScale) * 100)}%</span>
+                      )}
+                    </div>
                   </div>
                   <div className="text-xs font-mono font-bold w-12" style={{ color: 'var(--color-accent)' }}>
                     {day.xp}
@@ -293,40 +302,101 @@ export default function Stats() {
             </div>
           </motion.div>
 
-          {/* Category Breakdown Chart */}
+          {/* Category Breakdown Pie Chart */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass rounded-lg p-5 border" style={{ borderColor: 'var(--color-border)' }}>
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 size={20} style={{ color: 'var(--color-accent)' }} />
               <h2 className="font-display text-xl font-semibold" style={{ color: 'var(--color-text)' }}>Category Breakdown</h2>
             </div>
 
-            <div className="space-y-2">
-              {categoryBreakdown.slice(0, 8).map((category, index) => (
-                <motion.div
-                  key={category.categoryId}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.02 * index }}
-                  className="flex items-center gap-2"
-                >
-                  <div className="text-xs font-medium w-24 truncate text-right" style={{ color: 'var(--color-text-secondary)' }}>
-                    {category.categoryName}
+            {categoryBreakdown.length > 0 ? (
+              <div className="flex flex-col md:flex-row gap-6 items-center">
+                {/* Pie Chart */}
+                <div className="relative w-48 h-48 flex-shrink-0">
+                  <div
+                    className="w-full h-full rounded-full"
+                    style={{
+                      background: `conic-gradient(${categoryBreakdown.slice(0, 6).map((cat, idx) => {
+                        const colors = [
+                          'rgba(167, 139, 250, 1)',
+                          'rgba(6, 182, 212, 1)',
+                          'rgba(236, 72, 153, 1)',
+                          'rgba(251, 191, 36, 1)',
+                          'rgba(34, 197, 94, 1)',
+                          'rgba(249, 115, 22, 1)',
+                        ];
+                        const totalXP = categoryBreakdown.reduce((sum, c) => sum + c.xp, 0);
+                        const prevPercent = categoryBreakdown.slice(0, idx).reduce((sum, c) => sum + (c.xp / totalXP * 100), 0);
+                        const currentPercent = cat.xp / totalXP * 100;
+                        return `${colors[idx]} ${prevPercent}% ${prevPercent + currentPercent}%`;
+                      }).join(', ')})`,
+                    }}
+                  />
+                  {/* Center hole for donut effect */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-24 h-24 rounded-full flex flex-col items-center justify-center" style={{ backgroundColor: 'var(--color-bg)' }}>
+                      <div className="text-2xl font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>
+                        {categoryBreakdown.length}
+                      </div>
+                      <div className="text-[10px] font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                        CATEGORIES
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1 h-6 rounded overflow-hidden" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
-                    <div
-                      className="h-full transition-all hover:opacity-80"
-                      style={{
-                        width: `${(category.xp / maxCategoryXP) * 100}%`,
-                        backgroundColor: 'var(--color-accent)',
-                      }}
-                    />
-                  </div>
-                  <div className="text-xs font-mono font-bold w-16 flex items-center gap-1" style={{ color: 'var(--color-accent)' }}>
-                    {category.xp} <span style={{ color: 'var(--color-text-tertiary)' }}>({category.count})</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+                </div>
+
+                {/* Legend */}
+                <div className="flex-1 space-y-2">
+                  {categoryBreakdown.slice(0, 6).map((category, index) => {
+                    const colors = [
+                      'rgba(167, 139, 250, 1)',
+                      'rgba(6, 182, 212, 1)',
+                      'rgba(236, 72, 153, 1)',
+                      'rgba(251, 191, 36, 1)',
+                      'rgba(34, 197, 94, 1)',
+                      'rgba(249, 115, 22, 1)',
+                    ];
+                    const totalXP = categoryBreakdown.reduce((sum, c) => sum + c.xp, 0);
+                    const percent = ((category.xp / totalXP) * 100).toFixed(1);
+
+                    return (
+                      <motion.div
+                        key={category.categoryId}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.02 * index }}
+                        className="flex items-center gap-3 p-2 rounded hover:bg-white/5 transition-colors"
+                      >
+                        <div
+                          className="w-3 h-3 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: colors[index] }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-medium truncate" style={{ color: 'var(--color-text)' }}>
+                            {category.categoryName}
+                          </div>
+                          <div className="text-[10px] font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                            {category.count} quests
+                          </div>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <div className="text-xs font-bold tabular-nums" style={{ color: colors[index] }}>
+                            {percent}%
+                          </div>
+                          <div className="text-[10px] font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
+                            {category.xp} XP
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8" style={{ color: 'var(--color-text-secondary)' }}>
+                No data yet
+              </div>
+            )}
           </motion.div>
         </div>
 
