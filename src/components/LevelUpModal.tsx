@@ -100,6 +100,7 @@ export default function LevelUpModal({ isOpen, newLevel, totalXP, onClose }: Lev
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
+          onClick={onClose}
           className="fixed inset-0 z-[250] flex items-center justify-center overflow-hidden"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.98)' }}
         >
