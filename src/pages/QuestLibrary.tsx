@@ -1,15 +1,17 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { questTemplatesExtended, categories } from '../data/seed';
+import { questTemplatesExtended, categories, questTemplates } from '../data/seed';
 import { useStore } from '../store/useStore';
+import { getRecommendedQuests } from '../lib/recommendations';
 import Toast from '../components/Toast';
 import PaywallBanner from '../components/PaywallBanner';
 import PaywallModal from '../components/PaywallModal';
-import { Menu, X, Dumbbell, Zap, Sparkles, Brain, Shield, Heart, Users, Mountain, Briefcase, Palette, Plus, Check, ChevronDown } from 'lucide-react';
+import { Menu, X, Dumbbell, Zap, Sparkles, Brain, Shield, Heart, Users, Mountain, Briefcase, Palette, Plus, Check, ChevronDown, Star, Ban } from 'lucide-react';
 
 const getCategoryIcon = (categoryId: string) => {
   const iconMap: Record<string, React.ReactNode> = {
+    'recommended': <Sparkles size={14} />,
     'fitness': <Dumbbell size={14} />,
     'body-wellness': <Sparkles size={14} />,
     'athletics-skill': <Zap size={14} />,
@@ -20,7 +22,8 @@ const getCategoryIcon = (categoryId: string) => {
     'adventure-outdoors': <Mountain size={14} />,
     'finance-career': <Briefcase size={14} />,
     'creativity': <Palette size={14} />,
-    'avoidance-detox': <X size={14} />,
+    'avoidance-detox': <Ban size={14} />,
+    'spirituality': <Star size={14} />,
   };
   return iconMap[categoryId] || null;
 };
@@ -34,10 +37,10 @@ const getQuickDurationTag = (durationMinutes: number): string | null => {
 };
 
 export default function QuestLibrary() {
-  const { profile, addUserQuest } = useStore();
+  const { profile, addUserQuest, completions, onboardingData } = useStore();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>('recommended');
   const [sortBy, setSortBy] = useState<'none' | 'xp-low' | 'xp-high' | 'difficulty-low' | 'difficulty-high'>('none');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -79,12 +82,26 @@ export default function QuestLibrary() {
     }
   };
 
-  let filteredQuests = questTemplatesExtended.filter((quest) => {
-    const matchesSearch = quest.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         quest.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || quest.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  // Get recommended quests
+  const recommendedQuests = getRecommendedQuests(
+    questTemplates,
+    completions,
+    profile,
+    onboardingData || undefined,
+    12
+  );
+
+  let filteredQuests = selectedCategory === 'recommended'
+    ? recommendedQuests.filter(quest =>
+        quest.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        quest.description.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : questTemplatesExtended.filter((quest) => {
+        const matchesSearch = quest.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                             quest.description.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = !selectedCategory || quest.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+      });
 
   // Apply sorting
   const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3, extreme: 4 };
@@ -165,6 +182,7 @@ export default function QuestLibrary() {
             </button>
             <Link to="/app" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Dashboard</Link>
             <Link to="/app/quests" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text)' }}>Quests</Link>
+            <Link to="/app/stats" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Stats</Link>
             <Link to="/app/leaderboard" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Leaderboard</Link>
             <Link to="/app/packs" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Packs</Link>
             <div className="relative">
@@ -341,22 +359,36 @@ export default function QuestLibrary() {
           <div className="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto pb-2">
             <button
               onClick={() => setSelectedCategory(null)}
-              className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 flex items-center gap-1.5 ${!selectedCategory ? 'shadow-lg' : ''}`}
+              className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 flex items-center gap-1.5 border ${!selectedCategory ? 'shadow-lg' : ''}`}
               style={{
                 background: !selectedCategory ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
                 color: !selectedCategory ? 'white' : 'var(--color-text)',
+                borderColor: !selectedCategory ? 'transparent' : 'var(--color-border)',
               }}
             >
               ALL
+            </button>
+            <button
+              onClick={() => setSelectedCategory('recommended')}
+              className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 flex items-center gap-1.5 border ${selectedCategory === 'recommended' ? 'shadow-lg' : ''}`}
+              style={{
+                background: selectedCategory === 'recommended' ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
+                color: selectedCategory === 'recommended' ? 'white' : 'var(--color-text)',
+                borderColor: selectedCategory === 'recommended' ? 'transparent' : 'var(--color-border)',
+              }}
+            >
+              {getCategoryIcon('recommended')}
+              RECOMMENDED
             </button>
             {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 flex items-center gap-1.5 ${selectedCategory === category.id ? 'shadow-lg' : ''}`}
+                className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-all hover:scale-105 flex items-center gap-1.5 border ${selectedCategory === category.id ? 'shadow-lg' : ''}`}
                 style={{
                   background: selectedCategory === category.id ? 'var(--gradient-primary)' : 'rgba(255, 255, 255, 0.03)',
                   color: selectedCategory === category.id ? 'white' : 'var(--color-text)',
+                  borderColor: selectedCategory === category.id ? 'transparent' : 'var(--color-border)',
                 }}
               >
                 {getCategoryIcon(category.id)}

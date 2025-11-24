@@ -7,13 +7,29 @@ import { calculateXP } from '../lib/xp';
 import { Clock, Camera, AlertTriangle, Check, Flame, X, Award, TrendingUp, Menu } from 'lucide-react';
 import PaywallModal from '../components/PaywallModal';
 import QuestConfirmDialog from '../components/QuestConfirmDialog';
+import { questTemplates } from '../data/seed';
 
 export default function QuestDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { profile, getQuestById, addCompletion } = useStore();
+  const { profile, getQuestById, addCompletion, addUserQuest } = useStore();
   const { hasAccess } = useSubscription();
-  const quest = getQuestById(id!);
+
+  // Try to find as user quest first, then as template
+  let quest = getQuestById(id!);
+  let isTemplate = false;
+  let questData: any = quest;
+
+  if (!quest) {
+    const template = questTemplates.find(t => t.id === id);
+    if (template) {
+      questData = template;
+      isTemplate = true;
+    }
+  } else {
+    questData = quest;
+  }
+
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -23,7 +39,7 @@ export default function QuestDetail() {
   const [textValue, setTextValue] = useState('');
   const [isTimerRunning, setIsTimerRunning] = useState(false);
 
-  if (!quest) {
+  if (!questData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-pattern-dots" style={{ backgroundColor: 'var(--color-bg)' }}>
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center glass rounded-card p-12 border" style={{ borderColor: 'var(--color-border)' }}>
@@ -48,25 +64,57 @@ export default function QuestDetail() {
   };
 
   const confirmCompletion = () => {
-    const xp = calculateXP(quest.baseXP, quest.proof, profile.currentStreak);
+    const xp = calculateXP(questData.baseXP, questData.proof, profile.currentStreak);
 
     const completion = {
-      userQuestId: quest.id,
-      questTitle: quest.title,
-      category: quest.category,
-      difficulty: quest.difficulty,
+      userQuestId: questData.id,
+      questTitle: questData.title,
+      category: questData.category,
+      difficulty: questData.difficulty,
       at: new Date().toISOString(),
       xp,
       proof: {
-        type: quest.proof,
-        ...(quest.proof === 'timer' && { timerSeconds }),
-        ...(quest.proof === 'text' && { text: textValue }),
+        type: questData.proof,
+        ...(questData.proof === 'timer' && { timerSeconds }),
+        ...(questData.proof === 'text' && { text: textValue }),
       },
       streakBonus: profile.currentStreak >= 7,
     };
 
     addCompletion(completion);
     setShowConfirmDialog(false);
+    navigate('/app');
+  };
+
+  const handleAddQuest = () => {
+    if (!hasAccess) {
+      setShowPaywall(true);
+      return;
+    }
+
+    // Add template to user's quests
+    const userQuest = {
+      id: `uq-${Date.now()}-${Math.random()}`,
+      templateId: questData.id,
+      custom: false,
+      title: questData.title,
+      category: questData.category,
+      difficulty: questData.difficulty,
+      description: questData.description,
+      durationMinutes: questData.durationMinutes,
+      proof: questData.proof,
+      baseXP: questData.baseXP,
+      schedule: {
+        type: questData.recurrence,
+      },
+      equipment: questData.equipment || [],
+      tags: questData.tags || [],
+      safety: questData.safety,
+      active: true,
+      createdAt: new Date().toISOString(),
+    };
+
+    addUserQuest(userQuest);
     navigate('/app');
   };
 
@@ -110,6 +158,7 @@ export default function QuestDetail() {
             </button>
             <Link to="/app" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Dashboard</Link>
             <Link to="/app/quests" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text)' }}>Quests</Link>
+            <Link to="/app/stats" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Stats</Link>
             <Link to="/app/leaderboard" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Leaderboard</Link>
             <Link to="/app/packs" className="hidden md:block text-sm font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--color-text-secondary)' }}>Packs</Link>
             <div className="relative">
@@ -218,19 +267,19 @@ export default function QuestDetail() {
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-xs font-medium px-2 py-1 rounded capitalize" style={{ backgroundColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
-                {quest.difficulty}
+                {questData.difficulty}
               </span>
               <span className="text-xs font-medium px-2 py-1 rounded capitalize" style={{ backgroundColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}>
-                {quest.category.replace(/-/g, ' ')}
+                {questData.category.replace(/-/g, ' ')}
               </span>
               <span className="text-xs font-medium px-2 py-1 rounded flex items-center gap-1" style={{ backgroundColor: 'rgba(167, 139, 250, 0.1)', color: 'var(--color-accent)' }}>
-                <Award size={12} /> {quest.baseXP} XP
+                <Award size={12} /> {questData.baseXP} XP
               </span>
             </div>
 
-            <h1 className="font-display text-3xl font-bold mb-3 pr-8" style={{ color: 'var(--color-text)' }}>{quest.title}</h1>
+            <h1 className="font-display text-3xl font-bold mb-3 pr-8" style={{ color: 'var(--color-text)' }}>{questData.title}</h1>
             <p className="text-base mb-4" style={{ color: 'var(--color-text-secondary)' }}>
-              {quest.description}
+              {questData.description}
             </p>
 
             {/* Stats Grid */}
@@ -238,13 +287,13 @@ export default function QuestDetail() {
               <div className="glass rounded-lg p-3 border transition-all hover:border-purple-500/50" style={{ borderColor: 'var(--color-border)' }}>
                 <div className="text-xs font-mono mb-2" style={{ color: 'var(--color-text-tertiary)' }}>DURATION</div>
                 <div className="flex items-center gap-1.5 text-base font-semibold" style={{ color: 'var(--color-text)' }}>
-                  <Clock size={16} /> {quest.durationMinutes}min
+                  <Clock size={16} /> {questData.durationMinutes}min
                 </div>
               </div>
               <div className="glass rounded-lg p-3 border transition-all hover:border-purple-500/50" style={{ borderColor: 'var(--color-border)' }}>
                 <div className="text-xs font-mono mb-2" style={{ color: 'var(--color-text-tertiary)' }}>PROOF TYPE</div>
                 <div className="flex items-center gap-1.5 text-base font-semibold capitalize" style={{ color: 'var(--color-text)' }}>
-                  <Camera size={16} /> {quest.proof}
+                  <Camera size={16} /> {questData.proof}
                 </div>
               </div>
               <div className="glass rounded-lg p-3 border transition-all hover:border-purple-500/50" style={{ borderColor: 'var(--color-border)' }}>
@@ -256,11 +305,11 @@ export default function QuestDetail() {
             </div>
 
             {/* Tags and Equipment */}
-            {quest.tags && quest.tags.length > 0 && (
+            {questData.tags && questData.tags.length > 0 && (
               <div className="mb-3">
                 <div className="text-xs font-mono mb-1.5" style={{ color: 'var(--color-text-tertiary)' }}>TAGS</div>
                 <div className="flex flex-wrap gap-1.5">
-                  {quest.tags.map((tag) => (
+                  {questData.tags.map((tag: string) => (
                     <span
                       key={tag}
                       className="px-2 py-0.5 rounded text-xs"
@@ -273,11 +322,11 @@ export default function QuestDetail() {
               </div>
             )}
 
-            {quest.equipment && quest.equipment.length > 0 && (
+            {questData.equipment && questData.equipment.length > 0 && (
               <div>
                 <div className="text-xs font-mono mb-1.5" style={{ color: 'var(--color-text-tertiary)' }}>EQUIPMENT NEEDED</div>
                 <div className="flex flex-wrap gap-1.5">
-                  {quest.equipment.map((item) => (
+                  {questData.equipment.map((item: string) => (
                     <span
                       key={item}
                       className="px-2 py-0.5 rounded text-xs capitalize"
@@ -291,10 +340,10 @@ export default function QuestDetail() {
             )}
           </div>
 
-          {quest.safety && (
+          {questData.safety && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mb-5 p-3 rounded border border-yellow-500/30" style={{ backgroundColor: 'rgba(251, 191, 36, 0.05)' }}>
               <p className="text-xs font-medium flex items-center gap-2" style={{ color: 'var(--color-warning)' }}>
-                <AlertTriangle size={14} /> {quest.safety}
+                <AlertTriangle size={14} /> {questData.safety}
               </p>
             </motion.div>
           )}
@@ -303,7 +352,7 @@ export default function QuestDetail() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mb-5">
             <h2 className="font-display text-xl font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Complete Quest</h2>
 
-            {quest.proof === 'check' && (
+            {questData.proof === 'check' && (
               <div className="text-center py-10">
                 <div className="mb-4">
                   <Check size={64} style={{ color: 'var(--color-accent)' }} className="mx-auto" />
@@ -312,12 +361,12 @@ export default function QuestDetail() {
                   Complete when you finish this quest
                 </p>
                 <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
-                  {quest.description}
+                  {questData.description}
                 </p>
               </div>
             )}
 
-            {quest.proof === 'timer' && (
+            {questData.proof === 'timer' && (
               <div className="text-center py-10">
                 <div className="text-7xl font-bold tabular-nums mb-8" style={{ color: 'var(--color-text)' }}>
                   {formatTime(timerSeconds)}
@@ -342,7 +391,7 @@ export default function QuestDetail() {
               </div>
             )}
 
-            {quest.proof === 'counter' && (
+            {questData.proof === 'counter' && (
               <div className="text-center py-10">
                 <div className="mb-4">
                   <Check size={64} style={{ color: 'var(--color-accent)' }} className="mx-auto" />
@@ -351,12 +400,12 @@ export default function QuestDetail() {
                   Complete when you finish this quest
                 </p>
                 <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
-                  {quest.description}
+                  {questData.description}
                 </p>
               </div>
             )}
 
-            {quest.proof === 'text' && (
+            {questData.proof === 'text' && (
               <div className="py-4">
                 <textarea
                   value={textValue}
@@ -372,7 +421,7 @@ export default function QuestDetail() {
               </div>
             )}
 
-            {quest.proof === 'photo' && (
+            {questData.proof === 'photo' && (
               <div className="text-center py-10">
                 <Camera size={64} className="mx-auto mb-4" style={{ color: 'var(--color-accent)' }} />
                 <p className="text-lg mb-2" style={{ color: 'var(--color-text)' }}>Photo proof coming soon</p>
@@ -381,18 +430,18 @@ export default function QuestDetail() {
             )}
           </motion.div>
 
-          {/* Complete Button */}
+          {/* Complete or Add Button */}
           <motion.button
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            onClick={handleComplete}
+            onClick={isTemplate ? handleAddQuest : handleComplete}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="w-full py-5 rounded-lg font-display font-bold text-xl transition-all shadow-lg hover:shadow-2xl"
             style={{ background: 'var(--gradient-primary)', color: 'white' }}
           >
-            Complete Quest · +{quest.baseXP} XP
+            {isTemplate ? `Add to My Quests · ${questData.baseXP} XP` : `Complete Quest · +${questData.baseXP} XP`}
           </motion.button>
 
           {profile.currentStreak >= 7 && (
@@ -413,8 +462,8 @@ export default function QuestDetail() {
       {/* Confirmation Dialog */}
       <QuestConfirmDialog
         isOpen={showConfirmDialog}
-        questTitle={quest.title}
-        xpAmount={quest.baseXP}
+        questTitle={questData.title}
+        xpAmount={questData.baseXP}
         onConfirm={confirmCompletion}
         onCancel={() => setShowConfirmDialog(false)}
       />

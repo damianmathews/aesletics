@@ -34,8 +34,7 @@ const getQuickDurationTag = (durationMinutes: number): string | null => {
 };
 
 export default function Dashboard() {
-  const { profile, getStats, getTodaysQuests, activePacks, completions, onboardingData } = useStore();
-  const stats = getStats();
+  const { profile, getTodaysQuests, activePacks, completions, onboardingData } = useStore();
   const allTodaysQuests = getTodaysQuests();
 
   // Check today's date for quest filtering
@@ -49,7 +48,6 @@ export default function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // Mobile UI toggles
-  const [showStats, setShowStats] = useState(false);
   const [showAllQuests, setShowAllQuests] = useState(false);
   const [showCompletedToday, setShowCompletedToday] = useState(false);
 
@@ -534,71 +532,6 @@ export default function Dashboard() {
             </div>
           </motion.div>
         )}
-
-        {/* Stats Toggle Button (Mobile Only) */}
-        <div className="md:hidden mb-3">
-          <button
-            onClick={() => setShowStats(!showStats)}
-            className="w-full py-2 px-4 rounded-lg text-xs font-mono font-medium transition-all hover:scale-[1.01]"
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', color: 'var(--color-text-secondary)' }}
-          >
-            {showStats ? 'Hide stats' : 'View stats'}
-          </button>
-        </div>
-
-        {/* Compact Single Row - 4 Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className={`mb-3 ${showStats ? 'block' : 'hidden'} md:block`}
-        >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {/* Card 1: Level & XP */}
-            <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }} data-tutorial="xp-display">
-              <p className="text-xs font-mono font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>LEVEL & XP</p>
-              <div className="text-3xl font-bold tabular-nums mb-1" style={{ color: 'var(--color-text)' }}>
-                Level {profile.level}
-              </div>
-              <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                {profile.totalXP.toLocaleString()} XP total
-              </p>
-            </div>
-
-            {/* Card 2: Streak */}
-            <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
-              <p className="text-xs font-mono font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>STREAK</p>
-              <div className="text-3xl font-bold tabular-nums mb-1" style={{ color: 'var(--color-accent)' }}>
-                {profile.currentStreak} {profile.currentStreak === 1 ? 'day' : 'days'}
-              </div>
-              <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                Best: {profile.longestStreak}
-              </p>
-            </div>
-
-            {/* Card 3: Weekly XP */}
-            <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
-              <p className="text-xs font-mono font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>WEEKLY XP</p>
-              <div className="text-3xl font-bold tabular-nums mb-1" style={{ color: 'var(--color-text)' }}>
-                {stats.xpThisWeek.toLocaleString()}
-              </div>
-              <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                {stats.completedThisWeek} quests this week
-              </p>
-            </div>
-
-            {/* Card 4: Today */}
-            <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
-              <p className="text-xs font-mono font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>TODAY</p>
-              <div className="text-3xl font-bold tabular-nums mb-1" style={{ color: 'var(--color-accent)' }}>
-                {stats.completedToday} {stats.completedToday === 1 ? 'quest' : 'quests'}
-              </div>
-              <p className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                {stats.xpToday} XP
-              </p>
-            </div>
-          </div>
-        </motion.div>
 
         {/* Active Packs - Prominent Section */}
         {activePacks.length > 0 && (
