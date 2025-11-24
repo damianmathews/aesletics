@@ -49,7 +49,7 @@ export default function Dashboard() {
   // Mobile UI toggles
   const [showStats, setShowStats] = useState(false);
   const [showAllQuests, setShowAllQuests] = useState(false);
-  const [showCompletedToday, setShowCompletedToday] = useState(true);
+  const [showCompletedToday, setShowCompletedToday] = useState(false);
 
   const dateFilterRef = useRef<HTMLDivElement>(null);
   const categoryFilterRef = useRef<HTMLDivElement>(null);
