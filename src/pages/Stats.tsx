@@ -149,7 +149,6 @@ export default function Stats() {
                     backdropFilter: 'blur(20px)'
                   }}
                 >
-                  <Link to="/app/settings" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Profile</Link>
                   <Link to="/app/stats" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Stats</Link>
                   <Link to="/app/settings" className="block px-4 py-2 rounded hover:bg-white/5 transition-colors" style={{ color: 'var(--color-text)' }}>Settings</Link>
                 </motion.div>
