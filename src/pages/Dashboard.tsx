@@ -411,7 +411,7 @@ export default function Dashboard() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.03 }} className="mb-3">
             <div className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="font-display text-lg font-semibold" style={{ color: 'var(--color-text)' }}>My Quests ({activeQuests.length})</h2>
+                <h2 className="font-display text-lg font-semibold" style={{ color: 'var(--color-text)' }}>My Quests</h2>
                 <div className="flex gap-1">
                   {(['all', 'daily', 'weekly', 'monthly', 'once'] as const).map(filter => (
                     <button
