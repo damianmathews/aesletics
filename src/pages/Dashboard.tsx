@@ -325,105 +325,155 @@ export default function Dashboard() {
           </motion.div>
         )}
 
-        {/* My Quests - Compact List */}
-        {activeQuests.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-6">
-            <div className="glass rounded-lg p-4" style={{ background: 'rgba(255, 255, 255, 0.02)' }}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display text-lg font-semibold" style={{ color: 'var(--color-text)' }}>My Quests</h2>
-                <div className="flex gap-1">
-                  {(['all', 'daily', 'weekly', 'monthly', 'once'] as const).map(filter => (
-                    <button
-                      key={filter}
-                      onClick={() => setQuestFilter(filter)}
-                      className="px-2 py-1 rounded text-xs font-mono transition-all"
-                      style={{
-                        background: questFilter === filter ? 'var(--gradient-primary)' : 'transparent',
-                        color: questFilter === filter ? 'white' : 'var(--color-text-secondary)',
-                      }}
-                    >
-                      {filter.toUpperCase()}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-2">
-                {filteredQuests.slice(0, 8).map((quest) => (
-                  <Link
-                    key={quest.id}
-                    to={`/app/quests/${quest.id}`}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-all group"
-                  >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div style={{ color: 'var(--color-accent)' }} className="flex-shrink-0">
-                        {getCategoryIcon(quest.category)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-sm truncate" style={{ color: 'var(--color-text)' }}>{quest.title}</h4>
-                      </div>
+        {/* Two-Column Layout */}
+        <div className="grid lg:grid-cols-3 gap-6 mb-6">
+          {/* Left Column - My Quests (2/3 width) */}
+          <div className="lg:col-span-2">
+            {activeQuests.length > 0 && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+                <div className="glass rounded-lg p-4" style={{ background: 'rgba(255, 255, 255, 0.02)' }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="font-display text-lg font-semibold" style={{ color: 'var(--color-text)' }}>My Quests</h2>
+                    <div className="flex gap-1">
+                      {(['all', 'daily', 'weekly', 'monthly', 'once'] as const).map(filter => (
+                        <button
+                          key={filter}
+                          onClick={() => setQuestFilter(filter)}
+                          className="px-2 py-1 rounded text-xs font-mono transition-all"
+                          style={{
+                            background: questFilter === filter ? 'var(--gradient-primary)' : 'transparent',
+                            color: questFilter === filter ? 'white' : 'var(--color-text-secondary)',
+                          }}
+                        >
+                          {filter.toUpperCase()}
+                        </button>
+                      ))}
                     </div>
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                      <span className="px-2 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', color: 'var(--color-text-secondary)' }}>
-                        {quest.difficulty}
-                      </span>
-                      <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>{quest.durationMinutes}min</span>
-                      <span className="text-xs font-mono font-bold" style={{ color: 'var(--color-accent)' }}>{quest.baseXP} XP</span>
+                  </div>
+                  <div className="space-y-2">
+                    {filteredQuests.slice(0, 8).map((quest) => (
+                      <Link
+                        key={quest.id}
+                        to={`/app/quests/${quest.id}`}
+                        className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-all group"
+                      >
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <div style={{ color: 'var(--color-accent)' }} className="flex-shrink-0">
+                            {getCategoryIcon(quest.category)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-sm truncate" style={{ color: 'var(--color-text)' }}>{quest.title}</h4>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          <span className="px-2 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', color: 'var(--color-text-secondary)' }}>
+                            {quest.difficulty}
+                          </span>
+                          <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>{quest.durationMinutes}min</span>
+                          <span className="text-xs font-mono font-bold" style={{ color: 'var(--color-accent)' }}>{quest.baseXP} XP</span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                  {filteredQuests.length > 8 && (
+                    <div className="mt-3 text-center">
+                      <Link to="/app/quests" className="text-xs font-mono transition-opacity hover:opacity-70" style={{ color: 'var(--color-accent)' }}>
+                        View All {filteredQuests.length} Quests →
+                      </Link>
                     </div>
-                  </Link>
-                ))}
-              </div>
-              {filteredQuests.length > 8 && (
-                <div className="mt-3 text-center">
-                  <Link to="/app/quests" className="text-xs font-mono transition-opacity hover:opacity-70" style={{ color: 'var(--color-accent)' }}>
-                    View All {filteredQuests.length} Quests →
-                  </Link>
+                  )}
                 </div>
-              )}
-            </div>
-          </motion.div>
-        )}
+              </motion.div>
+            )}
+          </div>
 
-        {/* Recommended for You - Compact */}
-        {recommendedQuests.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="mb-6">
-            <div className="glass rounded-lg p-4" style={{ background: 'rgba(255, 255, 255, 0.02)' }}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={18} style={{ color: 'var(--color-accent)' }} />
-                  <h2 className="font-display text-base font-semibold" style={{ color: 'var(--color-text)' }}>Recommended</h2>
+          {/* Right Column - Progress + Recommended (1/3 width) */}
+          <div className="space-y-4">
+            {/* Progress Card */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
+              <div className="glass rounded-lg p-4" style={{ background: 'rgba(255, 255, 255, 0.02)' }}>
+                <h3 className="font-display text-base font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Your Progress</h3>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>Level {profile.level}</span>
+                      <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>Level {profile.level + 1}</span>
+                    </div>
+                    <div className="w-full h-2 rounded-full" style={{ background: 'rgba(255, 255, 255, 0.1)' }}>
+                      <div
+                        className="h-2 rounded-full transition-all"
+                        style={{
+                          width: `${((profile.totalXP % 100) / 100) * 100}%`,
+                          background: 'var(--gradient-primary)',
+                        }}
+                      />
+                    </div>
+                    <p className="text-xs font-mono mt-1" style={{ color: 'var(--color-accent)' }}>
+                      {profile.totalXP % 100} / 100 XP
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="glass rounded p-3 text-center" style={{ background: 'rgba(255, 255, 255, 0.05)' }}>
+                      <div className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>{completedTodayData.length}</div>
+                      <div className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>Today</div>
+                    </div>
+                    <div className="glass rounded p-3 text-center" style={{ background: 'rgba(255, 255, 255, 0.05)' }}>
+                      <div className="text-2xl font-bold" style={{ color: 'rgba(251, 146, 60, 1)' }}>{profile.currentStreak}</div>
+                      <div className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>Streak</div>
+                    </div>
+                  </div>
+                  <div className="text-center pt-2">
+                    <Link to="/app/stats" className="text-xs font-mono transition-opacity hover:opacity-70" style={{ color: 'var(--color-accent)' }}>
+                      View Stats →
+                    </Link>
+                  </div>
                 </div>
-                <Link to="/app/quests" className="text-xs font-mono transition-opacity hover:opacity-70" style={{ color: 'var(--color-accent)' }}>
-                  Browse All →
-                </Link>
               </div>
-              <div className="space-y-2">
-                {recommendedQuests.slice(0, 3).map((quest) => (
-                  <Link
-                    key={quest.id}
-                    to={`/app/quests/${quest.id}`}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-all"
-                  >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div style={{ color: 'var(--color-accent)' }} className="flex-shrink-0">
-                        {getCategoryIcon(quest.category)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-sm truncate" style={{ color: 'var(--color-text)' }}>{quest.title}</h4>
-                      </div>
+            </motion.div>
+
+            {/* Recommended - Mini */}
+            {recommendedQuests.length > 0 && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
+                <div className="glass rounded-lg p-4" style={{ background: 'rgba(255, 255, 255, 0.02)' }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Sparkles size={16} style={{ color: 'var(--color-accent)' }} />
+                      <h3 className="font-display text-base font-semibold" style={{ color: 'var(--color-text)' }}>Recommended</h3>
                     </div>
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                      <span className="px-2 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', color: 'var(--color-text-secondary)' }}>
-                        {quest.difficulty}
-                      </span>
-                      <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>{quest.durationMinutes}min</span>
-                      <span className="text-xs font-mono font-bold" style={{ color: 'var(--color-accent)' }}>{quest.baseXP} XP</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
+                  </div>
+                  <div className="space-y-2">
+                    {recommendedQuests.slice(0, 3).map((quest) => (
+                      <Link
+                        key={quest.id}
+                        to={`/app/quests/${quest.id}`}
+                        className="block p-3 rounded-lg hover:bg-white/5 transition-all"
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <div style={{ color: 'var(--color-accent)', fontSize: '16px' }} className="flex-shrink-0">
+                            {getCategoryIcon(quest.category)}
+                          </div>
+                          <h4 className="font-semibold text-sm line-clamp-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h4>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                          <span className="capitalize">{quest.difficulty}</span>
+                          <span>•</span>
+                          <span>{quest.durationMinutes}min</span>
+                          <span>•</span>
+                          <span style={{ color: 'var(--color-accent)' }}>{quest.baseXP} XP</span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="text-center pt-3">
+                    <Link to="/app/quests" className="text-xs font-mono transition-opacity hover:opacity-70" style={{ color: 'var(--color-accent)' }}>
+                      Browse All →
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </div>
 
         {/* Completed Today Section */}
         {completedTodayData.length > 0 && (
