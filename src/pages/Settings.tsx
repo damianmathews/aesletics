@@ -210,7 +210,7 @@ export default function Settings() {
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3 rounded" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
                 <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>TOTAL XP</div>
-                <div className="text-xl font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>{profile.totalXP.toLocaleString()}</div>
+                <div className="text-xl font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>{(profile.totalXP || 0).toLocaleString()}</div>
               </div>
               <div className="p-3 rounded" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
                 <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>LEVEL</div>

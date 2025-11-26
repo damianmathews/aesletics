@@ -215,7 +215,7 @@ export default function History() {
                         key={dayIdx}
                         className="w-3 h-3 rounded-sm transition-all hover:scale-150 relative group"
                         style={{ backgroundColor: getIntensityColor(day.xp), zIndex: 10 }}
-                        title={`${dateStr}: ${day.count} quests, ${day.xp} XP`}
+                        title={`${dateStr}: ${day.count} quests, ${day.xp || 0} XP`}
                       >
                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none font-medium shadow-xl border" style={{
                           color: 'var(--color-text)',
@@ -226,7 +226,7 @@ export default function History() {
                         }}>
                           {dateStr}<br />
                           {day.count} quests<br />
-                          {day.xp} XP
+                          {day.xp || 0} XP
                         </div>
                       </div>
                     );
@@ -286,7 +286,7 @@ export default function History() {
                         <div className="flex items-center gap-2.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
                           <span>{timeAgo}</span>
                           <span>•</span>
-                          <span className="font-medium" style={{ color: 'var(--color-accent)' }}>+{completion.xp} XP</span>
+                          <span className="font-medium" style={{ color: 'var(--color-accent)' }}>+{completion.xp || 0} XP</span>
                           <span>•</span>
                           <span className="capitalize">{completion.difficulty}</span>
                           {completion.streakBonus && (
