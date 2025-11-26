@@ -46,7 +46,6 @@ export default function Dashboard() {
   const [showValueProp, setShowValueProp] = useState(!localStorage.getItem('valuePropDismissed'));
 
   // Mobile UI toggles
-  const [showAllQuests, setShowAllQuests] = useState(false);
   const [showCompletedToday, setShowCompletedToday] = useState(false);
 
   // Scroll to top when component mounts
@@ -107,18 +106,6 @@ export default function Dashboard() {
     })
     .sort((a, b) => new Date(b.completedAt || 0).getTime() - new Date(a.completedAt || 0).getTime()); // Most recent first
 
-  // Split quests into pack quests and regular quests
-  // Filter out the Next Quest from both lists to avoid duplication
-  const packQuests = todaysQuests.filter(quest =>
-    quest.id !== nextQuest?.id &&
-    activePacks.some(packId =>
-      questPacks.find(p => p.id === packId)?.quests
-        .some(pq => pq.templateId === quest.templateId)
-    )
-  );
-  const regularQuests = todaysQuests.filter(quest =>
-    quest.id !== nextQuest?.id && !packQuests.includes(quest)
-  );
 
   return (
     <div className="min-h-screen bg-pattern-dots" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -560,9 +547,9 @@ export default function Dashboard() {
                 const pack = questPacks.find(p => p.id === packId);
                 if (!pack) return null;
 
-                // Get quests for this specific pack
-                const thisPackQuests = packQuests.filter(quest =>
-                  pack.quests.some(pq => pq.templateId === quest.templateId)
+                // Get quests for this specific pack from user's added quests
+                const thisPackQuests = userQuests.filter((quest: typeof userQuests[number]) =>
+                  quest.templateId && pack.quests.some(pq => pq.templateId === quest.templateId)
                 );
 
                 return (
@@ -590,7 +577,7 @@ export default function Dashboard() {
                     {/* Pack Quests Grid */}
                     {thisPackQuests.length > 0 ? (
                       <div className="grid md:grid-cols-2 gap-3">
-                        {thisPackQuests.map((quest, qIndex) => (
+                        {thisPackQuests.map((quest: typeof userQuests[number], qIndex: number) => (
                           <motion.div
                             key={quest.id}
                             initial={{ opacity: 0, x: -20 }}
@@ -641,106 +628,6 @@ export default function Dashboard() {
           </motion.div>
         )}
 
-        {/* Today's Quests */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mb-3">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-display text-xl font-semibold" style={{ color: 'var(--color-text)' }}>Today's Quests</h2>
-            <Link to="/app/quests" className="text-sm font-mono transition-opacity hover:opacity-70 flex items-center gap-2" style={{ color: 'var(--color-accent)' }}>
-              View All
-              <span>→</span>
-            </Link>
-          </div>
-
-          {regularQuests.length === 0 ? (
-            <div className="glass rounded-lg p-8 border text-center" style={{ borderColor: 'var(--color-border)' }}>
-              <Trophy size={32} className="mx-auto mb-3" style={{ color: 'var(--color-accent)' }} />
-              <p className="text-base mb-2" style={{ color: 'var(--color-text)' }}>No quests today</p>
-              <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>Add two quests to get started. Keep it simple.</p>
-              <Link to="/app/quests" className="inline-block px-5 py-2.5 rounded-lg text-sm font-semibold transition-all hover:scale-105" style={{ background: 'var(--gradient-primary)', color: 'white' }}>
-                Browse Quests
-              </Link>
-            </div>
-          ) : (
-            <>
-              {/* Mobile: Conditional rendering based on toggle */}
-              <div className="md:hidden grid gap-3" data-tutorial="quest-cards">
-                {(showAllQuests ? regularQuests : regularQuests.slice(0, 3)).map((quest, index) => (
-                  <motion.div key={quest.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * index }}>
-                    <Link
-                      to={`/app/quests/${quest.id}`}
-                      className="block glass rounded-lg p-4 border hover:scale-[1.02] transition-all relative"
-                      style={{ borderColor: 'var(--color-border)' }}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-base mb-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
-                          <div className="flex items-center gap-2.5 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                            <span className="px-1.5 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'var(--color-border)' }}>{quest.difficulty}</span>
-                            {getQuickDurationTag(quest.durationMinutes) && (
-                              <span className="px-1.5 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-success)' }}>
-                                {getQuickDurationTag(quest.durationMinutes)}
-                              </span>
-                            )}
-                            <span>{quest.durationMinutes}min</span>
-                            <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
-                          </div>
-                        </div>
-                        <div style={{ color: 'var(--color-accent)' }}>
-                          {getCategoryIcon(quest.category)}
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Desktop: Always show all quests */}
-              <div className="hidden md:grid md:grid-cols-2 gap-3" data-tutorial="quest-cards">
-                {regularQuests.map((quest, index) => (
-                  <motion.div key={quest.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * index }}>
-                    <Link
-                      to={`/app/quests/${quest.id}`}
-                      className="block glass rounded-lg p-4 border hover:scale-[1.02] transition-all relative"
-                      style={{ borderColor: 'var(--color-border)' }}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-base mb-2" style={{ color: 'var(--color-text)' }}>{quest.title}</h3>
-                          <div className="flex items-center gap-2.5 text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                            <span className="px-1.5 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'var(--color-border)' }}>{quest.difficulty}</span>
-                            {getQuickDurationTag(quest.durationMinutes) && (
-                              <span className="px-1.5 py-0.5 rounded text-xs font-bold" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-success)' }}>
-                                {getQuickDurationTag(quest.durationMinutes)}
-                              </span>
-                            )}
-                            <span>{quest.durationMinutes}min</span>
-                            <span style={{ color: 'var(--color-accent)' }} className="font-bold">{quest.baseXP} XP</span>
-                          </div>
-                        </div>
-                        <div style={{ color: 'var(--color-accent)' }}>
-                          {getCategoryIcon(quest.category)}
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Show More/Less Button (Mobile Only, when more than 3 quests) */}
-              {regularQuests.length > 3 && (
-                <div className="md:hidden mt-3">
-                  <button
-                    onClick={() => setShowAllQuests(!showAllQuests)}
-                    className="w-full py-2 px-4 rounded-lg text-xs font-mono font-medium transition-all hover:scale-[1.01]"
-                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', color: 'var(--color-text-secondary)' }}
-                  >
-                    {showAllQuests ? 'Show less' : `View all ${regularQuests.length} quests`}
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </motion.div>
       </main>
     </div>
   );
