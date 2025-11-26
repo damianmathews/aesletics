@@ -27,9 +27,10 @@ export default function Stats() {
       const dayCompletions = completions.filter(
         (c) => c.at.split('T')[0] === dateStr
       );
-      const xp = dayCompletions.reduce((sum, c) => sum + c.xp, 0);
+      // Handle NaN/undefined xp values
+      const xp = dayCompletions.reduce((sum, c) => sum + (c.xp || 0), 0);
 
-      xpData.push({ date: dateStr, xp, label });
+      xpData.push({ date: dateStr, xp: isNaN(xp) ? 0 : xp, label });
     }
 
     return xpData;
@@ -46,7 +47,9 @@ export default function Stats() {
     if (!categoryData[c.category]) {
       categoryData[c.category] = { xp: 0, count: 0 };
     }
-    categoryData[c.category].xp += c.xp;
+    // Handle NaN/undefined xp values
+    const xpValue = c.xp || 0;
+    categoryData[c.category].xp += isNaN(xpValue) ? 0 : xpValue;
     categoryData[c.category].count += 1;
   });
 
@@ -74,11 +77,12 @@ export default function Stats() {
       const dayCompletions = completions.filter(
         (c) => c.at.split('T')[0] === dateStr
       );
-      const xp = dayCompletions.reduce((sum, c) => sum + c.xp, 0);
+      // Handle NaN/undefined xp values
+      const xp = dayCompletions.reduce((sum, c) => sum + (c.xp || 0), 0);
 
       heatmapData.push({
         date: dateStr,
-        xp,
+        xp: isNaN(xp) ? 0 : xp,
         count: dayCompletions.length,
       });
     }
@@ -240,7 +244,7 @@ export default function Stats() {
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
             <div className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>TOTAL XP EARNED</div>
-            <div className="text-2xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{profile.totalXP.toLocaleString()}</div>
+            <div className="text-2xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{(profile.totalXP || 0).toLocaleString()}</div>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
@@ -250,7 +254,7 @@ export default function Stats() {
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
             <div className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>AVG DIFFICULTY</div>
-            <div className="text-2xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{stats.averageDifficulty.toFixed(1)}</div>
+            <div className="text-2xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{(stats.averageDifficulty || 0).toFixed(1)}</div>
           </motion.div>
         </div>
 
@@ -315,7 +319,12 @@ export default function Stats() {
                   <div
                     className="w-full h-full rounded-full"
                     style={{
-                      background: `conic-gradient(${categoryBreakdown.slice(0, 6).map((cat, idx) => {
+                      background: (() => {
+                        const totalXP = categoryBreakdown.reduce((sum, c) => sum + (c.xp || 0), 0);
+                        // If no XP data, show a gray circle
+                        if (totalXP === 0 || isNaN(totalXP)) {
+                          return 'var(--color-border)';
+                        }
                         const colors = [
                           'rgba(167, 139, 250, 1)',
                           'rgba(6, 182, 212, 1)',
@@ -324,11 +333,12 @@ export default function Stats() {
                           'rgba(34, 197, 94, 1)',
                           'rgba(249, 115, 22, 1)',
                         ];
-                        const totalXP = categoryBreakdown.reduce((sum, c) => sum + c.xp, 0);
-                        const prevPercent = categoryBreakdown.slice(0, idx).reduce((sum, c) => sum + (c.xp / totalXP * 100), 0);
-                        const currentPercent = cat.xp / totalXP * 100;
-                        return `${colors[idx]} ${prevPercent}% ${prevPercent + currentPercent}%`;
-                      }).join(', ')})`,
+                        return `conic-gradient(${categoryBreakdown.slice(0, 6).map((cat, idx) => {
+                          const prevPercent = categoryBreakdown.slice(0, idx).reduce((sum, c) => sum + ((c.xp || 0) / totalXP * 100), 0);
+                          const currentPercent = (cat.xp || 0) / totalXP * 100;
+                          return `${colors[idx]} ${prevPercent}% ${prevPercent + currentPercent}%`;
+                        }).join(', ')})`;
+                      })(),
                     }}
                   />
                   {/* Center hole for donut effect */}
@@ -355,8 +365,8 @@ export default function Stats() {
                       'rgba(34, 197, 94, 1)',
                       'rgba(249, 115, 22, 1)',
                     ];
-                    const totalXP = categoryBreakdown.reduce((sum, c) => sum + c.xp, 0);
-                    const percent = ((category.xp / totalXP) * 100).toFixed(1);
+                    const totalXP = categoryBreakdown.reduce((sum, c) => sum + (c.xp || 0), 0);
+                    const percent = totalXP > 0 ? (((category.xp || 0) / totalXP) * 100).toFixed(1) : '0.0';
 
                     return (
                       <motion.div
@@ -383,7 +393,7 @@ export default function Stats() {
                             {percent}%
                           </div>
                           <div className="text-[10px] font-mono" style={{ color: 'var(--color-text-tertiary)' }}>
-                            {category.xp} XP
+                            {category.xp || 0} XP
                           </div>
                         </div>
                       </motion.div>
@@ -487,7 +497,7 @@ export default function Stats() {
                         <div className="flex items-center gap-2.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
                           <span>{timeAgo}</span>
                           <span>•</span>
-                          <span className="font-medium" style={{ color: 'var(--color-accent)' }}>+{completion.xp} XP</span>
+                          <span className="font-medium" style={{ color: 'var(--color-accent)' }}>+{completion.xp || 0} XP</span>
                           <span>•</span>
                           <span className="capitalize">{completion.difficulty}</span>
                           {completion.streakBonus && (
