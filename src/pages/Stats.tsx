@@ -12,6 +12,11 @@ export default function Stats() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
+  // Calculate actual totalXP from completions if profile.totalXP is invalid
+  const actualTotalXP = (profile.totalXP && !isNaN(profile.totalXP))
+    ? profile.totalXP
+    : completions.reduce((sum, c) => sum + (c.xp || 0), 0);
+
   // Generate XP over time data (last 14 days)
   const generateXPOverTime = () => {
     const days = 14;
@@ -244,7 +249,7 @@ export default function Stats() {
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
             <div className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>TOTAL XP EARNED</div>
-            <div className="text-2xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{(profile.totalXP || 0).toLocaleString()}</div>
+            <div className="text-2xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{actualTotalXP.toLocaleString()}</div>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>

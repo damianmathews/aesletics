@@ -10,7 +10,12 @@ import { Menu, X, LogOut, Crown } from 'lucide-react';
 import PaywallModal from '../components/PaywallModal';
 
 export default function Settings() {
-  const { profile, settings, updateSettings, updateProfile } = useStore();
+  const { profile, settings, updateSettings, updateProfile, completions } = useStore();
+
+  // Calculate actual totalXP from completions if profile.totalXP is invalid
+  const actualTotalXP = (profile.totalXP && !isNaN(profile.totalXP))
+    ? profile.totalXP
+    : completions.reduce((sum, c) => sum + (c.xp || 0), 0);
   const { logout, user } = useAuth();
   const { subscription, hasAccess, isTrialing } = useSubscription();
   const navigate = useNavigate();
@@ -210,7 +215,7 @@ export default function Settings() {
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3 rounded" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
                 <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>TOTAL XP</div>
-                <div className="text-xl font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>{(profile.totalXP || 0).toLocaleString()}</div>
+                <div className="text-xl font-bold tabular-nums" style={{ color: 'var(--color-accent)' }}>{actualTotalXP.toLocaleString()}</div>
               </div>
               <div className="p-3 rounded" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
                 <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>LEVEL</div>
