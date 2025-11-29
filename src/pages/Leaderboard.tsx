@@ -226,7 +226,7 @@ export default function Leaderboard() {
               <div className="sm:text-right">
                 <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>YOUR STATS</div>
                 <div className="flex items-center gap-3 font-mono text-xs">
-                  <span style={{ color: 'var(--color-text)' }}>{safeXP.toLocaleString()} XP</span>
+                  <span style={{ color: 'var(--color-text)' }}>{userEntry.xp.toLocaleString()} XP</span>
                   <span style={{ color: 'var(--color-text)' }}>Lvl {userEntry.level}</span>
                   <span className="flex items-center gap-1" style={{ color: 'var(--color-text)' }}>
                     <Flame size={14} className="text-orange-500" /> {profile.currentStreak}
