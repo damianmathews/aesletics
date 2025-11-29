@@ -112,7 +112,7 @@ function App() {
             xpBonus={dailyLoginData.xpBonus}
             totalLoginStreak={profile.loginStreakDays}
             isNewStreak={dailyLoginData.isNewStreak}
-            streakFreezesEarned={Math.floor(profile.loginStreakDays / 7) - Math.floor((profile.loginStreakDays - 1) / 7)}
+            streakFreezesEarned={dailyLoginData.streakFreezesEarned}
             onClose={closeDailyLoginModal}
           />
         )}

@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useSubscription } from '../hooks/useSubscription';
@@ -36,6 +36,19 @@ export default function QuestDetail() {
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [textValue, setTextValue] = useState('');
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+
+  // Bug #12 fix: Use ref for timer interval to prevent memory leak
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+      }
+    };
+  }, []);
 
   if (!questData) {
     return (
@@ -107,10 +120,14 @@ export default function QuestDetail() {
   const confirmCompletion = () => {
     const xp = calculateXP(questData.baseXP, questData.proof, profile.currentStreak);
 
+    // Bug #14 fix: Use user quest ID if available, otherwise use template ID
+    // quest is the user quest (if exists), questData might be template
+    const userQuestId = quest ? quest.id : questData.id;
+
     const completion = {
-      userQuestId: questData.id,
+      userQuestId,
       questTitle: questData.title,
-      category: questData.category,
+      category: questData.category || 'uncategorized', // Bug #17 fix: ensure category exists
       difficulty: questData.difficulty,
       at: new Date().toISOString(),
       xp,
@@ -129,16 +146,16 @@ export default function QuestDetail() {
 
   const startTimer = () => {
     setIsTimerRunning(true);
-    const interval = setInterval(() => {
+    timerIntervalRef.current = setInterval(() => {
       setTimerSeconds((prev) => prev + 1);
     }, 1000);
-    (window as any).timerInterval = interval;
   };
 
   const stopTimer = () => {
     setIsTimerRunning(false);
-    if ((window as any).timerInterval) {
-      clearInterval((window as any).timerInterval);
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
     }
   };
 

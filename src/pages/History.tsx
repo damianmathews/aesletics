@@ -197,7 +197,7 @@ export default function History() {
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
             <div className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>AVG DIFFICULTY</div>
-            <div className="text-2xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{stats.averageDifficulty.toFixed(1)}</div>
+            <div className="text-2xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{(stats.averageDifficulty || 0).toFixed(1)}</div>
           </motion.div>
         </div>
 

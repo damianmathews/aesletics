@@ -10,7 +10,7 @@ import type {
   UserStats,
   OnboardingData,
 } from '../types';
-import { calculateLevel, calculateStreak } from '../lib/xp';
+import { calculateLevel, calculateStreak, calculateStreakBonus } from '../lib/xp';
 import { questTemplatesExtended, questPacks } from '../data/seed';
 import { getLocalDateString, getLocalDateStringDaysAgo } from '../lib/dateUtils';
 import { syncToLeaderboard } from '../lib/leaderboard';
@@ -31,6 +31,7 @@ interface DailyLoginData {
   dayNumber: number;
   xpBonus: number;
   isNewStreak: boolean;
+  streakFreezesEarned: number; // Bug #1 fix: Include actual freezes earned
 }
 
 interface StoreState extends AppState {
@@ -217,22 +218,30 @@ export const useStore = create<StoreState>()(
         })),
 
       addCompletion: (completion) => {
+        // Bug #8 fix: Validate completion XP before processing
+        const xpGained = (completion.xp && !isNaN(completion.xp) && completion.xp > 0) ? completion.xp : 0;
+        if (xpGained === 0) {
+          console.error('Invalid XP value in completion:', completion.xp);
+        }
+
         const newCompletion: Completion = {
           ...completion,
+          xp: xpGained, // Use validated XP
           id: `c-${Date.now()}-${Math.random()}`,
         };
 
         set((state) => {
           const newCompletions = [...state.completions, newCompletion];
           const oldLevel = state.profile.level;
-          const newTotalXP = state.profile.totalXP + completion.xp;
+          const safeCurrentXP = (state.profile.totalXP && !isNaN(state.profile.totalXP)) ? state.profile.totalXP : 0;
+          const newTotalXP = safeCurrentXP + xpGained;
           const newLevel = calculateLevel(newTotalXP);
           const streakData = calculateStreak(newCompletions);
           const didLevelUp = newLevel > oldLevel;
 
-          // Calculate streak bonus amount if applicable
+          // Bug #7 fix: Use consistent streak bonus calculation from xp.ts
           const streakBonusAmount = completion.streakBonus && state.profile.currentStreak > 0
-            ? Math.floor(completion.xp * (Math.min(state.profile.currentStreak * 0.02, 0.3) / (1 + Math.min(state.profile.currentStreak * 0.02, 0.3))))
+            ? calculateStreakBonus(xpGained, state.profile.currentStreak)
             : 0;
 
           // Show quest complete modal
@@ -260,33 +269,38 @@ export const useStore = create<StoreState>()(
             }
           }, 100);
 
+          // Bug #4 fix: Capture the new values for leaderboard sync before returning
+          const newProfile = {
+            ...state.profile,
+            totalXP: newTotalXP,
+            level: newLevel,
+            currentStreak: streakData.currentStreak,
+            longestStreak: Math.max(
+              state.profile.longestStreak,
+              streakData.longestStreak
+            ),
+            completedQuests: newCompletions.length,
+          };
+
+          // Sync to leaderboard with the NEW values (not stale state)
+          const currentUser = auth.currentUser;
+          if (currentUser) {
+            // Use setTimeout to ensure state is committed first
+            setTimeout(() => {
+              syncToLeaderboard(
+                currentUser.uid,
+                newProfile.nickname,
+                newProfile.totalXP,
+                newProfile.level
+              ).catch(err => console.error('Failed to sync to leaderboard:', err));
+            }, 0);
+          }
+
           return {
             completions: newCompletions,
-            profile: {
-              ...state.profile,
-              totalXP: newTotalXP,
-              level: newLevel,
-              currentStreak: streakData.currentStreak,
-              longestStreak: Math.max(
-                state.profile.longestStreak,
-                streakData.longestStreak
-              ),
-              completedQuests: newCompletions.length,
-            },
+            profile: newProfile,
           };
         });
-
-        // Sync to leaderboard (fire and forget)
-        const currentUser = auth.currentUser;
-        if (currentUser) {
-          const updatedState = get();
-          syncToLeaderboard(
-            currentUser.uid,
-            updatedState.profile.nickname,
-            updatedState.profile.totalXP,
-            updatedState.profile.level
-          ).catch(err => console.error('Failed to sync to leaderboard:', err));
-        }
       },
 
       updateSettings: (settings) =>
@@ -459,7 +473,7 @@ export const useStore = create<StoreState>()(
           ).catch(err => console.error('Failed to sync to leaderboard:', err));
         }
 
-        // Show daily login modal
+        // Show daily login modal (Bug #1 fix: pass actual streak freezes earned)
         setTimeout(() => {
           set({
             showDailyLoginModal: true,
@@ -467,6 +481,7 @@ export const useStore = create<StoreState>()(
               dayNumber: dayInCycle,
               xpBonus,
               isNewStreak,
+              streakFreezesEarned,
             },
           });
         }, 500); // Small delay after page load

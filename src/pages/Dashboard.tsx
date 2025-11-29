@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { Zap, Trophy, Package, Menu, X, Shield, Dumbbell, Sparkles, Brain, Heart, Users, Mountain, Briefcase, Palette, Check, ChevronDown, Star, Ban } from 'lucide-react';
 import { questPacks, questTemplates } from '../data/seed';
 import { getRecommendedQuests } from '../lib/recommendations';
+import { getLevelProgress } from '../lib/xp';
 
 // Category icon mapping
 const getCategoryIcon = (categoryId: string) => {
@@ -39,6 +40,9 @@ export default function Dashboard() {
 
   // Protect against NaN XP values from Firestore
   const safeXP = (profile.totalXP && !isNaN(profile.totalXP)) ? profile.totalXP : 0;
+
+  // Get correct level progress (Bug #6 fix - was using XP % 100 which is wrong)
+  const levelProgress = getLevelProgress(safeXP);
 
   // Check today's date for quest filtering
   const today = new Date().toISOString().split('T')[0];
@@ -386,20 +390,20 @@ export default function Dashboard() {
                 <div className="space-y-3">
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>Level {profile.level}</span>
-                      <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>Level {profile.level + 1}</span>
+                      <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>Level {levelProgress.level}</span>
+                      <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>Level {levelProgress.level + 1}</span>
                     </div>
                     <div className="w-full h-2 rounded-full" style={{ background: 'rgba(255, 255, 255, 0.1)' }}>
                       <div
                         className="h-2 rounded-full transition-all"
                         style={{
-                          width: `${((safeXP % 100) / 100) * 100}%`,
+                          width: `${Math.min(levelProgress.progress * 100, 100)}%`,
                           background: 'var(--gradient-primary)',
                         }}
                       />
                     </div>
                     <p className="text-xs font-mono mt-1" style={{ color: 'var(--color-accent)' }}>
-                      {safeXP % 100} / 100 XP
+                      {levelProgress.currentLevelXP} / {levelProgress.nextLevelXP} XP
                     </p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">

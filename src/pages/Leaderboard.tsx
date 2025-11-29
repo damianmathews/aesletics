@@ -33,14 +33,23 @@ export default function Leaderboard() {
         const topPlayersData = await getTopPlayers(50);
 
         // Convert to Player format with ranks (protect against NaN)
-        const players: Player[] = topPlayersData.map((entry, index) => ({
-          rank: index + 1,
-          username: entry.displayName,
-          xp: (entry.totalXP && !isNaN(entry.totalXP)) ? entry.totalXP : 0,
-          level: entry.level || 1,
-          streak: 0, // We don't store streak in leaderboard yet
-          isUser: auth.currentUser?.uid === entry.userId,
-        }));
+        // Bug #9 fix: Calculate level from XP to ensure consistency
+        const players: Player[] = topPlayersData.map((entry, index) => {
+          const xp = (entry.totalXP && !isNaN(entry.totalXP)) ? entry.totalXP : 0;
+          // Calculate level from XP using same formula as xp.ts
+          let level = 1;
+          while (xp >= Math.floor(100 * Math.pow(level + 1, 1.6))) {
+            level++;
+          }
+          return {
+            rank: index + 1,
+            username: entry.displayName,
+            xp,
+            level,
+            streak: 0, // Bug #19: We don't store streak in leaderboard collection yet
+            isUser: auth.currentUser?.uid === entry.userId,
+          };
+        });
 
         // Add current user if not in top 50
         const userInList = players.some(p => p.isUser);

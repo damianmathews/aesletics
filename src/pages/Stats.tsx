@@ -47,15 +47,17 @@ export default function Stats() {
   const chartScale = Math.max(500, Math.ceil(maxXP * 1.2 / 100) * 100);
 
   // Category breakdown
+  // Bug #17 fix: Skip completions with undefined/null category
   const categoryData: Record<string, { xp: number; count: number }> = {};
   completions.forEach(c => {
-    if (!categoryData[c.category]) {
-      categoryData[c.category] = { xp: 0, count: 0 };
+    const category = c.category || 'uncategorized';
+    if (!categoryData[category]) {
+      categoryData[category] = { xp: 0, count: 0 };
     }
     // Handle NaN/undefined xp values
     const xpValue = c.xp || 0;
-    categoryData[c.category].xp += isNaN(xpValue) ? 0 : xpValue;
-    categoryData[c.category].count += 1;
+    categoryData[category].xp += isNaN(xpValue) ? 0 : xpValue;
+    categoryData[category].count += 1;
   });
 
   const categoryBreakdown = Object.entries(categoryData)

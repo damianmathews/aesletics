@@ -26,14 +26,26 @@ export function calculateXP(
   proofType: ProofType,
   streakDays: number
 ): number {
+  // Validate inputs (Bug #16 fix)
+  if (!baseXP || baseXP < 0 || isNaN(baseXP)) return 0;
+  const multiplier = PROOF_MULTIPLIERS[proofType];
+  if (multiplier === undefined) return 0;
+
   // Apply proof multiplier
-  let xp = baseXP * PROOF_MULTIPLIERS[proofType];
+  let xp = baseXP * multiplier;
 
   // Apply streak bonus (2% per day, max 30%)
-  const streakBonus = Math.min(streakDays * 0.02, 0.3);
+  const streakBonus = Math.min((streakDays || 0) * 0.02, 0.3);
   xp = xp * (1 + streakBonus);
 
   return Math.floor(xp);
+}
+
+// Calculate the streak bonus amount separately (for display in modals)
+export function calculateStreakBonus(baseXP: number, streakDays: number): number {
+  if (!baseXP || baseXP < 0 || isNaN(baseXP)) return 0;
+  const streakBonusPercent = Math.min((streakDays || 0) * 0.02, 0.3);
+  return Math.floor(baseXP * streakBonusPercent);
 }
 
 // Calculate level from total XP

@@ -24,14 +24,22 @@ export async function loadUserData(userId: string): Promise<UserData | null> {
       const data = userDoc.data() as UserData;
 
       // Ensure profile.totalXP is a valid number (fixes NaN XP bug)
+      // Bug #10 fix: Check for undefined/null explicitly, not falsy (0 is valid)
       if (data.profile) {
-        if (!data.profile.totalXP || isNaN(data.profile.totalXP)) {
+        if (data.profile.totalXP === undefined || data.profile.totalXP === null || isNaN(data.profile.totalXP)) {
           // Calculate from completions if available
           const calculatedXP = data.completions?.reduce((sum, c) => sum + (c.xp || 0), 0) || 0;
           data.profile.totalXP = calculatedXP;
         }
-        if (!data.profile.level || isNaN(data.profile.level)) {
-          data.profile.level = Math.floor((data.profile.totalXP || 0) / 100) + 1;
+        // Bug #20 fix: Use correct level calculation (not 100 XP per level)
+        if (data.profile.level === undefined || data.profile.level === null || isNaN(data.profile.level) || data.profile.level < 1) {
+          // Import would create circular dependency, so inline the calculation
+          let level = 1;
+          const xp = data.profile.totalXP || 0;
+          while (xp >= Math.floor(100 * Math.pow(level + 1, 1.6))) {
+            level++;
+          }
+          data.profile.level = level;
         }
       }
 

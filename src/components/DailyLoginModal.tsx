@@ -84,29 +84,26 @@ export default function DailyLoginModal({
               Daily Login Bonus!
             </motion.h2>
 
-            {isNewStreak ? (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="text-sm"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
-                Welcome back! Starting a new streak.
-              </motion.p>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="flex items-center justify-center gap-2"
-              >
-                <Flame size={18} style={{ color: 'var(--color-accent)' }} fill="currentColor" />
-                <span className="text-sm font-mono font-bold" style={{ color: 'var(--color-accent)' }}>
-                  {totalLoginStreak} DAY STREAK!
+            {/* Bug #13 fix: Show appropriate message based on streak status */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="flex items-center justify-center gap-2"
+            >
+              {isNewStreak ? (
+                <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                  Welcome back! Day 1 of a new streak.
                 </span>
-              </motion.div>
-            )}
+              ) : (
+                <>
+                  <Flame size={18} style={{ color: 'var(--color-accent)' }} fill="currentColor" />
+                  <span className="text-sm font-mono font-bold" style={{ color: 'var(--color-accent)' }}>
+                    {totalLoginStreak} DAY STREAK!
+                  </span>
+                </>
+              )}
+            </motion.div>
           </div>
 
           {/* Weekly Calendar */}
