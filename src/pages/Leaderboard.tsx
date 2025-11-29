@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useState, useEffect } from 'react';
-import { Trophy, TrendingUp, Flame, Menu, X } from 'lucide-react';
+import { Trophy, TrendingUp, Menu, X } from 'lucide-react';
 import { getTopPlayers } from '../lib/leaderboard';
 import { auth } from '../lib/firebase';
 
@@ -11,7 +11,6 @@ interface Player {
   username: string;
   xp: number;
   level: number;
-  streak: number;
   isUser: boolean;
 }
 
@@ -46,7 +45,6 @@ export default function Leaderboard() {
             username: entry.displayName,
             xp,
             level,
-            streak: 0, // Bug #19: We don't store streak in leaderboard collection yet
             isUser: auth.currentUser?.uid === entry.userId,
           };
         });
@@ -63,7 +61,6 @@ export default function Leaderboard() {
             username: profile.nickname,
             xp: safeXP,
             level: profile.level,
-            streak: profile.currentStreak,
             isUser: true,
           };
 
@@ -237,9 +234,6 @@ export default function Leaderboard() {
                 <div className="flex items-center gap-3 font-mono text-xs">
                   <span style={{ color: 'var(--color-text)' }}>{userEntry.xp.toLocaleString()} XP</span>
                   <span style={{ color: 'var(--color-text)' }}>Lvl {userEntry.level}</span>
-                  <span className="flex items-center gap-1" style={{ color: 'var(--color-text)' }}>
-                    <Flame size={14} className="text-orange-500" /> {profile.currentStreak}
-                  </span>
                 </div>
               </div>
             </div>
@@ -273,8 +267,7 @@ export default function Leaderboard() {
                     <th className="text-left py-1.5 px-3">PLAYER</th>
                     <th className="text-right py-1.5 px-3">XP</th>
                     <th className="text-right py-1.5 px-3">LEVEL</th>
-                    <th className="text-right py-1.5 px-3">STREAK</th>
-                  </tr>
+                                      </tr>
                 </thead>
                 <tbody>
                   {topPlayers.map((player, index) => (
@@ -299,11 +292,6 @@ export default function Leaderboard() {
                     <td className="py-1.5 px-3 font-semibold" style={{ color: 'var(--color-text)' }}>{player.username}</td>
                     <td className="py-1.5 px-3 text-right font-mono font-medium" style={{ color: 'var(--color-text)' }}>{player.xp.toLocaleString()}</td>
                     <td className="py-1.5 px-3 text-right font-mono" style={{ color: 'var(--color-text-secondary)' }}>{player.level}</td>
-                    <td className="py-1.5 px-3 text-right">
-                      <span className="flex items-center justify-end gap-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                        <Flame size={12} className="text-orange-500" /> {player.streak}
-                      </span>
-                    </td>
                   </motion.tr>
                   ))}
                 </tbody>
@@ -331,8 +319,7 @@ export default function Leaderboard() {
                     <th className="text-left py-1.5 px-3">PLAYER</th>
                     <th className="text-right py-1.5 px-3">XP</th>
                     <th className="text-right py-1.5 px-3">LEVEL</th>
-                    <th className="text-right py-1.5 px-3">STREAK</th>
-                  </tr>
+                                      </tr>
                 </thead>
                 <tbody>
                   {userContext.map((player) => (
@@ -358,11 +345,6 @@ export default function Leaderboard() {
                       {player.xp.toLocaleString()}
                     </td>
                     <td className="py-1.5 px-3 text-right font-mono" style={{ color: 'var(--color-text-secondary)' }}>{player.level}</td>
-                    <td className="py-1.5 px-3 text-right">
-                      <span className="flex items-center justify-end gap-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-                        <Flame size={12} className="text-orange-500" /> {player.streak}
-                      </span>
-                    </td>
                   </tr>
                   ))}
                 </tbody>
