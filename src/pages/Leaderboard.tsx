@@ -22,6 +22,9 @@ export default function Leaderboard() {
   const [leaderboard, setLeaderboard] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Protect against NaN XP values from Firestore
+  const safeXP = (profile.totalXP && !isNaN(profile.totalXP)) ? profile.totalXP : 0;
+
   useEffect(() => {
     async function fetchLeaderboard() {
       setLoading(true);
@@ -29,12 +32,12 @@ export default function Leaderboard() {
         // Fetch top 50 players from Firestore
         const topPlayersData = await getTopPlayers(50);
 
-        // Convert to Player format with ranks
+        // Convert to Player format with ranks (protect against NaN)
         const players: Player[] = topPlayersData.map((entry, index) => ({
           rank: index + 1,
           username: entry.displayName,
-          xp: entry.totalXP,
-          level: entry.level,
+          xp: (entry.totalXP && !isNaN(entry.totalXP)) ? entry.totalXP : 0,
+          level: entry.level || 1,
           streak: 0, // We don't store streak in leaderboard yet
           isUser: auth.currentUser?.uid === entry.userId,
         }));
@@ -43,13 +46,13 @@ export default function Leaderboard() {
         const userInList = players.some(p => p.isUser);
         if (!userInList && auth.currentUser) {
           // Calculate user's rank (they're somewhere after the top 50)
-          const userRank = players.findIndex(p => p.xp < profile.totalXP);
+          const userRank = players.findIndex(p => p.xp < safeXP);
           const rank = userRank === -1 ? players.length + 1 : userRank + 1;
 
           const userPlayer: Player = {
             rank,
             username: profile.nickname,
-            xp: profile.totalXP,
+            xp: safeXP,
             level: profile.level,
             streak: profile.currentStreak,
             isUser: true,
@@ -76,7 +79,7 @@ export default function Leaderboard() {
     }
 
     fetchLeaderboard();
-  }, [profile.totalXP, profile.level, profile.nickname, profile.currentStreak]);
+  }, [safeXP, profile.level, profile.nickname, profile.currentStreak]);
 
   const userEntry = leaderboard.find(p => p.isUser);
   const topPlayers = leaderboard.slice(0, 50); // Show up to top 50
@@ -223,7 +226,7 @@ export default function Leaderboard() {
               <div className="sm:text-right">
                 <div className="text-xs mb-1 font-mono" style={{ color: 'var(--color-text-secondary)' }}>YOUR STATS</div>
                 <div className="flex items-center gap-3 font-mono text-xs">
-                  <span style={{ color: 'var(--color-text)' }}>{profile.totalXP.toLocaleString()} XP</span>
+                  <span style={{ color: 'var(--color-text)' }}>{safeXP.toLocaleString()} XP</span>
                   <span style={{ color: 'var(--color-text)' }}>Lvl {userEntry.level}</span>
                   <span className="flex items-center gap-1" style={{ color: 'var(--color-text)' }}>
                     <Flame size={14} className="text-orange-500" /> {profile.currentStreak}

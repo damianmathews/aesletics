@@ -21,7 +21,21 @@ export async function loadUserData(userId: string): Promise<UserData | null> {
     const userDoc = await getDoc(userDocRef);
 
     if (userDoc.exists()) {
-      return userDoc.data() as UserData;
+      const data = userDoc.data() as UserData;
+
+      // Ensure profile.totalXP is a valid number (fixes NaN XP bug)
+      if (data.profile) {
+        if (!data.profile.totalXP || isNaN(data.profile.totalXP)) {
+          // Calculate from completions if available
+          const calculatedXP = data.completions?.reduce((sum, c) => sum + (c.xp || 0), 0) || 0;
+          data.profile.totalXP = calculatedXP;
+        }
+        if (!data.profile.level || isNaN(data.profile.level)) {
+          data.profile.level = Math.floor((data.profile.totalXP || 0) / 100) + 1;
+        }
+      }
+
+      return data;
     }
     return null;
   } catch (error) {

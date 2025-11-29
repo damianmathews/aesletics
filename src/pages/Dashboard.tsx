@@ -37,6 +37,9 @@ export default function Dashboard() {
   const { profile, getTodaysQuests, activePacks, completions, onboardingData, userQuests } = useStore();
   const allTodaysQuests = getTodaysQuests();
 
+  // Protect against NaN XP values from Firestore
+  const safeXP = (profile.totalXP && !isNaN(profile.totalXP)) ? profile.totalXP : 0;
+
   // Check today's date for quest filtering
   const today = new Date().toISOString().split('T')[0];
 
@@ -230,7 +233,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-4 text-sm font-mono" style={{ color: 'var(--color-text-secondary)' }}>
               <span>Level {profile.level}</span>
               <span>•</span>
-              <span style={{ color: 'var(--color-accent)' }}>{profile.totalXP.toLocaleString()} XP</span>
+              <span style={{ color: 'var(--color-accent)' }}>{safeXP.toLocaleString()} XP</span>
               <span>•</span>
               <span>{profile.currentStreak} day streak 🔥</span>
             </div>
@@ -390,13 +393,13 @@ export default function Dashboard() {
                       <div
                         className="h-2 rounded-full transition-all"
                         style={{
-                          width: `${((profile.totalXP % 100) / 100) * 100}%`,
+                          width: `${((safeXP % 100) / 100) * 100}%`,
                           background: 'var(--gradient-primary)',
                         }}
                       />
                     </div>
                     <p className="text-xs font-mono mt-1" style={{ color: 'var(--color-accent)' }}>
-                      {profile.totalXP % 100} / 100 XP
+                      {safeXP % 100} / 100 XP
                     </p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">

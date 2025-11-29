@@ -11,6 +11,9 @@ export default function History() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
+  // Protect against NaN XP values from Firestore
+  const safeXP = (profile.totalXP && !isNaN(profile.totalXP)) ? profile.totalXP : 0;
+
   // Generate calendar heatmap data (last 12 weeks)
   const generateHeatmapData = () => {
     const weeks = 12;
@@ -26,7 +29,7 @@ export default function History() {
       const dayCompletions = completions.filter(
         (c) => c.at.split('T')[0] === dateStr
       );
-      const xp = dayCompletions.reduce((sum, c) => sum + c.xp, 0);
+      const xp = dayCompletions.reduce((sum, c) => sum + (c.xp || 0), 0);
 
       heatmapData.push({
         date: dateStr,
@@ -184,7 +187,7 @@ export default function History() {
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
             <div className="text-xs font-medium mb-2 font-mono" style={{ color: 'var(--color-text-secondary)' }}>TOTAL XP EARNED</div>
-            <div className="text-2xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{profile.totalXP.toLocaleString()}</div>
+            <div className="text-2xl font-bold tabular-nums" style={{ color: 'var(--color-text)' }}>{safeXP.toLocaleString()}</div>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass rounded-lg p-4 border" style={{ borderColor: 'var(--color-border)' }}>
