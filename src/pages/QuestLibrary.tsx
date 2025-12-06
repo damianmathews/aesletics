@@ -401,7 +401,7 @@ export default function QuestLibrary() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4" data-tutorial="quest-grid">
           {filteredQuests.map((quest, index) => (
             <motion.div
-              key={quest.id}
+              key={`${quest.id}-${sortBy}`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.02 * (index % 12) }}
