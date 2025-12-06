@@ -6,6 +6,7 @@ import { Zap, Trophy, Package, Menu, X, Shield, Dumbbell, Sparkles, Brain, Heart
 import { questPacks, questTemplates } from '../data/seed';
 import { getRecommendedQuests } from '../lib/recommendations';
 import { getLevelProgress } from '../lib/xp';
+import MyQuestsModal from '../components/MyQuestsModal';
 
 // Category icon mapping
 const getCategoryIcon = (categoryId: string) => {
@@ -54,6 +55,9 @@ export default function Dashboard() {
 
   // Mobile UI toggles
   const [showCompletedToday, setShowCompletedToday] = useState(false);
+
+  // My Quests modal
+  const [showMyQuestsModal, setShowMyQuestsModal] = useState(false);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -371,9 +375,13 @@ export default function Dashboard() {
                   </div>
                   {filteredQuests.length > 8 && (
                     <div className="mt-3 text-center">
-                      <Link to="/app/quests" className="text-xs font-mono transition-opacity hover:opacity-70" style={{ color: 'var(--color-accent)' }}>
+                      <button
+                        onClick={() => setShowMyQuestsModal(true)}
+                        className="text-xs font-mono transition-opacity hover:opacity-70"
+                        style={{ color: 'var(--color-accent)' }}
+                      >
                         View All {filteredQuests.length} Quests →
-                      </Link>
+                      </button>
                     </div>
                   )}
                 </div>
@@ -636,6 +644,14 @@ export default function Dashboard() {
         )}
 
       </main>
+
+      {/* My Quests Modal */}
+      <MyQuestsModal
+        isOpen={showMyQuestsModal}
+        onClose={() => setShowMyQuestsModal(false)}
+        quests={userQuests}
+        completedTodayIds={todayCompletedQuestIds}
+      />
     </div>
   );
 }
