@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { X, Zap, Dumbbell, Sparkles, Brain, Heart, Users, Mountain, Briefcase, Palette, Shield, Ban, Star, Trash2, Pause, Play } from 'lucide-react';
+import { X, Zap, Dumbbell, Sparkles, Brain, Heart, Users, Mountain, Briefcase, Palette, Shield, Ban, Star, Trash2 } from 'lucide-react';
 import type { UserQuest } from '../types';
 import { useStore } from '../store/useStore';
 
@@ -36,7 +36,7 @@ export default function MyQuestsModal({ isOpen, onClose, quests, completedTodayI
   const [statusFilter, setStatusFilter] = useState<'active' | 'inactive' | 'all'>('active');
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
-  const { removeUserQuest, toggleQuestActive } = useStore();
+  const { removeUserQuest } = useStore();
 
   // Filter quests by status
   const statusFilteredQuests = statusFilter === 'all'
@@ -207,36 +207,20 @@ export default function MyQuestsModal({ isOpen, onClose, quests, completedTodayI
                           <span className="text-xs font-mono font-bold" style={{ color: 'var(--color-accent)' }}>
                             {quest.baseXP} XP
                           </span>
-                          {/* Action buttons */}
-                          <div className="flex items-center gap-1 ml-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                toggleQuestActive(quest.id);
-                              }}
-                              className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                              style={{
-                                backgroundColor: quest.active ? 'rgba(251, 146, 60, 0.2)' : 'rgba(16, 185, 129, 0.2)',
-                                color: quest.active ? 'rgb(251, 146, 60)' : 'var(--color-success)'
-                              }}
-                              title={quest.active ? 'Pause Quest' : 'Resume Quest'}
-                            >
-                              {quest.active ? <Pause size={14} /> : <Play size={14} />}
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setDeleteConfirmId(quest.id);
-                              }}
-                              className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                              style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', color: 'var(--color-error)' }}
-                              title="Remove Quest"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
+                          {/* Delete button */}
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setDeleteConfirmId(quest.id);
+                            }}
+                            className="ml-2 px-2 py-1 rounded text-xs font-mono transition-all opacity-40 group-hover:opacity-100 hover:bg-white/10 flex items-center gap-1"
+                            style={{ color: 'var(--color-text-secondary)' }}
+                            title="Remove Quest"
+                          >
+                            <Trash2 size={12} />
+                            <span className="hidden sm:inline">Remove</span>
+                          </button>
                         </div>
                       </div>
                     );

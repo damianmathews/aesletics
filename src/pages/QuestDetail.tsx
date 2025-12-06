@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useSubscription } from '../hooks/useSubscription';
 import { calculateXP } from '../lib/xp';
-import { Clock, Camera, AlertTriangle, Check, Flame, X, Award, TrendingUp, Trash2, Pause, Play } from 'lucide-react';
+import { Clock, Camera, AlertTriangle, Check, Flame, X, Award, TrendingUp, Trash2 } from 'lucide-react';
 import PaywallModal from '../components/PaywallModal';
 import QuestConfirmDialog from '../components/QuestConfirmDialog';
 import { questTemplates } from '../data/seed';
@@ -12,7 +12,7 @@ import { questTemplates } from '../data/seed';
 export default function QuestDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { profile, getQuestById, addCompletion, addUserQuest, removeUserQuest, toggleQuestActive } = useStore();
+  const { profile, getQuestById, addCompletion, addUserQuest, removeUserQuest } = useStore();
   const { hasAccess } = useSubscription();
 
   // Try to find as user quest first, then as template
@@ -177,12 +177,6 @@ export default function QuestDetail() {
     }
   };
 
-  const handleToggleActive = () => {
-    if (quest) {
-      toggleQuestActive(quest.id);
-    }
-  };
-
   return (
     <>
       {/* Backdrop Overlay */}
@@ -215,31 +209,6 @@ export default function QuestDetail() {
           >
             <X size={20} />
           </button>
-
-          {/* Quest Management Buttons - Only show for user quests (not templates) */}
-          {quest && !isTemplate && (
-            <div className="absolute top-4 left-4 flex items-center gap-2">
-              <button
-                onClick={handleToggleActive}
-                className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                style={{
-                  backgroundColor: quest.active ? 'rgba(251, 146, 60, 0.2)' : 'rgba(16, 185, 129, 0.2)',
-                  color: quest.active ? 'rgb(251, 146, 60)' : 'var(--color-success)'
-                }}
-                title={quest.active ? 'Pause Quest' : 'Resume Quest'}
-              >
-                {quest.active ? <Pause size={16} /> : <Play size={16} />}
-              </button>
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', color: 'var(--color-error)' }}
-                title="Remove Quest"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
-          )}
 
           {/* Quest Info */}
           <div className="mb-6">
@@ -412,6 +381,21 @@ export default function QuestDetail() {
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-center text-xs mt-3 flex items-center justify-center gap-2" style={{ color: 'var(--color-accent)' }}>
               <Flame size={14} className="text-orange-500" /> Streak bonus active! You'll earn extra XP
             </motion.p>
+          )}
+
+          {/* Remove Quest Button - Only show for user quests */}
+          {quest && !isTemplate && (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              onClick={() => setShowDeleteConfirm(true)}
+              className="w-full mt-4 py-3 rounded-lg font-mono text-sm transition-all hover:bg-white/5 flex items-center justify-center gap-2"
+              style={{ color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)' }}
+            >
+              <Trash2 size={16} />
+              Remove from My Quests
+            </motion.button>
           )}
         </motion.div>
           </main>
