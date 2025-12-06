@@ -122,7 +122,7 @@ export default function QuestConfirmDialog({
               <div className="flex gap-3">
                 <button
                   onClick={onCancel}
-                  className="flex-1 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 active:scale-95"
+                  className="px-6 py-3 rounded-lg font-semibold text-sm transition-all hover:scale-105 active:scale-95"
                   style={{
                     backgroundColor: 'rgba(255, 255, 255, 0.05)',
                     color: 'var(--color-text-secondary)',
@@ -134,13 +134,13 @@ export default function QuestConfirmDialog({
                 <button
                   onClick={handleConfirm}
                   disabled={!isChecked}
-                  className="flex-1 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="flex-1 py-3 px-4 rounded-lg font-semibold text-sm transition-all hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 whitespace-nowrap"
                   style={{
                     background: isChecked ? 'var(--gradient-primary)' : 'rgba(167, 139, 250, 0.2)',
                     color: 'white',
                   }}
                 >
-                  Confirm & Complete +{xpAmount} XP
+                  Complete +{xpAmount} XP
                 </button>
               </div>
             </div>
