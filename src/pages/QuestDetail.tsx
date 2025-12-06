@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
 import { useSubscription } from '../hooks/useSubscription';
 import { calculateXP } from '../lib/xp';
-import { Clock, Camera, AlertTriangle, Check, Flame, X, Award, TrendingUp } from 'lucide-react';
+import { Clock, Camera, AlertTriangle, Check, Flame, X, Award, TrendingUp, Trash2, Pause, Play } from 'lucide-react';
 import PaywallModal from '../components/PaywallModal';
 import QuestConfirmDialog from '../components/QuestConfirmDialog';
 import { questTemplates } from '../data/seed';
@@ -12,7 +12,7 @@ import { questTemplates } from '../data/seed';
 export default function QuestDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { profile, getQuestById, addCompletion, addUserQuest } = useStore();
+  const { profile, getQuestById, addCompletion, addUserQuest, removeUserQuest, toggleQuestActive } = useStore();
   const { hasAccess } = useSubscription();
 
   // Try to find as user quest first, then as template
@@ -32,6 +32,7 @@ export default function QuestDetail() {
 
   const [showPaywall, setShowPaywall] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [textValue, setTextValue] = useState('');
@@ -169,6 +170,19 @@ export default function QuestDetail() {
     navigate(-1); // Go back to previous page
   };
 
+  const handleDelete = () => {
+    if (quest) {
+      removeUserQuest(quest.id);
+      navigate('/app');
+    }
+  };
+
+  const handleToggleActive = () => {
+    if (quest) {
+      toggleQuestActive(quest.id);
+    }
+  };
+
   return (
     <>
       {/* Backdrop Overlay */}
@@ -201,6 +215,31 @@ export default function QuestDetail() {
           >
             <X size={20} />
           </button>
+
+          {/* Quest Management Buttons - Only show for user quests (not templates) */}
+          {quest && !isTemplate && (
+            <div className="absolute top-4 left-4 flex items-center gap-2">
+              <button
+                onClick={handleToggleActive}
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                style={{
+                  backgroundColor: quest.active ? 'rgba(251, 146, 60, 0.2)' : 'rgba(16, 185, 129, 0.2)',
+                  color: quest.active ? 'rgb(251, 146, 60)' : 'var(--color-success)'
+                }}
+                title={quest.active ? 'Pause Quest' : 'Resume Quest'}
+              >
+                {quest.active ? <Pause size={16} /> : <Play size={16} />}
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', color: 'var(--color-error)' }}
+                title="Remove Quest"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          )}
 
           {/* Quest Info */}
           <div className="mb-6">
@@ -394,6 +433,54 @@ export default function QuestDetail() {
         onConfirm={confirmCompletion}
         onCancel={() => setShowConfirmDialog(false)}
       />
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteConfirm && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}
+          onClick={() => setShowDeleteConfirm(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="glass rounded-xl p-6 border max-w-sm w-full"
+            style={{ borderColor: 'var(--color-error)', backgroundColor: 'var(--color-bg)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center mb-4">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)' }}>
+                <Trash2 size={24} style={{ color: 'var(--color-error)' }} />
+              </div>
+              <h3 className="font-display text-xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>
+                Remove Quest?
+              </h3>
+              <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                This will permanently remove "{questData.title}" from your quests. Your completion history will be preserved.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1 py-3 rounded-lg font-semibold transition-all hover:bg-white/10"
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', color: 'var(--color-text)' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="flex-1 py-3 rounded-lg font-semibold transition-all hover:opacity-90"
+                style={{ backgroundColor: 'var(--color-error)', color: 'white' }}
+              >
+                Remove
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </>
   );
 }

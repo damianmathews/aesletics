@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { X, Zap, Dumbbell, Sparkles, Brain, Heart, Users, Mountain, Briefcase, Palette, Shield, Ban, Star } from 'lucide-react';
+import { X, Zap, Dumbbell, Sparkles, Brain, Heart, Users, Mountain, Briefcase, Palette, Shield, Ban, Star, Trash2, Pause, Play } from 'lucide-react';
 import type { UserQuest } from '../types';
+import { useStore } from '../store/useStore';
 
 interface MyQuestsModalProps {
   isOpen: boolean;
@@ -33,6 +34,9 @@ const getCategoryIcon = (categoryId: string) => {
 export default function MyQuestsModal({ isOpen, onClose, quests, completedTodayIds }: MyQuestsModalProps) {
   const [filter, setFilter] = useState<'all' | 'daily' | 'weekly' | 'monthly' | 'once'>('all');
   const [statusFilter, setStatusFilter] = useState<'active' | 'inactive' | 'all'>('active');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  const { removeUserQuest, toggleQuestActive } = useStore();
 
   // Filter quests by status
   const statusFilteredQuests = statusFilter === 'all'
@@ -155,17 +159,19 @@ export default function MyQuestsModal({ isOpen, onClose, quests, completedTodayI
                   {filteredQuests.map((quest) => {
                     const isCompletedToday = completedTodayIds.has(quest.id);
                     return (
-                      <Link
+                      <div
                         key={quest.id}
-                        to={`/app/quests/${quest.id}`}
-                        onClick={onClose}
                         className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 transition-all group"
                         style={{
-                          opacity: !quest.active ? 0.5 : 1,
+                          opacity: !quest.active ? 0.6 : 1,
                           backgroundColor: isCompletedToday ? 'rgba(16, 185, 129, 0.1)' : 'transparent',
                         }}
                       >
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <Link
+                          to={`/app/quests/${quest.id}`}
+                          onClick={onClose}
+                          className="flex items-center gap-3 flex-1 min-w-0"
+                        >
                           <div style={{ color: isCompletedToday ? 'var(--color-success)' : 'var(--color-accent)' }} className="flex-shrink-0">
                             {getCategoryIcon(quest.category)}
                           </div>
@@ -190,19 +196,49 @@ export default function MyQuestsModal({ isOpen, onClose, quests, completedTodayI
                               {quest.custom && <span>• Custom</span>}
                             </div>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-3 flex-shrink-0">
-                          <span className="px-2 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', color: 'var(--color-text-secondary)' }}>
+                        </Link>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className="hidden sm:inline px-2 py-0.5 rounded text-xs font-medium capitalize" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', color: 'var(--color-text-secondary)' }}>
                             {quest.difficulty}
                           </span>
-                          <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                          <span className="hidden sm:inline text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
                             {quest.durationMinutes}min
                           </span>
                           <span className="text-xs font-mono font-bold" style={{ color: 'var(--color-accent)' }}>
                             {quest.baseXP} XP
                           </span>
+                          {/* Action buttons */}
+                          <div className="flex items-center gap-1 ml-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleQuestActive(quest.id);
+                              }}
+                              className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                              style={{
+                                backgroundColor: quest.active ? 'rgba(251, 146, 60, 0.2)' : 'rgba(16, 185, 129, 0.2)',
+                                color: quest.active ? 'rgb(251, 146, 60)' : 'var(--color-success)'
+                              }}
+                              title={quest.active ? 'Pause Quest' : 'Resume Quest'}
+                            >
+                              {quest.active ? <Pause size={14} /> : <Play size={14} />}
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setDeleteConfirmId(quest.id);
+                              }}
+                              className="w-7 h-7 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                              style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', color: 'var(--color-error)' }}
+                              title="Remove Quest"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </div>
-                      </Link>
+                      </div>
                     );
                   })}
                 </div>
@@ -221,6 +257,57 @@ export default function MyQuestsModal({ isOpen, onClose, quests, completedTodayI
               </Link>
             </div>
           </motion.div>
+
+          {/* Delete Confirmation Dialog */}
+          {deleteConfirmId && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 flex items-center justify-center p-4"
+              style={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }}
+              onClick={() => setDeleteConfirmId(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="glass rounded-xl p-6 border max-w-sm w-full"
+                style={{ borderColor: 'var(--color-error)', backgroundColor: 'var(--color-bg)' }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="text-center mb-4">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)' }}>
+                    <Trash2 size={24} style={{ color: 'var(--color-error)' }} />
+                  </div>
+                  <h3 className="font-display text-xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>
+                    Remove Quest?
+                  </h3>
+                  <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                    This will permanently remove "{quests.find(q => q.id === deleteConfirmId)?.title}" from your quests.
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setDeleteConfirmId(null)}
+                    className="flex-1 py-3 rounded-lg font-semibold transition-all hover:bg-white/10"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', color: 'var(--color-text)' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      removeUserQuest(deleteConfirmId);
+                      setDeleteConfirmId(null);
+                    }}
+                    className="flex-1 py-3 rounded-lg font-semibold transition-all hover:opacity-90"
+                    style={{ backgroundColor: 'var(--color-error)', color: 'white' }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>
