@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useStore } from '../store/useStore';
-import { useState, useEffect } from 'react';
-import { Trophy, TrendingUp, Menu, X } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Trophy, TrendingUp, Menu, X, RefreshCw } from 'lucide-react';
 import { getTopPlayers } from '../lib/leaderboard';
 import { auth } from '../lib/firebase';
 
@@ -20,72 +20,92 @@ export default function Leaderboard() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [leaderboard, setLeaderboard] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Protect against NaN XP values from Firestore
   const safeXP = (profile.totalXP && !isNaN(profile.totalXP)) ? profile.totalXP : 0;
 
-  useEffect(() => {
-    async function fetchLeaderboard() {
+  const fetchLeaderboard = useCallback(async (isRefresh = false) => {
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
       setLoading(true);
-      try {
-        // Fetch top 50 players from Firestore
-        const topPlayersData = await getTopPlayers(50);
-
-        // Convert to Player format with ranks (protect against NaN)
-        // Bug #9 fix: Calculate level from XP to ensure consistency
-        const players: Player[] = topPlayersData.map((entry, index) => {
-          const xp = (entry.totalXP && !isNaN(entry.totalXP)) ? entry.totalXP : 0;
-          // Calculate level from XP using same formula as xp.ts
-          let level = 1;
-          while (xp >= Math.floor(100 * Math.pow(level + 1, 1.6))) {
-            level++;
-          }
-          return {
-            rank: index + 1,
-            username: entry.displayName,
-            xp,
-            level,
-            isUser: auth.currentUser?.uid === entry.userId,
-          };
-        });
-
-        // Add current user if not in top 50
-        const userInList = players.some(p => p.isUser);
-        if (!userInList && auth.currentUser) {
-          // Calculate user's rank (they're somewhere after the top 50)
-          const userRank = players.findIndex(p => p.xp < safeXP);
-          const rank = userRank === -1 ? players.length + 1 : userRank + 1;
-
-          const userPlayer: Player = {
-            rank,
-            username: profile.nickname,
-            xp: safeXP,
-            level: profile.level,
-            isUser: true,
-          };
-
-          // Insert user in correct position
-          if (userRank === -1) {
-            players.push(userPlayer);
-          } else {
-            players.splice(userRank, 0, userPlayer);
-            // Update ranks after insertion
-            for (let i = userRank + 1; i < players.length; i++) {
-              players[i].rank = i + 1;
-            }
-          }
-        }
-
-        setLeaderboard(players);
-      } catch (error) {
-        console.error('Failed to fetch leaderboard:', error);
-      } finally {
-        setLoading(false);
-      }
     }
 
+    try {
+      // Fetch top 50 players from Firestore
+      const topPlayersData = await getTopPlayers(50);
+
+      // Convert to Player format with ranks (protect against NaN)
+      // Bug #9 fix: Calculate level from XP to ensure consistency
+      const players: Player[] = topPlayersData.map((entry, index) => {
+        const xp = (entry.totalXP && !isNaN(entry.totalXP)) ? entry.totalXP : 0;
+        // Calculate level from XP using same formula as xp.ts
+        let level = 1;
+        while (xp >= Math.floor(100 * Math.pow(level + 1, 1.6))) {
+          level++;
+        }
+        return {
+          rank: index + 1,
+          username: entry.displayName,
+          xp,
+          level,
+          isUser: auth.currentUser?.uid === entry.userId,
+        };
+      });
+
+      // Add current user if not in top 50
+      const userInList = players.some(p => p.isUser);
+      if (!userInList && auth.currentUser) {
+        // Calculate user's rank (they're somewhere after the top 50)
+        const userRank = players.findIndex(p => p.xp < safeXP);
+        const rank = userRank === -1 ? players.length + 1 : userRank + 1;
+
+        const userPlayer: Player = {
+          rank,
+          username: profile.nickname,
+          xp: safeXP,
+          level: profile.level,
+          isUser: true,
+        };
+
+        // Insert user in correct position
+        if (userRank === -1) {
+          players.push(userPlayer);
+        } else {
+          players.splice(userRank, 0, userPlayer);
+          // Update ranks after insertion
+          for (let i = userRank + 1; i < players.length; i++) {
+            players[i].rank = i + 1;
+          }
+        }
+      }
+
+      setLeaderboard(players);
+    } catch (error) {
+      console.error('Failed to fetch leaderboard:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [safeXP, profile.level, profile.nickname]);
+
+  // Initial fetch
+  useEffect(() => {
     fetchLeaderboard();
-  }, [safeXP, profile.level, profile.nickname, profile.currentStreak]);
+  }, [fetchLeaderboard]);
+
+  // Auto-refresh when tab becomes visible again
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchLeaderboard(true);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [fetchLeaderboard]);
 
   const userEntry = leaderboard.find(p => p.isUser);
   const topPlayers = leaderboard.slice(0, 50); // Show up to top 50
@@ -206,8 +226,21 @@ export default function Leaderboard() {
 
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative mb-5">
-          <h1 className="font-display text-2xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>Global Leaderboard</h1>
-          <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>You vs Everyone - See where you rank worldwide</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="font-display text-2xl font-bold mb-1" style={{ color: 'var(--color-text)' }}>Global Leaderboard</h1>
+              <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>You vs Everyone - See where you rank worldwide</p>
+            </div>
+            <button
+              onClick={() => fetchLeaderboard(true)}
+              disabled={refreshing}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all hover:scale-105 disabled:opacity-50"
+              style={{ background: 'rgba(255, 255, 255, 0.05)', color: 'var(--color-text)' }}
+            >
+              <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
+              <span className="text-xs font-mono hidden sm:inline">{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+            </button>
+          </div>
         </motion.div>
 
         {/* Your Rank Card */}

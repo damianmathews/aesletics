@@ -190,7 +190,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const criticalDataChanged = prevState && (
         state.onboardingComplete !== prevState.onboardingComplete ||
         state.profile.level !== prevState.profile.level ||
-        state.completions.length !== prevState.completions.length
+        state.completions.length !== prevState.completions.length ||
+        state.userQuests.length !== prevState.userQuests.length // Quest additions/removals sync immediately
       );
 
       if (criticalDataChanged) {
